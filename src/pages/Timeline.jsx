@@ -1,0 +1,135 @@
+// src/pages/Timeline.jsx
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronDown, ChevronUp } from 'lucide-react'
+import { AnimatedPage } from '../components/shared/AnimatedPage'
+import { PageWrapper } from '../components/layout/PageWrapper'
+import { SectionHeader } from '../components/shared/SectionHeader'
+import { Badge } from '../components/ui/Badge'
+import { electionStages, electionPhases } from '../data/electionStages'
+import { cn } from '../utils/helpers'
+
+const phaseColors = {
+  'Pre-Election': 'saffron',
+  'Election Day': 'primary',
+  'Post-Election': 'green',
+}
+
+export default function Timeline() {
+  const [activePhase, setActivePhase] = useState('All')
+  const [expanded, setExpanded] = useState(null)
+
+  const phases = ['All', ...electionPhases]
+  const filtered = activePhase === 'All'
+    ? electionStages
+    : electionStages.filter(s => s.phase === activePhase)
+
+  return (
+    <AnimatedPage>
+      <PageWrapper>
+        <SectionHeader
+          eyebrow="India's Democratic Process"
+          title="Election Timeline"
+          description="A complete, stage-by-stage walkthrough of how India conducts the world's largest democratic exercise — from the first announcement to the formation of government."
+          center
+        />
+
+        {/* Phase filter */}
+        <div className="flex flex-wrap justify-center gap-2 mb-12">
+          {phases.map(p => (
+            <button
+              key={p}
+              onClick={() => setActivePhase(p)}
+              className={cn(
+                'px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border',
+                activePhase === p
+                  ? 'bg-[#1a56db] border-[#1a56db] text-white shadow-lg shadow-blue-900/30'
+                  : 'border-white/15 text-white/60 hover:text-white hover:border-white/30',
+              )}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+
+        {/* Timeline */}
+        <div className="relative">
+          {/* Vertical line */}
+          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-[#FF9933] via-[#1a56db] to-[#138808] opacity-30" />
+
+          <div className="space-y-8">
+            {filtered.map((stage, idx) => {
+              const isExpanded = expanded === stage.id
+              const isLeft = idx % 2 === 0
+
+              return (
+                <motion.div
+                  key={stage.id}
+                  initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.5, delay: idx * 0.05 }}
+                  className={cn(
+                    'relative flex items-start gap-6 md:gap-0',
+                    'md:flex-row',
+                    isLeft ? 'md:flex-row' : 'md:flex-row-reverse',
+                  )}
+                >
+                  {/* Content */}
+                  <div className={cn('flex-1 ml-14 md:ml-0', isLeft ? 'md:pr-12 md:text-right' : 'md:pl-12')}>
+                    <div
+                      className="glass rounded-2xl p-5 border border-white/10 cursor-pointer hover:border-white/20 transition-all duration-300"
+                      onClick={() => setExpanded(isExpanded ? null : stage.id)}
+                    >
+                      <div className={cn('flex items-start gap-3 mb-2', isLeft ? 'md:flex-row-reverse' : '')}>
+                        <Badge variant={phaseColors[stage.phase]}>{stage.phase}</Badge>
+                        <span className="text-white/40 text-xs mt-0.5">{stage.duration}</span>
+                      </div>
+
+                      <h3 className="font-display font-bold text-lg text-white mb-2">
+                        {stage.icon} {stage.title}
+                      </h3>
+                      <p className="text-white/60 text-sm leading-relaxed">{stage.description}</p>
+
+                      <button className="mt-3 flex items-center gap-1 text-xs text-white/40 hover:text-white/70 transition-colors">
+                        {isExpanded ? <><ChevronUp size={14} /> Less</> : <><ChevronDown size={14} /> Details</>}
+                      </button>
+
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.ul
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mt-4 space-y-2 overflow-hidden"
+                          >
+                            {stage.details.map((d, i) => (
+                              <li key={i} className="flex items-start gap-2 text-sm text-white/70">
+                                <span className="size-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: stage.color }} />
+                                {d}
+                              </li>
+                            ))}
+                          </motion.ul>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+
+                  {/* Center dot */}
+                  <div className="absolute left-6 md:left-1/2 -translate-x-1/2 flex items-center justify-center">
+                    <div
+                      className="size-10 rounded-full border-2 border-current flex items-center justify-center text-base z-10"
+                      style={{ backgroundColor: `${stage.color}20`, borderColor: stage.color, color: stage.color }}
+                    >
+                      {stage.icon}
+                    </div>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
+      </PageWrapper>
+    </AnimatedPage>
+  )
+}

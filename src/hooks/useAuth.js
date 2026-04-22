@@ -13,10 +13,15 @@ const googleProvider = new GoogleAuthProvider()
 
 export function useAuth() {
   const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false)
+      return
+    }
+    setLoading(true)
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser)
       setLoading(false)
@@ -25,6 +30,7 @@ export function useAuth() {
   }, [])
 
   const signInWithGoogle = async () => {
+    if (!auth) { setError('Firebase not configured'); return }
     setError(null)
     try {
       const result = await signInWithPopup(auth, googleProvider)
@@ -36,6 +42,7 @@ export function useAuth() {
   }
 
   const signInAsGuest = async () => {
+    if (!auth) { setError('Firebase not configured'); return }
     setError(null)
     try {
       const result = await signInAnonymously(auth)
@@ -47,6 +54,7 @@ export function useAuth() {
   }
 
   const logout = async () => {
+    if (!auth) return
     setError(null)
     try {
       await signOut(auth)
