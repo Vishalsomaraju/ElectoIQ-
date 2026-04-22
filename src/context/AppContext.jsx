@@ -1,0 +1,100 @@
+// src/context/AppContext.jsx
+import { createContext, useContext, useReducer } from 'react'
+
+const initialState = {
+  currentPage: 'home',
+  quizState: {
+    started: false,
+    currentIndex: 0,
+    answers: {},
+    completed: false,
+    score: 0,
+  },
+  progress: {
+    timelineViewed: [],
+    glossaryViewed: [],
+    quizzesCompleted: 0,
+    totalScore: 0,
+  },
+  chatOpen: false,
+}
+
+function appReducer(state, action) {
+  switch (action.type) {
+    case 'SET_PAGE':
+      return { ...state, currentPage: action.payload }
+
+    case 'START_QUIZ':
+      return { ...state, quizState: { ...initialState.quizState, started: true } }
+
+    case 'ANSWER_QUESTION':
+      return {
+        ...state,
+        quizState: {
+          ...state.quizState,
+          answers: { ...state.quizState.answers, [action.payload.index]: action.payload.answer },
+        },
+      }
+
+    case 'NEXT_QUESTION':
+      return {
+        ...state,
+        quizState: { ...state.quizState, currentIndex: state.quizState.currentIndex + 1 },
+      }
+
+    case 'COMPLETE_QUIZ':
+      return {
+        ...state,
+        quizState: { ...state.quizState, completed: true, score: action.payload.score },
+        progress: {
+          ...state.progress,
+          quizzesCompleted: state.progress.quizzesCompleted + 1,
+          totalScore: state.progress.totalScore + action.payload.score,
+        },
+      }
+
+    case 'RESET_QUIZ':
+      return { ...state, quizState: initialState.quizState }
+
+    case 'MARK_TIMELINE_VIEWED':
+      return {
+        ...state,
+        progress: {
+          ...state.progress,
+          timelineViewed: [...new Set([...state.progress.timelineViewed, action.payload])],
+        },
+      }
+
+    case 'MARK_GLOSSARY_VIEWED':
+      return {
+        ...state,
+        progress: {
+          ...state.progress,
+          glossaryViewed: [...new Set([...state.progress.glossaryViewed, action.payload])],
+        },
+      }
+
+    case 'TOGGLE_CHAT':
+      return { ...state, chatOpen: !state.chatOpen }
+
+    default:
+      return state
+  }
+}
+
+const AppContext = createContext(null)
+
+export function AppProvider({ children }) {
+  const [state, dispatch] = useReducer(appReducer, initialState)
+  return (
+    <AppContext.Provider value={{ state, dispatch }}>
+      {children}
+    </AppContext.Provider>
+  )
+}
+
+export function useAppContext() {
+  const ctx = useContext(AppContext)
+  if (!ctx) throw new Error('useAppContext must be used within AppProvider')
+  return ctx
+}

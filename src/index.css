@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1a56db;
+  --color-primary-dark: #1e429f;
+  --color-primary-light: #3f83f8;
+  --color-accent: #0ea5e9;
+  --color-accent-dark: #0284c7;
+  --color-surface: #ffffff;
+  --color-surface-dark: #1e2433;
+  --color-india-saffron: #FF9933;
+  --color-india-green: #138808;
+  --color-india-navy: #000080;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Outfit', system-ui, sans-serif;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #0f1524;
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #1e2433;
+}
+::-webkit-scrollbar-thumb {
+  background: #1a56db;
+  border-radius: 3px;
+}
+
+/* India flag gradient utility */
+.tricolor-gradient {
+  background: linear-gradient(135deg, #FF9933 0%, #ffffff 50%, #138808 100%);
+}
+
+.glass {
+  background: rgba(30, 36, 51, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glow-primary {
+  box-shadow: 0 0 30px rgba(26, 86, 219, 0.35);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #3f83f8, #0ea5e9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-tricolor {
+  background: linear-gradient(90deg, #FF9933, #ffffff, #138808);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
