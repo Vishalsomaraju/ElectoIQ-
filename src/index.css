@@ -82,3 +82,55 @@ body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* Saffron-to-green gradient text (hero heading) */
+.text-gradient-india {
+  background: linear-gradient(90deg, #FF9933 0%, #f7c948 50%, #138808 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Active nav underline pill */
+.nav-active-dot {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: #FF9933;
+}
+
+/* Floating particle */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Ashoka Chakra spin */
+@keyframes chakra-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.chakra-spin {
+  animation: chakra-spin 30s linear infinite;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Visible focus ring */
+:focus-visible {
+  outline: 2px solid #FF9933;
+  outline-offset: 2px;
+  border-radius: 4px;
+}

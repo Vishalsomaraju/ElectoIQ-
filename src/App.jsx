@@ -36,9 +36,9 @@ export default function App() {
         <AppProvider>
           <div className="min-h-screen flex flex-col">
             <Navbar />
-            <div className="flex-1">
+          <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
               <AnimatedRoutes />
-            </div>
+            </main>
             <Footer />
           </div>
         </AppProvider>
