@@ -7,6 +7,8 @@ import { AppProvider } from './context/AppContext'
 import { Navbar } from './components/layout/Navbar'
 import { Footer } from './components/layout/Footer'
 import { Spinner } from './components/ui/Spinner'
+import { ChatDrawer } from './components/shared/ChatDrawer'
+import { FloatingChat } from './components/shared/FloatingChat'
 
 const Home = lazy(() => import('./pages/Home'))
 const Timeline = lazy(() => import('./pages/Timeline'))
@@ -51,6 +53,8 @@ export default function App() {
               <AnimatedRoutes />
             </main>
             <Footer />
+            <FloatingChat />
+            <ChatDrawer />
           </div>
         </AppProvider>
       </AuthProvider>

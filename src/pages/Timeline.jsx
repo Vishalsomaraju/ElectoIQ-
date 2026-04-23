@@ -1,13 +1,14 @@
 // src/pages/Timeline.jsx
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, ChevronUp, Megaphone, ClipboardList, FileEdit, FolderOpen, Speaker, Vote, Monitor, Hash, Landmark } from 'lucide-react'
+import { ChevronDown, ChevronUp, Megaphone, ClipboardList, FileEdit, FolderOpen, Speaker, Vote, Monitor, Hash, Landmark, Bot } from 'lucide-react'
 import { AnimatedPage } from '../components/shared/AnimatedPage'
 import { PageWrapper } from '../components/layout/PageWrapper'
 import { SectionHeader } from '../components/shared/SectionHeader'
 import { Badge } from '../components/ui/Badge'
 import { electionStages, electionPhases } from '../data/electionStages'
 import { cn } from '../utils/helpers'
+import { useAppContext } from '../context/AppContext'
 
 const iconMap = {
   Megaphone, ClipboardList, FileEdit, FolderOpen, Speaker, Vote, Monitor, Hash, Landmark
@@ -22,6 +23,7 @@ const phaseColors = {
 export default function Timeline() {
   const [activePhase, setActivePhase] = useState('All')
   const [expanded, setExpanded] = useState(null)
+  const { dispatch } = useAppContext()
 
   const phases = ['All', ...electionPhases]
   const filtered = activePhase === 'All'
@@ -114,6 +116,20 @@ export default function Timeline() {
                                 {d}
                               </li>
                             ))}
+                            <li className="pt-2">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  dispatch({ type: 'SET_CHAT_CONTEXT', payload: { stageName: stage.title } })
+                                  dispatch({ type: 'SET_SUGGESTED_QUESTIONS', payload: [`Explain ${stage.title} in detail`, `What is the role of ECI during ${stage.title}?`, `Can you summarize ${stage.title}?`] })
+                                  dispatch({ type: 'TOGGLE_CHAT', payload: true })
+                                }}
+                                className="w-full mt-2 py-2 px-4 rounded-xl bg-gradient-to-r from-[#FF9933]/10 to-[#138808]/10 border border-white/10 hover:border-white/30 text-white/90 text-sm font-medium flex items-center justify-center gap-2 transition-all hover:scale-[1.02]"
+                              >
+                                <Bot size={16} className="text-[#FF9933]" />
+                                Ask ElectoBot about this stage
+                              </button>
+                            </li>
                           </motion.ul>
                         )}
                       </AnimatePresence>

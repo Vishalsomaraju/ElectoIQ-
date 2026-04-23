@@ -17,6 +17,12 @@ const initialState = {
     totalScore: 0,
   },
   chatOpen: false,
+  chatContext: null, // Stores specific context like { stageName: 'Voting' }
+  suggestedQuestions: [
+    "How do I register to vote?",
+    "What is NOTA?",
+    "When are the next elections?"
+  ]
 }
 
 function appReducer(state, action) {
@@ -75,7 +81,22 @@ function appReducer(state, action) {
       }
 
     case 'TOGGLE_CHAT':
-      return { ...state, chatOpen: !state.chatOpen }
+      return { 
+        ...state, 
+        chatOpen: action.payload !== undefined ? action.payload : !state.chatOpen 
+      }
+      
+    case 'SET_CHAT_CONTEXT':
+      return {
+        ...state,
+        chatContext: action.payload
+      }
+      
+    case 'SET_SUGGESTED_QUESTIONS':
+      return {
+        ...state,
+        suggestedQuestions: action.payload
+      }
 
     default:
       return state
