@@ -3,7 +3,7 @@ import { cn } from '../../utils/helpers'
 
 export function PageWrapper({ children, className, wide = false }) {
   return (
-    <main className={cn('pt-24 pb-16 min-h-screen', className)}>
+    <main id="main-content" tabIndex={-1} className={cn('pt-24 pb-16 min-h-screen', className)}>
       <div className={cn('mx-auto px-4 sm:px-6', wide ? 'max-w-7xl' : 'max-w-6xl')}>
         {children}
       </div>

@@ -11,8 +11,8 @@ vi.mock('../services/gemini', () => ({
 describe('useGemini Hook', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    // Suppress console.error in tests for expected errors
-    vi.spyOn(console, 'error').mockImplementation(() => {})
+    // Suppress console.warn in tests for expected errors
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
   })
 
   it('should initialize with empty state', () => {
@@ -97,7 +97,7 @@ describe('useGemini Hook', () => {
       await result.current.sendMessage('Hi')
     })
 
-    expect(console.error).toHaveBeenCalled()
+    expect(console.warn).toHaveBeenCalled()
     expect(result.current.error).toBe(errorMsg)
     expect(result.current.streaming).toBe(false)
     // The assistant message should be removed on error

@@ -61,17 +61,19 @@ export default function Dashboard() {
           <div className="inline-flex items-center justify-center size-20 rounded-2xl bg-gradient-to-br from-blue-600/20 to-sky-500/20 border border-blue-500/20 mb-4 text-4xl">
             {grade.emoji}
           </div>
-          <h2 className="font-display font-bold text-2xl text-white mb-1">{grade.label}</h2>
+          <h2 className="font-display font-bold text-2xl text-slate-900 dark:text-white mb-1">{grade.label}</h2>
           <p className={`text-sm ${grade.color} mb-6`}>Civic Readiness Level</p>
-          <ProgressBar
-            value={overallProgress}
-            max={100}
-            label="Overall Progress"
-            showPercent
-            color="primary"
-            size="lg"
-            className="max-w-xs mx-auto"
-          />
+          <div role="status" aria-live="polite" aria-atomic="true" aria-label={`Overall civic progress: ${overallProgress} percent`}>
+            <ProgressBar
+              value={overallProgress}
+              max={100}
+              label="Overall Progress"
+              showPercent
+              color="primary"
+              size="lg"
+              className="max-w-xs mx-auto"
+            />
+          </div>
         </Card>
 
         {/* Stat Cards */}
@@ -88,8 +90,16 @@ export default function Dashboard() {
                 <div className={`size-12 rounded-xl ${s.bg} flex items-center justify-center mx-auto mb-3 ${s.color}`}>
                   {s.icon}
                 </div>
-                <p className={`text-2xl font-bold ${s.color} mb-1`}>{s.value}</p>
-                <p className="text-xs text-white/50">{s.label}</p>
+                <p
+                  role="status"
+                  aria-live="polite"
+                  aria-atomic="true"
+                  aria-label={`${s.label}: ${s.value}`}
+                  className={`text-2xl font-bold ${s.color} mb-1`}
+                >
+                  {s.value}
+                </p>
+                <p className="text-xs text-slate-500 dark:text-white/50">{s.label}</p>
               </Card>
             </motion.div>
           ))}
@@ -142,8 +152,8 @@ export default function Dashboard() {
                   <div key={m.label} className="flex items-center gap-3">
                     <span className={`text-xl ${achieved ? '' : 'opacity-30 grayscale'}`}>{m.icon}</span>
                     <div className="flex-1">
-                      <p className={`text-sm font-medium ${achieved ? 'text-white' : 'text-white/40'}`}>{m.label}</p>
-                      <p className="text-xs text-white/30">{Math.min(val, m.threshold)}/{m.threshold}</p>
+                      <p className={`text-sm font-medium ${achieved ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-white/40'}`}>{m.label}</p>
+                      <p className="text-xs text-slate-500 dark:text-white/30">{Math.min(val, m.threshold)}/{m.threshold}</p>
                     </div>
                     {achieved ? (
                       <Badge variant="success">Earned</Badge>

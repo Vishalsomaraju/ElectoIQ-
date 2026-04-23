@@ -6,7 +6,8 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
+.env
+electoiq-firebase-adminsdk-fbsvc-b3b9993f92.json
 skills
 node_modules
 dist

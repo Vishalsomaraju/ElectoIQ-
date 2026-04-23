@@ -1,21 +1,53 @@
-# Google Services Integration
+# Google Services — ElectoIQ
 
-ElectoIQ leverages multiple Google Cloud and Firebase services for its core architecture, adhering to production-grade security and performance patterns.
+ElectoIQ integrates multiple Google services to deliver a real-time, AI-powered Indian election education platform.
+
+---
 
 ## 1. Firebase Authentication
-- **Implementation**: Google Sign-In via `firebase/auth` using `signInWithPopup`.
-- **Security**: Utilizes explicitly scoped parameters (`email`, `profile`) to enforce principle of least privilege.
-- **Role**: Serves as the primary identity provider.
+
+- **Package**: `firebase/auth`
+- **Files**: `src/services/firebase.js`, `src/hooks/useAuth.js`, `src/context/AuthContext.jsx`
+- **Usage**: Anonymous sign-in for public users (no friction), Google OAuth for registered learners. OAuth configured with `email` and `profile` scopes, with `prompt: 'select_account'` to force account selection.
+- **Docs**: https://firebase.google.com/docs/auth
+
+---
 
 ## 2. Cloud Firestore
-- **Implementation**: Used for real-time synchronization of users, timeline events, and glossary terms.
-- **Security**: Implements strict `firestore.rules` featuring role-based access control (RBAC), user ownership checks (`isOwner`), and a secure `deny-all` catch-all.
-- **Performance**: Pre-configured with `firestore.indexes.json` to enable optimized compound querying.
+
+- **Package**: `firebase/firestore`
+- **Files**: `src/services/firebase.js`, `src/hooks/useFirestore.js`
+- **Usage**: Stores and syncs user progress data (quiz scores, completed milestones) with auth guards on all write operations. Queries use `limit()` to avoid unbounded fetches. Security rules enforce `deny-all` fallback.
+- **Docs**: https://firebase.google.com/docs/firestore
+
+---
 
 ## 3. Firebase Hosting
-- **Implementation**: Deployed via Firebase Hosting for high-speed global CDN delivery.
-- **Security**: Configuration (`firebase.json`) integrates production-grade security headers (`X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`) and rigorous caching rules.
 
-## 4. Gemini 1.5 Flash (Google AI Studio)
-- **Implementation**: Provides the generative AI capability for the conversational ElectoBot assistant and the dynamic quiz engine.
-- **Usage**: Invoked asynchronously through a custom React hook leveraging `@google/genai`.
+- **Config**: `firebase.json`, `firestore.rules`, `firestore.indexes.json`
+- **Usage**: SPA deployment with client-side routing rewrites (`**` → `/index.html`). Firestore rules and indexes co-deployed.
+- **Docs**: https://firebase.google.com/docs/hosting
+
+---
+
+## 4. Gemini AI (Generative Language API)
+
+- **Package**: `@google/generative-ai ^0.24.1`
+- **Files**: `src/services/gemini.js`, `src/hooks/useGemini.js`
+- **Model**: `gemini-1.5-flash`
+- **Usage**: Conversational AI assistant for Indian election education. Uses multi-turn streaming chat sessions. System prompt restricts responses to election domain. User input is sanitized via `sanitizeInput()` before any API call.
+- **Docs**: https://ai.google.dev/docs
+
+---
+
+## Environment Variables Required
+
+```env
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+VITE_GEMINI_KEY=
+```

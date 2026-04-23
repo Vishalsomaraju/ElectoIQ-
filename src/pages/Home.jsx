@@ -249,7 +249,7 @@ function HeroHeading() {
             variants={wordVariants}
             initial="hidden"
             animate="show"
-            className="inline-block mr-3 text-white last:mr-0"
+            className="inline-block mr-3 text-slate-900 dark:text-white last:mr-0"
           >
             {word}
           </motion.span>
@@ -283,7 +283,7 @@ export default function Home() {
     <AnimatedPage>
       {/* ── HERO ─────────────────────────────────────────────────── */}
       <section
-        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#0b1120] pt-24 pb-20 px-4"
+        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-slate-50 dark:bg-[#0b1120] pt-24 pb-20 px-4 transition-colors duration-500"
         aria-labelledby="hero-heading"
       >
         {/* Animated background particles */}
@@ -311,7 +311,7 @@ export default function Home() {
           initial="hidden"
           animate="show"
           transition={{ duration: 0.5 }}
-          className="flex items-center gap-2 px-4 py-2 rounded-full glass border border-white/10 text-sm text-white/70 mb-8"
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-white/5 backdrop-blur-md border border-slate-200 dark:border-white/10 text-sm text-slate-700 dark:text-white/70 mb-8 shadow-sm"
         >
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" aria-hidden="true" />
           India's AI-Powered Civic Education Platform
@@ -328,7 +328,7 @@ export default function Home() {
           initial="hidden"
           animate="show"
           transition={{ duration: 0.55, delay: 0.5 }}
-          className="text-white/55 text-lg md:text-xl max-w-2xl text-center mx-auto mb-10 leading-relaxed"
+          className="text-slate-600 dark:text-white/55 text-lg md:text-xl max-w-2xl text-center mx-auto mb-10 leading-relaxed"
         >
           Interactive, AI-powered civic education for every Indian voter —
           from registration to results, demystified.
@@ -354,7 +354,7 @@ export default function Home() {
           {/* Secondary — outlined */}
           <Link
             to="/quiz"
-            className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-base border border-white/20 text-white/80 hover:text-white hover:bg-white/8 hover:border-white/35 transition-all duration-200 hover:-translate-y-0.5"
+            className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-base border border-slate-300 dark:border-white/20 text-slate-700 dark:text-white/80 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/8 hover:border-slate-400 dark:hover:border-white/35 transition-all duration-200 hover:-translate-y-0.5"
           >
             <Sparkles size={16} className="text-[#0ea5e9]" aria-hidden="true" />
             Ask ElectoBot
@@ -372,7 +372,7 @@ export default function Home() {
         >
           <div className="flex h-[3px] w-36 rounded-full overflow-hidden">
             <div className="flex-1 bg-[#FF9933]" />
-            <div className="flex-1 bg-white/70" />
+            <div className="flex-1 bg-slate-300 dark:bg-white/70" />
             <div className="flex-1 bg-[#138808]" />
           </div>
         </motion.div>
@@ -398,10 +398,10 @@ export default function Home() {
               aria-live="polite"
               aria-atomic="true"
               aria-label={`${s.label}: ${s.value}${s.suffix}`}
-              className="bg-[#111827] border border-white/10 rounded-2xl p-6 text-center hover:border-white/20 transition-colors duration-300 hover:shadow-lg"
+              className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/10 rounded-2xl p-6 text-center hover:border-slate-300 dark:hover:border-white/20 transition-all duration-300 shadow-sm hover:shadow-lg"
             >
               <AnimatedCounter to={s.value} suffix={s.suffix} color={s.color} />
-              <p className="text-white/50 text-sm font-medium" aria-hidden="true">{s.label}</p>
+              <p className="text-slate-500 dark:text-white/50 text-sm font-medium" aria-hidden="true">{s.label}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -426,11 +426,11 @@ export default function Home() {
           </p>
           <h2
             id="features-heading"
-            className="font-display font-extrabold text-3xl md:text-4xl text-white"
+            className="font-display font-extrabold text-3xl md:text-4xl text-slate-900 dark:text-white"
           >
             Your Complete Election Companion
           </h2>
-          <p className="mt-3 text-white/45 max-w-xl mx-auto text-base">
+          <p className="mt-3 text-slate-600 dark:text-white/45 max-w-xl mx-auto text-base">
             Six powerful tools to help every Indian voter understand, prepare, and participate confidently.
           </p>
         </motion.div>
@@ -447,7 +447,7 @@ export default function Home() {
             <motion.div key={f.title} variants={cardVariant}>
               <Link
                 to={f.to}
-                className="group relative block h-full bg-[#111827] border border-white/8 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-white/20 hover:shadow-xl hover:shadow-black/40 overflow-hidden"
+                className="group relative block h-full bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/8 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-slate-300 dark:hover:border-white/20 shadow-sm hover:shadow-xl hover:shadow-slate-200 dark:hover:shadow-black/40 overflow-hidden"
               >
                 {/* Subtle accent glow on hover */}
                 <div
@@ -473,12 +473,12 @@ export default function Home() {
                 </div>
 
                 {/* Title */}
-                <h3 className="font-display font-bold text-lg text-white mb-2 group-hover:text-white transition-colors">
+                <h3 className="font-display font-bold text-lg text-slate-900 dark:text-white mb-2 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                   {f.title}
                 </h3>
 
                 {/* Desc */}
-                <p className="text-white/45 text-sm leading-relaxed mb-5">
+                <p className="text-slate-600 dark:text-white/45 text-sm leading-relaxed mb-5">
                   {f.desc}
                 </p>
 
@@ -515,7 +515,7 @@ export default function Home() {
           whileInView="show"
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="relative overflow-hidden rounded-3xl border border-[#FF9933]/20 bg-gradient-to-br from-[#0f172a] via-[#111827] to-[#0f172a] p-10 md:p-16 text-center"
+          className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-[#FF9933]/20 bg-white dark:bg-gradient-to-br dark:from-[#0f172a] dark:via-[#111827] dark:to-[#0f172a] shadow-lg dark:shadow-none p-10 md:p-16 text-center"
           aria-labelledby="cta-heading"
         >
           {/* Glow */}
@@ -533,12 +533,12 @@ export default function Home() {
           </p>
           <h2
             id="cta-heading"
-            className="font-display font-extrabold text-3xl md:text-5xl text-white mb-4 relative z-10"
+            className="font-display font-extrabold text-3xl md:text-5xl text-slate-900 dark:text-white mb-4 relative z-10"
           >
             Ready to Become an{' '}
             <span className="text-gradient-india">Informed Voter</span>?
           </h2>
-          <p className="text-white/50 max-w-lg mx-auto mb-10 leading-relaxed relative z-10">
+          <p className="text-slate-600 dark:text-white/50 max-w-lg mx-auto mb-10 leading-relaxed relative z-10">
             Start your journey through India's election process and discover how your single vote shapes the future of 1.4 billion people.
           </p>
           <div className="flex flex-wrap justify-center gap-4 relative z-10">
@@ -550,7 +550,7 @@ export default function Home() {
             </Link>
             <Link
               to="/voter-journey"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold border border-white/20 text-white/80 hover:text-white hover:bg-white/8 hover:border-white/35 transition-all duration-200 hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold border border-slate-300 dark:border-white/20 text-slate-700 dark:text-white/80 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/8 hover:border-slate-400 dark:hover:border-white/35 transition-all duration-200 hover:-translate-y-0.5"
             >
               My Voter Journey
             </Link>

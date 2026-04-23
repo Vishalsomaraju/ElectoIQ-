@@ -1,5 +1,9 @@
-// src/services/gemini.js
+// ─── Google Service: Gemini AI (Generative Language API) ─────────────────────
+// Purpose: Conversational AI assistant for Indian election education
+// SDK: @google/generative-ai ^0.24.1
+// Docs: https://ai.google.dev/docs
 import { GoogleGenerativeAI } from '@google/generative-ai'
+import { sanitizeInput } from '../utils/helpers'
 
 const API_KEY = import.meta.env.VITE_GEMINI_KEY
 
@@ -53,8 +57,9 @@ export async function sendMessage(message, history = []) {
   const model = getChatModel()
   if (!model) throw new Error('Gemini API key not configured')
 
+  const safeMessage = sanitizeInput(message)
   const chat = model.startChat({ history })
-  const result = await chat.sendMessage(message)
+  const result = await chat.sendMessage(safeMessage)
   return result.response.text()
 }
 
@@ -68,8 +73,9 @@ export async function sendMessageStream(message, history = [], onChunk) {
   const model = getChatModel()
   if (!model) throw new Error('Gemini API key not configured')
 
+  const safeMessage = sanitizeInput(message)
   const chat = model.startChat({ history })
-  const result = await chat.sendMessageStream(message)
+  const result = await chat.sendMessageStream(safeMessage)
 
   let fullText = ''
   for await (const chunk of result.stream) {

@@ -1,5 +1,5 @@
 // src/pages/Timeline.jsx
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, ChevronUp, Megaphone, ClipboardList, FileEdit, FolderOpen, Speaker, Vote, Monitor, Hash, Landmark, Bot } from 'lucide-react'
 import { AnimatedPage } from '../components/shared/AnimatedPage'
@@ -25,10 +25,13 @@ export default function Timeline() {
   const [expanded, setExpanded] = useState(null)
   const { dispatch } = useAppContext()
 
-  const phases = ['All', ...electionPhases]
-  const filtered = activePhase === 'All'
-    ? electionStages
-    : electionStages.filter(s => s.phase === activePhase)
+  const phases = useMemo(() => ['All', ...electionPhases], [])
+  const filtered = useMemo(
+    () => activePhase === 'All'
+      ? electionStages
+      : electionStages.filter(s => s.phase === activePhase),
+    [activePhase]
+  )
 
   return (
     <AnimatedPage>
@@ -50,7 +53,7 @@ export default function Timeline() {
                 'px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border',
                 activePhase === p
                   ? 'bg-[#1a56db] border-[#1a56db] text-white shadow-lg shadow-blue-900/30'
-                  : 'border-white/15 text-white/60 hover:text-white hover:border-white/30',
+                  : 'border-slate-200 dark:border-white/15 text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-white/30',
               )}
             >
               {p}
@@ -61,7 +64,7 @@ export default function Timeline() {
         {/* Timeline */}
         <div className="relative">
           {/* Vertical line */}
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-[#FF9933] via-[#1a56db] to-[#138808] opacity-30" />
+          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-[#FF9933] via-[#1a56db] to-[#138808] opacity-40 dark:opacity-30" />
 
           <div className="space-y-8">
             {filtered.map((stage, idx) => {
@@ -85,20 +88,20 @@ export default function Timeline() {
                   {/* Content */}
                   <div className={cn('flex-1 ml-14 md:ml-0', isLeft ? 'md:pr-12 md:text-right' : 'md:pl-12')}>
                     <div
-                      className="glass rounded-2xl p-5 border border-white/10 cursor-pointer hover:border-white/20 transition-all duration-300"
+                      className="bg-white dark:bg-white/5 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-white/10 shadow-sm cursor-pointer hover:border-slate-300 dark:hover:border-white/20 transition-all duration-300"
                       onClick={() => setExpanded(isExpanded ? null : stage.id)}
                     >
                       <div className={cn('flex items-start gap-3 mb-2', isLeft ? 'md:flex-row-reverse' : '')}>
                         <Badge variant={phaseColors[stage.phase]}>{stage.phase}</Badge>
-                        <span className="text-white/40 text-xs mt-0.5">{stage.duration}</span>
+                        <span className="text-slate-400 dark:text-white/40 text-xs mt-0.5">{stage.duration}</span>
                       </div>
 
-                      <h3 className="font-display font-bold text-lg text-white mb-2 flex items-center gap-2">
-                        <Icon size={20} className="text-white/80" /> {stage.title}
+                      <h3 className="font-display font-bold text-lg text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                        <Icon size={20} className="text-slate-600 dark:text-white/80" /> {stage.title}
                       </h3>
-                      <p className="text-white/60 text-sm leading-relaxed">{stage.description}</p>
+                      <p className="text-slate-600 dark:text-white/60 text-sm leading-relaxed">{stage.description}</p>
 
-                      <button className="mt-3 flex items-center gap-1 text-xs text-white/40 hover:text-white/70 transition-colors">
+                      <button className="mt-3 flex items-center gap-1 text-xs text-slate-400 dark:text-white/40 hover:text-slate-700 dark:hover:text-white/70 transition-colors">
                         {isExpanded ? <><ChevronUp size={14} /> Less</> : <><ChevronDown size={14} /> Details</>}
                       </button>
 
@@ -111,7 +114,7 @@ export default function Timeline() {
                             className="mt-4 space-y-2 overflow-hidden"
                           >
                             {stage.details.map((d, i) => (
-                              <li key={i} className="flex items-start gap-2 text-sm text-white/70">
+                              <li key={i} className="flex items-start gap-2 text-sm text-slate-600 dark:text-white/70">
                                 <span className="size-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: stage.color }} />
                                 {d}
                               </li>
@@ -124,7 +127,7 @@ export default function Timeline() {
                                   dispatch({ type: 'SET_SUGGESTED_QUESTIONS', payload: [`Explain ${stage.title} in detail`, `What is the role of ECI during ${stage.title}?`, `Can you summarize ${stage.title}?`] })
                                   dispatch({ type: 'TOGGLE_CHAT', payload: true })
                                 }}
-                                className="w-full mt-2 py-2 px-4 rounded-xl bg-gradient-to-r from-[#FF9933]/10 to-[#138808]/10 border border-white/10 hover:border-white/30 text-white/90 text-sm font-medium flex items-center justify-center gap-2 transition-all hover:scale-[1.02]"
+                                className="w-full mt-2 py-2 px-4 rounded-xl bg-gradient-to-r from-[#FF9933]/10 to-[#138808]/10 border border-[#FF9933]/20 dark:border-white/10 hover:border-[#FF9933]/40 dark:hover:border-white/30 text-slate-800 dark:text-white/90 text-sm font-medium flex items-center justify-center gap-2 transition-all hover:scale-[1.02]"
                               >
                                 <Bot size={16} className="text-[#FF9933]" />
                                 Ask ElectoBot about this stage
@@ -139,8 +142,8 @@ export default function Timeline() {
                   {/* Center dot */}
                   <div className="absolute left-6 md:left-1/2 -translate-x-1/2 flex items-center justify-center">
                     <div
-                      className="size-10 rounded-full border-2 border-current flex items-center justify-center z-10"
-                      style={{ backgroundColor: `${stage.color}20`, borderColor: stage.color, color: stage.color }}
+                      className="size-10 rounded-full border-2 border-current bg-white dark:bg-[#0f1524] flex items-center justify-center z-10"
+                      style={{ borderColor: stage.color, color: stage.color }}
                     >
                       <Icon size={20} />
                     </div>

@@ -2,47 +2,30 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ── Helper functions ──────────────────────────────────────
     function isSignedIn() {
       return request.auth != null;
     }
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-    function hasRole(role) {
-      return isSignedIn() && request.auth.token.role == role;
-    }
-    function isStaff() {
-      return isSignedIn() && (
-        request.auth.token.role == 'admin' ||
-        request.auth.token.role == 'staff'
-      );
-    }
     function isAdmin() {
-      return hasRole('admin');
+      return isSignedIn() && request.auth.token.role == 'admin';
     }
 
-    // ── Public read collections (Educational Content) ─────────
-    match /glossary/{docId} {
-      allow read: if true;
-      allow write: if isStaff();
-    }
-    match /timeline/{docId} {
-      allow read: if true;
-      allow write: if isStaff();
-    }
-    match /quiz/{docId} {
-      allow read: if true;
-      allow write: if isStaff();
-    }
-
-    // ── User profiles & progress ──────────────────────────────
+    // User quiz progress — own data only
     match /users/{userId} {
-      allow read: if isSignedIn() && (isOwner(userId) || isStaff());
-      allow write: if isOwner(userId);
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
     }
 
-    // ── Deny all else (CATCH-ALL) ─────────────────────────────
+    // Public election data — read only for everyone
+    match /glossaryTerms/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /electionStages/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Deny everything not explicitly allowed
     match /{document=**} {
       allow read, write: if false;
     }

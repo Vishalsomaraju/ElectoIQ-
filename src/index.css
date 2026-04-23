@@ -2,6 +2,8 @@
 
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-primary: #1a56db;
   --color-primary-dark: #1e429f;
@@ -36,8 +38,7 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background-color: #0f1524;
-  color: #e2e8f0;
+  @apply bg-slate-50 text-slate-900 dark:bg-[#0f1524] dark:text-[#e2e8f0] antialiased;
   min-height: 100vh;
 }
 

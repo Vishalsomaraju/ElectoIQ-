@@ -56,8 +56,7 @@ export function ChatDrawer() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={closeDrawer}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[99]"
+            className="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-[99]"
           />
 
           {/* Drawer */}
@@ -65,23 +64,22 @@ export function ChatDrawer() {
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 h-[100dvh] w-full sm:w-[400px] bg-[#0f172a] border-l border-white/10 z-[100] flex flex-col shadow-2xl"
+            className="fixed top-0 right-0 h-[100dvh] w-full sm:w-[400px] bg-white dark:bg-[#0f172a] border-l border-slate-200 dark:border-white/10 z-[100] flex flex-col shadow-2xl"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/5">
+            <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF9933] to-[#138808] flex items-center justify-center text-white">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF9933] to-[#138808] flex items-center justify-center text-white shadow-md">
                   <Bot size={20} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white">ElectoBot</h3>
-                  <p className="text-xs text-white/50">Your AI Election Guide</p>
+                  <h3 className="font-bold text-slate-900 dark:text-white">ElectoBot</h3>
+                  <p className="text-xs text-slate-500 dark:text-white/50">Your AI Election Guide</p>
                 </div>
               </div>
               <button
                 onClick={closeDrawer}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-white/10 text-slate-500 dark:text-white/70 hover:text-slate-900 dark:hover:text-white transition-colors"
               >
                 <X size={20} />
               </button>
@@ -99,8 +97,8 @@ export function ChatDrawer() {
             {/* Chat Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.length === 0 && (
-                <div className="h-full flex flex-col items-center justify-center text-center p-6 text-white/50 space-y-4">
-                  <Bot size={48} className="text-white/20" />
+                <div className="h-full flex flex-col items-center justify-center text-center p-6 text-slate-500 dark:text-white/50 space-y-4">
+                  <Bot size={48} className="text-slate-200 dark:text-white/20" />
                   <p>Ask me anything about Indian elections, voter rights, or how to register!</p>
                 </div>
               )}
@@ -111,14 +109,14 @@ export function ChatDrawer() {
                   className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
                 >
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                    msg.role === 'user' ? 'bg-white/10' : 'bg-gradient-to-br from-[#FF9933] to-[#138808]'
+                    msg.role === 'user' ? 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-white/70' : 'bg-gradient-to-br from-[#FF9933] to-[#138808] text-white shadow-sm'
                   }`}>
                     {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
                   </div>
-                  <div className={`px-4 py-2 rounded-2xl max-w-[80%] text-sm ${
+                  <div className={`px-4 py-2.5 rounded-2xl max-w-[80%] text-sm shadow-sm ${
                     msg.role === 'user'
                       ? 'bg-blue-600 text-white rounded-tr-sm'
-                      : 'bg-white/10 text-white/90 rounded-tl-sm'
+                      : 'bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white/90 rounded-tl-sm border border-slate-200 dark:border-white/5'
                   }`}>
                     {msg.content}
                     {msg.streaming && <span className="ml-1 animate-pulse inline-block w-2 h-4 bg-white/50 align-middle"></span>}
@@ -136,7 +134,7 @@ export function ChatDrawer() {
             </div>
 
             {/* Input Area */}
-            <div className="p-4 bg-[#0f172a] border-t border-white/10">
+            <div className="p-4 bg-white dark:bg-[#0f172a] border-t border-slate-200 dark:border-white/10">
               {/* Suggested Questions */}
               {state.suggestedQuestions?.length > 0 && messages.length === 0 && (
                 <div className="flex flex-wrap gap-2 mb-3">
@@ -144,7 +142,7 @@ export function ChatDrawer() {
                     <button
                       key={idx}
                       onClick={() => handleSuggestionClick(q)}
-                      className="text-xs bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 px-3 py-1.5 rounded-full transition-colors text-left"
+                      className="text-xs bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-white/70 px-3 py-1.5 rounded-full transition-colors text-left"
                     >
                       {q}
                     </button>
@@ -153,12 +151,12 @@ export function ChatDrawer() {
               )}
 
               <form onSubmit={handleSubmit} className="relative">
-                <input
+                  <input
                   ref={inputRef}
                   disabled={isLoading}
                   type="text"
                   placeholder="Ask ElectoBot..."
-                  className="w-full bg-white/5 border border-white/10 rounded-full pl-4 pr-12 py-3 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+                  className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full pl-4 pr-12 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 transition-all"
                 />
                 <button
                   type="submit"

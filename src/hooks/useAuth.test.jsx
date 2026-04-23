@@ -9,7 +9,10 @@ vi.mock('firebase/auth', () => ({
   signInAnonymously: vi.fn(),
   signOut: vi.fn(),
   onAuthStateChanged: vi.fn(),
-  GoogleAuthProvider: vi.fn(),
+  GoogleAuthProvider: class {
+    addScope() {}
+    setCustomParameters() {}
+  },
 }))
 
 // Mock our local firebase service

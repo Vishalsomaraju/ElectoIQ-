@@ -18,7 +18,7 @@ const external = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-[#0a0f1e] mt-20">
+    <footer className="border-t border-slate-200 dark:border-white/10 bg-white dark:bg-[#0a0f1e] mt-20 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Brand */}
@@ -27,26 +27,26 @@ export function Footer() {
               <div className="size-9 rounded-xl bg-gradient-to-br from-[#1a56db] to-[#0ea5e9] flex items-center justify-center">
                 <Vote size={18} className="text-white" />
               </div>
-              <span className="font-display font-bold text-xl text-white">ElectoIQ</span>
+              <span className="font-display font-bold text-xl text-slate-900 dark:text-white">ElectoIQ</span>
             </div>
-            <p className="text-sm text-white/50 leading-relaxed max-w-xs">
+            <p className="text-sm text-slate-500 dark:text-white/50 leading-relaxed max-w-xs">
               Empowering every Indian citizen to understand their democratic rights and participate confidently in elections.
             </p>
             {/* Tricolor bar */}
             <div className="flex mt-5 h-1.5 rounded-full overflow-hidden w-32">
               <div className="flex-1 bg-[#FF9933]" />
-              <div className="flex-1 bg-white" />
+              <div className="flex-1 bg-slate-200 dark:bg-white" />
               <div className="flex-1 bg-[#138808]" />
             </div>
           </div>
 
           {/* Navigation */}
           <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Explore</h4>
+            <h4 className="text-slate-900 dark:text-white font-semibold mb-4 text-sm uppercase tracking-wider">Explore</h4>
             <ul className="space-y-2">
               {links.map(l => (
                 <li key={l.to}>
-                  <Link to={l.to} className="text-white/50 hover:text-white text-sm transition-colors">
+                  <Link to={l.to} className="text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white text-sm transition-colors">
                     {l.label}
                   </Link>
                 </li>
@@ -56,7 +56,7 @@ export function Footer() {
 
           {/* External */}
           <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Official Resources</h4>
+            <h4 className="text-slate-900 dark:text-white font-semibold mb-4 text-sm uppercase tracking-wider">Official Resources</h4>
             <ul className="space-y-2">
               {external.map(l => (
                 <li key={l.href}>
@@ -64,7 +64,7 @@ export function Footer() {
                     href={l.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-white/50 hover:text-white text-sm transition-colors"
+                    className="flex items-center gap-1.5 text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white text-sm transition-colors"
                   >
                     {l.label}
                     <ExternalLink size={12} />
@@ -75,11 +75,11 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-white/30">
+        <div className="mt-10 pt-6 border-t border-slate-200 dark:border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-slate-400 dark:text-white/30">
             © {new Date().getFullYear()} ElectoIQ. Educational use only. Not affiliated with ECI.
           </p>
-          <p className="text-xs text-white/30 flex items-center gap-1">
+          <p className="text-xs text-slate-400 dark:text-white/30 flex items-center gap-1">
             Made with <Heart size={12} className="text-red-400" /> for Indian voters
           </p>
         </div>

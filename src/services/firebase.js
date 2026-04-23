@@ -1,3 +1,7 @@
+// ─── Google Service: Firebase (Auth + Firestore) ─────────────────────────
+// Purpose: Auth (Google OAuth + Anonymous) and real-time Firestore data
+// SDK: firebase ^12.12.1
+// Docs: https://firebase.google.com/docs
 // src/services/firebase.js
 // Firebase is lazily initialized. Only bootstraps when real env vars are present.
 
@@ -27,7 +31,10 @@ async function initFirebase() {
     _auth = getAuth(_app)
     _db = getFirestore(_app)
   } catch (err) {
-    console.error('[ElectoIQ] Firebase init failed:', err)
+    const msg = err instanceof Error
+      ? err.message.replace(/key=[^&\s]*/g, 'key=REDACTED')
+      : 'Firebase init failed'
+    console.warn('[ElectoIQ] Firebase init failed:', msg)
   }
 }
 

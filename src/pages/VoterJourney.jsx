@@ -29,16 +29,16 @@ const WIZARD_STEPS = [
 
       return (
         <div className="space-y-4">
-          <p className="text-white/70 mb-6 text-sm">Please verify your eligibility to vote in India:</p>
+          <p className="text-slate-600 dark:text-white/70 mb-6 text-sm">Please verify your eligibility to vote in India:</p>
           {[
             'I am 18 years or older',
             'I am a citizen of India',
             'I am ordinarily resident in the constituency',
             'I am not disqualified under any law'
           ].map((text, idx) => (
-            <label key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10 cursor-pointer hover:bg-white/10 transition">
-              <input type="checkbox" checked={checks[idx]} onChange={() => toggleCheck(idx)} className="w-5 h-5 rounded border-gray-600 bg-transparent focus:ring-blue-500 focus:ring-2" />
-              <span className="text-white text-sm">{text}</span>
+            <label key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 cursor-pointer hover:bg-slate-100 dark:hover:bg-white/10 transition shadow-sm">
+              <input type="checkbox" checked={checks[idx]} onChange={() => toggleCheck(idx)} className="w-5 h-5 rounded border-slate-300 dark:border-gray-600 bg-transparent focus:ring-blue-500 focus:ring-2" />
+              <span className="text-slate-900 dark:text-white text-sm">{text}</span>
             </label>
           ))}
           {allChecked && (
@@ -57,9 +57,9 @@ const WIZARD_STEPS = [
     color: 'text-blue-400',
     bgColor: 'bg-blue-400/20',
     Content: () => (
-      <div className="space-y-6 text-sm text-white/80">
-        <div className="bg-white/5 p-5 rounded-xl border border-white/10">
-          <h4 className="font-bold text-white mb-2 flex items-center gap-2"><span className="bg-blue-500 text-xs px-2 py-0.5 rounded text-white">Method 1</span> Online (Recommended)</h4>
+      <div className="space-y-6 text-sm text-slate-700 dark:text-white/80">
+        <div className="bg-slate-50 dark:bg-white/5 p-5 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm">
+          <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2"><span className="bg-blue-500 text-xs px-2 py-0.5 rounded text-white shadow-sm">Method 1</span> Online (Recommended)</h4>
           <ul className="list-disc pl-5 space-y-1">
             <li>Go to <a href="https://voters.eci.gov.in" target="_blank" rel="noreferrer" className="text-blue-400 hover:underline">voters.eci.gov.in</a></li>
             <li>Click "New Registration" → Fill <strong>Form 6</strong></li>
@@ -67,8 +67,8 @@ const WIZARD_STEPS = [
             <li>Submit and note your Application Reference Number</li>
           </ul>
         </div>
-        <div className="bg-white/5 p-5 rounded-xl border border-white/10">
-          <h4 className="font-bold text-white mb-2 flex items-center gap-2"><span className="bg-gray-500 text-xs px-2 py-0.5 rounded text-white">Method 2</span> Offline</h4>
+        <div className="bg-slate-50 dark:bg-white/5 p-5 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm">
+          <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2"><span className="bg-slate-500 dark:bg-gray-500 text-xs px-2 py-0.5 rounded text-white shadow-sm">Method 2</span> Offline</h4>
           <ul className="list-disc pl-5 space-y-1">
             <li>Visit your nearest Booth Level Officer (BLO) or Electoral Registration Officer</li>
             <li>Fill Form 6 (available free at ERO office)</li>
@@ -85,7 +85,7 @@ const WIZARD_STEPS = [
     color: 'text-purple-400',
     bgColor: 'bg-purple-400/20',
     Content: () => (
-      <div className="space-y-6 text-sm text-white/80">
+      <div className="space-y-6 text-sm text-slate-700 dark:text-white/80">
         <p>Before voting day, you must verify that your name is on the Electoral Roll.</p>
         <ul className="list-disc pl-5 space-y-2">
           <li>Visit <a href="https://electoralsearch.eci.gov.in" target="_blank" rel="noreferrer" className="text-purple-400 hover:underline">electoralsearch.eci.gov.in</a></li>
@@ -106,14 +106,14 @@ const WIZARD_STEPS = [
     color: 'text-orange-400',
     bgColor: 'bg-orange-400/20',
     Content: () => (
-      <div className="space-y-4 text-sm text-white/80">
+      <div className="space-y-4 text-sm text-slate-700 dark:text-white/80">
         <p><strong>EPIC</strong> (Electors Photo Identity Card) is your official voter identity document.</p>
-        <p>You can download the digital version (<strong>e-EPIC</strong>) from <a href="https://voters.eci.gov.in/e-epic" target="_blank" rel="noreferrer" className="text-orange-400 hover:underline">voters.eci.gov.in/e-epic</a> which is fully valid for voting.</p>
+        <p>You can download the digital version (<strong>e-EPIC</strong>) from <a href="https://voters.eci.gov.in/e-epic" target="_blank" rel="noreferrer" className="text-orange-500 dark:text-orange-400 hover:underline">voters.eci.gov.in/e-epic</a> which is fully valid for voting.</p>
         <div className="mt-6">
-          <h4 className="font-bold text-white mb-2">Approved alternate IDs (if you don't have Voter ID):</h4>
+          <h4 className="font-bold text-slate-900 dark:text-white mb-2">Approved alternate IDs (if you don't have Voter ID):</h4>
           <div className="grid grid-cols-2 gap-2 text-xs">
             {['Aadhaar Card', 'Passport', 'Driving License', 'PAN Card', 'MNREGA Job Card', 'Bank Passbook with photo'].map(id => (
-              <div key={id} className="bg-white/5 p-2 rounded border border-white/5">{id}</div>
+              <div key={id} className="bg-slate-50 dark:bg-white/5 p-2 rounded border border-slate-200 dark:border-white/5 shadow-sm">{id}</div>
             ))}
           </div>
         </div>
@@ -127,21 +127,21 @@ const WIZARD_STEPS = [
     color: 'text-red-400',
     bgColor: 'bg-red-400/20',
     Content: () => (
-      <div className="space-y-6 text-sm text-white/80">
-        <div className="relative pl-6 border-l border-white/10 space-y-6">
+      <div className="space-y-6 text-sm text-slate-700 dark:text-white/80">
+        <div className="relative pl-6 border-l border-slate-200 dark:border-white/10 space-y-6">
           <div className="relative">
             <div className="absolute w-3 h-3 bg-red-400 rounded-full -left-[29px] top-1"></div>
-            <h4 className="font-bold text-white">Before leaving home</h4>
+            <h4 className="font-bold text-slate-900 dark:text-white">Before leaving home</h4>
             <p className="text-xs mt-1">Check polling booth location, carry your Voter ID, and verify polling time (usually 7AM–6PM).</p>
           </div>
           <div className="relative">
             <div className="absolute w-3 h-3 bg-red-400 rounded-full -left-[29px] top-1"></div>
-            <h4 className="font-bold text-white">At the polling station</h4>
+            <h4 className="font-bold text-slate-900 dark:text-white">At the polling station</h4>
             <p className="text-xs mt-1">Join the queue. Show ID to polling officer. Ink will be applied to your left index finger.</p>
           </div>
           <div className="relative">
             <div className="absolute w-3 h-3 bg-red-400 rounded-full -left-[29px] top-1"></div>
-            <h4 className="font-bold text-white">At the EVM</h4>
+            <h4 className="font-bold text-slate-900 dark:text-white">At the EVM</h4>
             <p className="text-xs mt-1">Press the button next to your candidate. Wait for the beep and check the VVPAT paper slip for 7 seconds to confirm your vote.</p>
           </div>
         </div>
@@ -160,8 +160,8 @@ const WIZARD_STEPS = [
           <PartyPopper size={40} />
         </div>
         <div>
-          <h3 className="text-2xl font-bold text-white">You're an Informed Voter!</h3>
-          <p className="text-white/60 text-sm mt-2 max-w-xs mx-auto">You have learned the complete process of voting in India. Your vote is your voice.</p>
+          <h3 className="text-2xl font-bold text-slate-900 dark:text-white">You're an Informed Voter!</h3>
+          <p className="text-slate-600 dark:text-white/60 text-sm mt-2 max-w-xs mx-auto">You have learned the complete process of voting in India. Your vote is your voice.</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
           <Button variant="outline" icon={<Share2 size={16} />}>Share Journey</Button>
@@ -236,7 +236,7 @@ export default function VoterJourney() {
         <div className="max-w-2xl mx-auto mb-20">
           {/* Progress Bar Header */}
           <div className="relative flex justify-between items-center mb-12">
-            <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white/10 -z-10 -translate-y-1/2"></div>
+            <div className="absolute top-1/2 left-0 w-full h-[2px] bg-slate-200 dark:bg-white/10 -z-10 -translate-y-1/2"></div>
             <motion.div 
               className="absolute top-1/2 left-0 h-[2px] bg-gradient-to-r from-[#FF9933] to-[#138808] -z-10 -translate-y-1/2"
               initial={{ width: 0 }}
@@ -252,15 +252,15 @@ export default function VoterJourney() {
                 <div key={step.id} className="relative flex flex-col items-center group">
                   <div className={cn(
                     "w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-colors duration-300 border-2",
-                    isPast ? "bg-green-500 border-green-500 text-white" : 
-                    isActive ? "bg-[#FF9933] border-[#FF9933] text-white" : 
-                    "bg-[#0f172a] border-white/20 text-white/40"
+                    isPast ? "bg-green-500 border-green-500 text-white shadow-md" : 
+                    isActive ? "bg-[#FF9933] border-[#FF9933] text-white shadow-lg shadow-[#FF9933]/30" : 
+                    "bg-white dark:bg-[#0f172a] border-slate-200 dark:border-white/20 text-slate-400 dark:text-white/40 shadow-sm"
                   )}>
                     {isPast ? <CheckCircle2 size={18} /> : step.id}
                   </div>
                   <span className={cn(
                     "absolute top-12 text-xs w-20 text-center font-medium transition-colors opacity-0 md:opacity-100",
-                    isActive ? "text-white" : "text-white/40"
+                    isActive ? "text-slate-900 dark:text-white" : "text-slate-400 dark:text-white/40"
                   )}>
                     {step.title}
                   </span>
@@ -276,7 +276,7 @@ export default function VoterJourney() {
           )}
 
           {/* Main Wizard Card */}
-          <div className="glass rounded-3xl border border-white/10 overflow-hidden shadow-2xl relative min-h-[400px] flex flex-col">
+          <div className="bg-white dark:bg-white/5 backdrop-blur-md rounded-3xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-2xl relative min-h-[400px] flex flex-col">
             <div className="flex-1 p-6 md:p-10 relative overflow-hidden">
               <AnimatePresence mode="popLayout" custom={direction}>
                 <motion.div
@@ -293,8 +293,8 @@ export default function VoterJourney() {
                       <ActiveStepData.icon size={24} />
                     </div>
                     <div>
-                      <p className="text-sm font-mono text-white/40">Step {currentStep} of {WIZARD_STEPS.length}</p>
-                      <h2 className="text-2xl font-bold text-white">{ActiveStepData.title}</h2>
+                      <p className="text-sm font-mono text-slate-500 dark:text-white/40">Step {currentStep} of {WIZARD_STEPS.length}</p>
+                      <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{ActiveStepData.title}</h2>
                     </div>
                   </div>
                   
@@ -304,7 +304,7 @@ export default function VoterJourney() {
             </div>
 
             {/* Navigation Footer */}
-            <div className="bg-white/5 border-t border-white/10 p-4 md:px-10 flex items-center justify-between">
+            <div className="bg-slate-50 dark:bg-white/5 border-t border-slate-200 dark:border-white/10 p-4 md:px-10 flex items-center justify-between">
               <Button 
                 variant="ghost" 
                 onClick={handlePrev} 

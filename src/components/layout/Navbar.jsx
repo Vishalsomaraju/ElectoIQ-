@@ -45,15 +45,24 @@ function ChakraLogo() {
 
 // ── Dark mode toggle ────────────────────────────────────────────────
 function DarkModeToggle() {
-  const [dark, setDark] = useState(false)
+  const [dark, setDark] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('theme')
+      if (saved) return saved === 'dark'
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+    }
+    return true
+  })
+
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark)
+    localStorage.setItem('theme', dark ? 'dark' : 'light')
   }, [dark])
   return (
     <button
       onClick={() => setDark(d => !d)}
       aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-      className="p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all duration-200"
+      className="p-2 rounded-lg text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-all duration-200"
     >
       <AnimatePresence mode="wait" initial={false}>
         {dark
@@ -76,12 +85,12 @@ function AuthButton({ compact = false }) {
 
   const handleSignIn = async () => {
     setSigningIn(true)
-    try { await signInWithGoogle() } catch { /* handled in hook */ }
+    try { await signInWithGoogle() } catch (err) { console.warn('[Navbar] Google login error:', err) }
     finally { setSigningIn(false) }
   }
 
   if (loading) return (
-    <div className="w-8 h-8 rounded-full bg-white/10 animate-pulse" aria-label="Loading auth state" />
+    <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-white/10 animate-pulse" aria-label="Loading auth state" />
   )
 
   if (user) {
@@ -96,12 +105,12 @@ function AuthButton({ compact = false }) {
             </div>
         }
         {!isAnon && !compact && (
-          <span className="text-sm text-white/70 max-w-[100px] truncate">{user.displayName}</span>
+          <span className="text-sm text-slate-700 dark:text-white/70 max-w-[100px] truncate">{user.displayName}</span>
         )}
         <button
           onClick={logout}
           aria-label="Sign out"
-          className="p-1.5 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-400/10 transition-all duration-200"
+          className="p-1.5 rounded-lg text-slate-500 dark:text-white/40 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-400/10 transition-all duration-200"
         >
           <LogOut size={14} />
         </button>
@@ -159,7 +168,7 @@ export function Navbar() {
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         scrolled
-          ? 'backdrop-blur-md bg-[#0f172a]/80 border-b border-white/10 py-3 shadow-lg shadow-black/20'
+          ? 'backdrop-blur-md bg-white/80 dark:bg-[#0f172a]/80 border-b border-slate-200 dark:border-white/10 py-3 shadow-lg shadow-slate-200/50 dark:shadow-black/20'
           : 'py-5',
       )}
     >
@@ -181,7 +190,7 @@ export function Navbar() {
             <ChakraLogo />
           </div>
           <span className="font-display font-extrabold text-xl tracking-tight">
-            <span className="text-white">Electo</span>
+            <span className="text-slate-900 dark:text-white">Electo</span>
             <span className="text-gradient-india">IQ</span>
           </span>
         </Link>
@@ -198,8 +207,8 @@ export function Navbar() {
                   className={cn(
                     'relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
                     active
-                      ? 'text-white'
-                      : 'text-white/60 hover:text-white hover:bg-white/8',
+                      ? 'text-slate-900 dark:text-white'
+                      : 'text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/8',
                   )}
                 >
                   {link.label}
@@ -220,13 +229,13 @@ export function Navbar() {
         {/* ── Right side: dark toggle + auth ── */}
         <div className="hidden md:flex items-center gap-2">
           <DarkModeToggle />
-          <div className="w-px h-5 bg-white/15 mx-1" aria-hidden="true" />
+          <div className="w-px h-5 bg-slate-200 dark:bg-white/15 mx-1" aria-hidden="true" />
           <AuthButton />
         </div>
 
         {/* ── Hamburger ── */}
         <button
-          className="md:hidden p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+          className="md:hidden p-2 rounded-lg text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
           onClick={() => setOpen(o => !o)}
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
@@ -256,7 +265,7 @@ export function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="md:hidden backdrop-blur-md bg-[#0f172a]/95 border-t border-white/10 overflow-hidden"
+            className="md:hidden backdrop-blur-md bg-white/95 dark:bg-[#0f172a]/95 border-t border-slate-200 dark:border-white/10 overflow-hidden"
           >
             <div className="max-w-7xl mx-auto px-4 pt-3 pb-5 flex flex-col gap-1">
               {navLinks.map((link, i) => {
@@ -274,8 +283,8 @@ export function Navbar() {
                       className={cn(
                         'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
                         active
-                          ? 'bg-[#FF9933]/15 text-[#FF9933] border border-[#FF9933]/20'
-                          : 'text-white/70 hover:text-white hover:bg-white/8',
+                          ? 'bg-[#FF9933]/10 dark:bg-[#FF9933]/15 text-[#FF9933] border border-[#FF9933]/20'
+                          : 'text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/8',
                       )}
                     >
                       {active && <span className="w-1.5 h-1.5 rounded-full bg-[#FF9933]" aria-hidden="true" />}
@@ -286,7 +295,7 @@ export function Navbar() {
               })}
 
               {/* Mobile auth + dark toggle */}
-              <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between gap-3">
+              <div className="mt-3 pt-3 border-t border-slate-200 dark:border-white/10 flex items-center justify-between gap-3">
                 <DarkModeToggle />
                 <div className="flex-1">
                   <AuthButton compact />

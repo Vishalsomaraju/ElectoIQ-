@@ -2,10 +2,15 @@
 import { useState, useCallback } from 'react'
 import {
   doc, getDoc, setDoc, updateDoc, deleteDoc,
-  collection, addDoc, getDocs, query, where, orderBy, serverTimestamp,
+  collection, addDoc, getDocs, query, where, orderBy, limit, serverTimestamp,
 } from 'firebase/firestore'
-import { db } from '../services/firebase'
+import { auth, db } from '../services/firebase'
 
+/**
+ * Custom hook for Firestore database operations.
+ * @param {string} collectionName The Firestore collection name
+ * @returns {Object} Methods and state { loading, error, getDocument, setDocument, addDocument, updateDocument, deleteDocument, getCollection }
+ */
 export function useFirestore(collectionName) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -18,7 +23,7 @@ export function useFirestore(collectionName) {
       const snap = await getDoc(ref)
       return snap.exists() ? { id: snap.id, ...snap.data() } : null
     } catch (err) {
-      console.error(`Error in getDocument (${collectionName}):`, err)
+      console.warn(`[getDocument] Error in ${collectionName}:`, err)
       setError(err.message)
       return null
     } finally {
@@ -30,11 +35,13 @@ export function useFirestore(collectionName) {
     setLoading(true)
     setError(null)
     try {
+      const user = auth.currentUser
+      if (!user) throw new Error('[setDocument] requires authentication')
       const ref = doc(db, collectionName, id)
       await setDoc(ref, { ...data, updatedAt: serverTimestamp() }, { merge: true })
       return true
     } catch (err) {
-      console.error(`Error in setDocument (${collectionName}):`, err)
+      console.warn(`[setDocument] Error in ${collectionName}:`, err)
       setError(err.message)
       return false
     } finally {
@@ -46,11 +53,13 @@ export function useFirestore(collectionName) {
     setLoading(true)
     setError(null)
     try {
+      const user = auth.currentUser
+      if (!user) throw new Error('[addDocument] requires authentication')
       const ref = collection(db, collectionName)
       const docRef = await addDoc(ref, { ...data, createdAt: serverTimestamp() })
       return docRef.id
     } catch (err) {
-      console.error(`Error in addDocument (${collectionName}):`, err)
+      console.warn(`[addDocument] Error in ${collectionName}:`, err)
       setError(err.message)
       return null
     } finally {
@@ -62,11 +71,13 @@ export function useFirestore(collectionName) {
     setLoading(true)
     setError(null)
     try {
+      const user = auth.currentUser
+      if (!user) throw new Error('[updateDocument] requires authentication')
       const ref = doc(db, collectionName, id)
       await updateDoc(ref, { ...data, updatedAt: serverTimestamp() })
       return true
     } catch (err) {
-      console.error(`Error in updateDocument (${collectionName}):`, err)
+      console.warn(`[updateDocument] Error in ${collectionName}:`, err)
       setError(err.message)
       return false
     } finally {
@@ -78,10 +89,12 @@ export function useFirestore(collectionName) {
     setLoading(true)
     setError(null)
     try {
+      const user = auth.currentUser
+      if (!user) throw new Error('[deleteDocument] requires authentication')
       await deleteDoc(doc(db, collectionName, id))
       return true
     } catch (err) {
-      console.error(`Error in deleteDocument (${collectionName}):`, err)
+      console.warn(`[deleteDocument] Error in ${collectionName}:`, err)
       setError(err.message)
       return false
     } finally {
@@ -89,18 +102,19 @@ export function useFirestore(collectionName) {
     }
   }, [collectionName])
 
-  const getCollection = useCallback(async (conditions = [], sortBy = null) => {
+  const getCollection = useCallback(async (conditions = [], sortBy = null, limitCount = 100) => {
     setLoading(true)
     setError(null)
     try {
       let q = collection(db, collectionName)
       const constraints = conditions.map(([field, op, val]) => where(field, op, val))
       if (sortBy) constraints.push(orderBy(sortBy))
+      constraints.push(limit(limitCount))
       q = query(q, ...constraints)
       const snap = await getDocs(q)
       return snap.docs.map(d => ({ id: d.id, ...d.data() }))
     } catch (err) {
-      console.error(`Error in getCollection (${collectionName}):`, err)
+      console.warn(`[getCollection] Error in ${collectionName}:`, err)
       setError(err.message)
       return []
     } finally {

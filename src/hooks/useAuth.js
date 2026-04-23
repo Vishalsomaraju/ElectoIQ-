@@ -10,7 +10,14 @@ import {
 import { auth } from '../services/firebase'
 
 const googleProvider = new GoogleAuthProvider()
+googleProvider.addScope('email')
+googleProvider.addScope('profile')
+googleProvider.setCustomParameters({ prompt: 'select_account' })
 
+/**
+ * Custom hook to manage Firebase authentication state.
+ * @returns {Object} Authentication state and methods { user, loading, error, signInWithGoogle, signInAsGuest, logout }
+ */
 export function useAuth() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -36,6 +43,7 @@ export function useAuth() {
       const result = await signInWithPopup(auth, googleProvider)
       return result.user
     } catch (err) {
+      console.warn('[signInWithGoogle] error:', err)
       setError(err.message)
       throw err
     }
@@ -48,6 +56,7 @@ export function useAuth() {
       const result = await signInAnonymously(auth)
       return result.user
     } catch (err) {
+      console.warn('[signInAsGuest] error:', err)
       setError(err.message)
       throw err
     }
@@ -59,7 +68,7 @@ export function useAuth() {
     try {
       await signOut(auth)
     } catch (err) {
-      console.error('Error logging out:', err)
+      console.warn('[logout] error:', err)
       setError(err.message)
       throw err
     }
