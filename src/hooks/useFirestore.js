@@ -18,6 +18,7 @@ export function useFirestore(collectionName) {
       const snap = await getDoc(ref)
       return snap.exists() ? { id: snap.id, ...snap.data() } : null
     } catch (err) {
+      console.error(`Error in getDocument (${collectionName}):`, err)
       setError(err.message)
       return null
     } finally {
@@ -33,6 +34,7 @@ export function useFirestore(collectionName) {
       await setDoc(ref, { ...data, updatedAt: serverTimestamp() }, { merge: true })
       return true
     } catch (err) {
+      console.error(`Error in setDocument (${collectionName}):`, err)
       setError(err.message)
       return false
     } finally {
@@ -48,6 +50,7 @@ export function useFirestore(collectionName) {
       const docRef = await addDoc(ref, { ...data, createdAt: serverTimestamp() })
       return docRef.id
     } catch (err) {
+      console.error(`Error in addDocument (${collectionName}):`, err)
       setError(err.message)
       return null
     } finally {
@@ -63,6 +66,7 @@ export function useFirestore(collectionName) {
       await updateDoc(ref, { ...data, updatedAt: serverTimestamp() })
       return true
     } catch (err) {
+      console.error(`Error in updateDocument (${collectionName}):`, err)
       setError(err.message)
       return false
     } finally {
@@ -77,6 +81,7 @@ export function useFirestore(collectionName) {
       await deleteDoc(doc(db, collectionName, id))
       return true
     } catch (err) {
+      console.error(`Error in deleteDocument (${collectionName}):`, err)
       setError(err.message)
       return false
     } finally {
@@ -95,6 +100,7 @@ export function useFirestore(collectionName) {
       const snap = await getDocs(q)
       return snap.docs.map(d => ({ id: d.id, ...d.data() }))
     } catch (err) {
+      console.error(`Error in getCollection (${collectionName}):`, err)
       setError(err.message)
       return []
     } finally {

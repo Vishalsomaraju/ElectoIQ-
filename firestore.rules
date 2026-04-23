@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper functions ──────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    function hasRole(role) {
+      return isSignedIn() && request.auth.token.role == role;
+    }
+    function isStaff() {
+      return isSignedIn() && (
+        request.auth.token.role == 'admin' ||
+        request.auth.token.role == 'staff'
+      );
+    }
+    function isAdmin() {
+      return hasRole('admin');
+    }
+
+    // ── Public read collections (Educational Content) ─────────
+    match /glossary/{docId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+    match /timeline/{docId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+    match /quiz/{docId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    // ── User profiles & progress ──────────────────────────────
+    match /users/{userId} {
+      allow read: if isSignedIn() && (isOwner(userId) || isStaff());
+      allow write: if isOwner(userId);
+    }
+
+    // ── Deny all else (CATCH-ALL) ─────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

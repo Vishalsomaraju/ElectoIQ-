@@ -27,7 +27,7 @@ async function initFirebase() {
     _auth = getAuth(_app)
     _db = getFirestore(_app)
   } catch (err) {
-    console.warn('[ElectoIQ] Firebase init failed:', err.message)
+    console.error('[ElectoIQ] Firebase init failed:', err)
   }
 }
 

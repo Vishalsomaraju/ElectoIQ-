@@ -1,30 +1,35 @@
 // src/App.jsx
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { AuthProvider } from './context/AuthContext'
 import { AppProvider } from './context/AppContext'
 import { Navbar } from './components/layout/Navbar'
 import { Footer } from './components/layout/Footer'
-import Home from './pages/Home'
-import Timeline from './pages/Timeline'
-import VoterJourney from './pages/VoterJourney'
-import Quiz from './pages/Quiz'
-import Glossary from './pages/Glossary'
-import Dashboard from './pages/Dashboard'
+import { Spinner } from './components/ui/Spinner'
+
+const Home = lazy(() => import('./pages/Home'))
+const Timeline = lazy(() => import('./pages/Timeline'))
+const VoterJourney = lazy(() => import('./pages/VoterJourney'))
+const Quiz = lazy(() => import('./pages/Quiz'))
+const Glossary = lazy(() => import('./pages/Glossary'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
 
 function AnimatedRoutes() {
   const location = useLocation()
 
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Home />} />
-        <Route path="/timeline" element={<Timeline />} />
-        <Route path="/voter-journey" element={<VoterJourney />} />
-        <Route path="/quiz" element={<Quiz />} />
-        <Route path="/glossary" element={<Glossary />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
+      <Suspense fallback={<div className="flex h-[80vh] items-center justify-center"><Spinner size="lg" /></div>}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<Home />} />
+          <Route path="/timeline" element={<Timeline />} />
+          <Route path="/voter-journey" element={<VoterJourney />} />
+          <Route path="/quiz" element={<Quiz />} />
+          <Route path="/glossary" element={<Glossary />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </Suspense>
     </AnimatePresence>
   )
 }
@@ -35,8 +40,14 @@ export default function App() {
       <AuthProvider>
         <AppProvider>
           <div className="min-h-screen flex flex-col">
+            <a
+              href="#main-content"
+              className="absolute -top-full left-0 z-[9999] px-4 py-2 bg-[#FF9933] text-white text-sm font-semibold rounded-br-xl focus:top-0 focus:outline-none transition-[top] duration-100"
+            >
+              Skip to main content
+            </a>
             <Navbar />
-          <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
+            <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
               <AnimatedRoutes />
             </main>
             <Footer />

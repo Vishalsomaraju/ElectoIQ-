@@ -59,7 +59,9 @@ export function useAuth() {
     try {
       await signOut(auth)
     } catch (err) {
+      console.error('Error logging out:', err)
       setError(err.message)
+      throw err
     }
   }
 

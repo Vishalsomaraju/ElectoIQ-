@@ -49,6 +49,7 @@ export function useGemini() {
         prev.map(m => m.id === assistantMsg.id ? { ...m, streaming: false } : m)
       )
     } catch (err) {
+      console.error('Error from Gemini AI:', err)
       setError(err.message || 'Failed to get response')
       setMessages(prev => prev.filter(m => m.id !== assistantMsg.id))
     } finally {

@@ -8,7 +8,16 @@ import {
   useSpring,
   AnimatePresence,
 } from 'framer-motion'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import {
+  ArrowRight,
+  Sparkles,
+  CalendarDays,
+  UserCheck,
+  BotMessageSquare,
+  ClipboardList,
+  BookOpenText,
+  BarChart3,
+} from 'lucide-react'
 import { AnimatedPage } from '../components/shared/AnimatedPage'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -24,52 +33,58 @@ const stats = [
 
 const features = [
   {
-    emoji: '🗳️',
+    Icon: CalendarDays,
     title: 'Election Timeline',
     desc: 'Learn the complete election cycle from announcement to results — every stage explained.',
     to: '/timeline',
     accent: '#FF9933',
     bg: 'rgba(255,153,51,0.08)',
+    ring: 'rgba(255,153,51,0.25)',
   },
   {
-    emoji: '👤',
+    Icon: UserCheck,
     title: 'Voter Journey',
     desc: 'Step-by-step guide from registration to casting your vote on polling day.',
     to: '/voter-journey',
     accent: '#138808',
     bg: 'rgba(19,136,8,0.08)',
+    ring: 'rgba(19,136,8,0.25)',
   },
   {
-    emoji: '🤖',
+    Icon: BotMessageSquare,
     title: 'AI Assistant',
     desc: 'Ask any question about elections in plain language — powered by Gemini AI.',
     to: '/quiz',
     accent: '#1a56db',
     bg: 'rgba(26,86,219,0.08)',
+    ring: 'rgba(26,86,219,0.25)',
   },
   {
-    emoji: '📝',
+    Icon: ClipboardList,
     title: 'Civic Quiz',
     desc: 'Test your election knowledge with AI-generated adaptive questions.',
     to: '/quiz',
     accent: '#0ea5e9',
     bg: 'rgba(14,165,233,0.08)',
+    ring: 'rgba(14,165,233,0.25)',
   },
   {
-    emoji: '📖',
+    Icon: BookOpenText,
     title: 'Glossary',
     desc: '50+ election terms explained simply — EVM, MCC, EPIC and more.',
     to: '/glossary',
     accent: '#7c3aed',
     bg: 'rgba(124,58,237,0.08)',
+    ring: 'rgba(124,58,237,0.25)',
   },
   {
-    emoji: '📊',
+    Icon: BarChart3,
     title: 'Progress Tracker',
     desc: 'Track your learning journey, quiz scores, and civic readiness score.',
     to: '/dashboard',
     accent: '#ec4899',
     bg: 'rgba(236,72,153,0.08)',
+    ring: 'rgba(236,72,153,0.25)',
   },
 ]
 
@@ -117,17 +132,14 @@ function AnimatedCounter({ to, suffix, color }) {
   }, [spring])
 
   return (
-    <p
+    <span
       ref={ref}
-      className="font-display font-extrabold text-4xl md:text-5xl tabular-nums mb-1"
+      className="font-display font-extrabold text-4xl md:text-5xl tabular-nums mb-1 block"
       style={{ color }}
-      role="status"
-      aria-live="polite"
-      aria-atomic="true"
-      aria-label={`${display}${suffix}`}
+      aria-hidden="true"
     >
       {display}{suffix}
-    </p>
+    </span>
   )
 }
 
@@ -382,10 +394,14 @@ export default function Home() {
             <motion.div
               key={s.label}
               variants={cardVariant}
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              aria-label={`${s.label}: ${s.value}${s.suffix}`}
               className="bg-[#111827] border border-white/10 rounded-2xl p-6 text-center hover:border-white/20 transition-colors duration-300 hover:shadow-lg"
             >
               <AnimatedCounter to={s.value} suffix={s.suffix} color={s.color} />
-              <p className="text-white/50 text-sm font-medium">{s.label}</p>
+              <p className="text-white/50 text-sm font-medium" aria-hidden="true">{s.label}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -431,16 +447,29 @@ export default function Home() {
             <motion.div key={f.title} variants={cardVariant}>
               <Link
                 to={f.to}
-                className="group block h-full bg-[#111827] border border-white/8 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-white/20 hover:shadow-xl hover:shadow-black/40"
-                style={{ '--card-accent': f.accent }}
+                className="group relative block h-full bg-[#111827] border border-white/8 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-white/20 hover:shadow-xl hover:shadow-black/40 overflow-hidden"
               >
+                {/* Subtle accent glow on hover */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none"
+                  style={{ background: `radial-gradient(ellipse at top left, ${f.bg} 0%, transparent 70%)` }}
+                  aria-hidden="true"
+                />
+
                 {/* Icon container */}
                 <div
-                  className="w-13 h-13 rounded-xl flex items-center justify-center text-2xl mb-5 transition-transform duration-300 group-hover:scale-110"
-                  style={{ background: f.bg }}
+                  className="relative w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg"
+                  style={{
+                    background: f.bg,
+                    boxShadow: `0 0 0 1px ${f.ring}`,
+                  }}
                   aria-hidden="true"
                 >
-                  {f.emoji}
+                  <f.Icon
+                    size={26}
+                    strokeWidth={1.8}
+                    style={{ color: f.accent }}
+                  />
                 </div>
 
                 {/* Title */}
