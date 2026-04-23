@@ -1,13 +1,17 @@
 // src/pages/Timeline.jsx
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, Megaphone, ClipboardList, FileEdit, FolderOpen, Speaker, Vote, Monitor, Hash, Landmark } from 'lucide-react'
 import { AnimatedPage } from '../components/shared/AnimatedPage'
 import { PageWrapper } from '../components/layout/PageWrapper'
 import { SectionHeader } from '../components/shared/SectionHeader'
 import { Badge } from '../components/ui/Badge'
 import { electionStages, electionPhases } from '../data/electionStages'
 import { cn } from '../utils/helpers'
+
+const iconMap = {
+  Megaphone, ClipboardList, FileEdit, FolderOpen, Speaker, Vote, Monitor, Hash, Landmark
+}
 
 const phaseColors = {
   'Pre-Election': 'saffron',
@@ -61,6 +65,7 @@ export default function Timeline() {
             {filtered.map((stage, idx) => {
               const isExpanded = expanded === stage.id
               const isLeft = idx % 2 === 0
+              const Icon = iconMap[stage.icon]
 
               return (
                 <motion.div
@@ -86,8 +91,8 @@ export default function Timeline() {
                         <span className="text-white/40 text-xs mt-0.5">{stage.duration}</span>
                       </div>
 
-                      <h3 className="font-display font-bold text-lg text-white mb-2">
-                        {stage.icon} {stage.title}
+                      <h3 className="font-display font-bold text-lg text-white mb-2 flex items-center gap-2">
+                        <Icon size={20} className="text-white/80" /> {stage.title}
                       </h3>
                       <p className="text-white/60 text-sm leading-relaxed">{stage.description}</p>
 
@@ -118,10 +123,10 @@ export default function Timeline() {
                   {/* Center dot */}
                   <div className="absolute left-6 md:left-1/2 -translate-x-1/2 flex items-center justify-center">
                     <div
-                      className="size-10 rounded-full border-2 border-current flex items-center justify-center text-base z-10"
+                      className="size-10 rounded-full border-2 border-current flex items-center justify-center z-10"
                       style={{ backgroundColor: `${stage.color}20`, borderColor: stage.color, color: stage.color }}
                     >
-                      {stage.icon}
+                      <Icon size={20} />
                     </div>
                   </div>
                 </motion.div>

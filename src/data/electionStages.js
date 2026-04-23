@@ -9,7 +9,7 @@ export const electionStages = [
     id: 1,
     phase: 'Pre-Election',
     title: 'Election Commission Announcement',
-    icon: '📢',
+    icon: 'Megaphone',
     duration: '1 Day',
     description:
       'The Election Commission of India (ECI) announces the election schedule, including voting dates, number of phases, and the Model Code of Conduct (MCC) activation.',
@@ -25,7 +25,7 @@ export const electionStages = [
     id: 2,
     phase: 'Pre-Election',
     title: 'Model Code of Conduct (MCC)',
-    icon: '📋',
+    icon: 'ClipboardList',
     duration: '6–8 Weeks',
     description:
       'A set of guidelines issued by ECI to govern the conduct of political parties and candidates during elections, ensuring a free and fair process.',
@@ -41,7 +41,7 @@ export const electionStages = [
     id: 3,
     phase: 'Pre-Election',
     title: 'Voter List Finalization',
-    icon: '📝',
+    icon: 'FileEdit',
     duration: '4 Weeks',
     description:
       'Electoral rolls are finalized with additions, deletions, and corrections. Citizens can verify their name on the voter list (EPIC).',
@@ -57,7 +57,7 @@ export const electionStages = [
     id: 4,
     phase: 'Pre-Election',
     title: 'Candidate Nomination',
-    icon: '🗂️',
+    icon: 'FolderOpen',
     duration: '2 Weeks',
     description:
       'Candidates file their nomination papers, pay a security deposit, and submit affidavits disclosing assets, liabilities, and criminal cases.',
@@ -73,7 +73,7 @@ export const electionStages = [
     id: 5,
     phase: 'Pre-Election',
     title: 'Election Campaign',
-    icon: '📣',
+    icon: 'Speaker',
     duration: 'Until 48 hrs before polling',
     description:
       'Political parties and candidates campaign to persuade voters. Campaign expenditure is strictly monitored by election observers.',
@@ -89,7 +89,7 @@ export const electionStages = [
     id: 6,
     phase: 'Election Day',
     title: 'Polling Day',
-    icon: '🗳️',
+    icon: 'Vote',
     duration: '1 Day (typically 7 AM – 6 PM)',
     description:
       'Eligible voters cast their vote at their designated polling booth using an Electronic Voting Machine (EVM) + VVPAT.',
@@ -105,7 +105,7 @@ export const electionStages = [
     id: 7,
     phase: 'Election Day',
     title: 'EVM & VVPAT',
-    icon: '🖥️',
+    icon: 'Monitor',
     duration: 'Ongoing',
     description:
       'Electronic Voting Machines are used for secure voting. The Voter Verifiable Paper Audit Trail (VVPAT) lets voters verify their vote was correctly recorded.',
@@ -121,7 +121,7 @@ export const electionStages = [
     id: 8,
     phase: 'Post-Election',
     title: 'Counting Day',
-    icon: '🔢',
+    icon: 'Hash',
     duration: '1 Day',
     description:
       'On the counting day, votes are tallied at Returning Officer\'s designated counting centers under strict security and observer presence.',
@@ -137,7 +137,7 @@ export const electionStages = [
     id: 9,
     phase: 'Post-Election',
     title: 'Result Declaration & Formation of Government',
-    icon: '🏛️',
+    icon: 'Landmark',
     duration: '2–4 Weeks',
     description:
       'The winning party or coalition forms the government. The President invites the majority party leader to form the government.',
