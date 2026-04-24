@@ -1,5 +1,5 @@
 // src/pages/Glossary.jsx
-import { useState, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Search, BookOpen, X } from 'lucide-react'
 import { AnimatedPage } from '../components/shared/AnimatedPage'
@@ -8,7 +8,7 @@ import { SectionHeader } from '../components/shared/SectionHeader'
 import { Badge } from '../components/ui/Badge'
 import { Card } from '../components/ui/Card'
 import { glossaryTerms, glossaryCategories } from '../data/glossaryTerms'
-import { cn, debounce } from '../utils/helpers'
+import { cn } from '../utils/helpers'
 
 const categoryBadgeMap = {
   Institution: 'primary', Regulation: 'warning', Voter: 'success',
@@ -17,6 +17,38 @@ const categoryBadgeMap = {
   Finance: 'warning', Campaign: 'danger', Governance: 'navy',
   Statistics: 'success',
 }
+
+const GlossaryCard = React.memo(function GlossaryCard({ term, idx, isOpen, onToggle }) {
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: Math.min(idx * 0.03, 0.3) }}
+    >
+      <Card
+        hover
+        className={cn('h-full cursor-pointer', isOpen && 'border-blue-500/30')}
+        onClick={onToggle}
+      >
+        <div className="flex items-start justify-between gap-2 mb-3">
+          <Badge variant={categoryBadgeMap[term.category] || 'default'}>{term.category}</Badge>
+        </div>
+        <h3 className="font-semibold text-slate-900 dark:text-white text-base leading-snug mb-2">{term.term}</h3>
+        <p className={cn('text-sm text-slate-600 dark:text-white/60 leading-relaxed', !isOpen && 'line-clamp-3')}>
+          {term.definition}
+        </p>
+        {term.example && isOpen && (
+          <div className="mt-3 rounded-lg bg-slate-50 dark:bg-white/5 p-3 border border-slate-100 dark:border-white/5">
+            <p className="text-xs text-slate-500 dark:text-white/40 uppercase font-semibold mb-1">Example</p>
+            <p className="text-xs text-slate-700 dark:text-white/70 italic">{term.example}</p>
+          </div>
+        )}
+        <p className="mt-2 text-xs text-blue-400">{isOpen ? '▲ Show less' : '▼ Show more'}</p>
+      </Card>
+    </motion.div>
+  )
+})
 
 export default function Glossary() {
   const [search, setSearch] = useState('')
@@ -31,15 +63,6 @@ export default function Glossary() {
       return matchCat && matchSearch
     })
   }, [search, category])
-
-  const grouped = useMemo(() => {
-    if (search || category !== 'All') return null
-    return glossaryCategories.slice(1).reduce((acc, cat) => {
-      const terms = filtered.filter(t => t.category === cat)
-      if (terms.length) acc[cat] = terms
-      return acc
-    }, {})
-  }, [filtered, search, category])
 
   return (
     <AnimatedPage>
@@ -105,34 +128,13 @@ export default function Glossary() {
             {filtered.map((term, idx) => {
               const isOpen = expanded === term.id
               return (
-                <motion.div
+                <GlossaryCard
                   key={term.id}
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: Math.min(idx * 0.03, 0.3) }}
-                >
-                  <Card
-                    hover
-                    className={cn('h-full cursor-pointer', isOpen && 'border-blue-500/30')}
-                    onClick={() => setExpanded(isOpen ? null : term.id)}
-                  >
-                    <div className="flex items-start justify-between gap-2 mb-3">
-                      <Badge variant={categoryBadgeMap[term.category] || 'default'}>{term.category}</Badge>
-                    </div>
-                    <h3 className="font-semibold text-slate-900 dark:text-white text-base leading-snug mb-2">{term.term}</h3>
-                    <p className={cn('text-sm text-slate-600 dark:text-white/60 leading-relaxed', !isOpen && 'line-clamp-3')}>
-                      {term.definition}
-                    </p>
-                    {term.example && isOpen && (
-                      <div className="mt-3 rounded-lg bg-slate-50 dark:bg-white/5 p-3 border border-slate-100 dark:border-white/5">
-                        <p className="text-xs text-slate-500 dark:text-white/40 uppercase font-semibold mb-1">Example</p>
-                        <p className="text-xs text-slate-700 dark:text-white/70 italic">{term.example}</p>
-                      </div>
-                    )}
-                    <p className="mt-2 text-xs text-blue-400">{isOpen ? '▲ Show less' : '▼ Show more'}</p>
-                  </Card>
-                </motion.div>
+                  idx={idx}
+                  term={term}
+                  isOpen={isOpen}
+                  onToggle={() => setExpanded(isOpen ? null : term.id)}
+                />
               )
             })}
           </motion.div>

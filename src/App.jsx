@@ -42,12 +42,6 @@ export default function App() {
       <AuthProvider>
         <AppProvider>
           <div className="min-h-screen flex flex-col">
-            <a
-              href="#main-content"
-              className="absolute -top-full left-0 z-[9999] px-4 py-2 bg-[#FF9933] text-white text-sm font-semibold rounded-br-xl focus:top-0 focus:outline-none transition-[top] duration-100"
-            >
-              Skip to main content
-            </a>
             <Navbar />
             <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
               <AnimatedRoutes />

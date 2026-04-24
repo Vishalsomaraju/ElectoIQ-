@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle2, ChevronRight, ChevronLeft, Download, Share2, ClipboardList, Search, FileEdit, IdCard, CalendarDays, PartyPopper } from 'lucide-react'
 import confetti from 'canvas-confetti'
+import { useNavigate } from 'react-router-dom'
 import { AnimatedPage } from '../components/shared/AnimatedPage'
 import { PageWrapper } from '../components/layout/PageWrapper'
 import { SectionHeader } from '../components/shared/SectionHeader'
@@ -177,6 +178,7 @@ export default function VoterJourney() {
   const [direction, setDirection] = useState(1) // 1 = forward, -1 = backward
   const { currentUser } = useAuthContext()
   const { setDocument } = useFirestore('users')
+  const navigate = useNavigate()
 
   const handleNext = useCallback(() => {
     if (currentStep < WIZARD_STEPS.length) {
@@ -326,10 +328,7 @@ export default function VoterJourney() {
                 <Button 
                   variant="primary" 
                   className="bg-green-600 hover:bg-green-500 text-white border-none"
-                  onClick={() => {
-                    // Route to Quiz or Dashboard
-                    window.location.href = '/quiz'
-                  }}
+                  onClick={() => navigate('/quiz')}
                 >
                   Take the Quiz 🎉
                 </Button>

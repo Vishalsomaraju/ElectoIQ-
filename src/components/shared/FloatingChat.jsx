@@ -13,6 +13,7 @@ export function FloatingChat() {
       animate={{ scale: 1, opacity: 1 }}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
+      aria-label="Open ElectoBot chat assistant"
       onClick={() => dispatch({ type: 'TOGGLE_CHAT' })}
       className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[#FF9933] shadow-lg shadow-[#FF9933]/30 flex items-center justify-center text-white"
     >

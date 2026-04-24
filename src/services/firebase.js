@@ -12,6 +12,7 @@ const FIREBASE_CONFIGURED =
 let _app = null
 let _auth = null
 let _db = null
+let _perf = null
 
 async function initFirebase() {
   if (!FIREBASE_CONFIGURED) return
@@ -19,6 +20,7 @@ async function initFirebase() {
     const { initializeApp } = await import('firebase/app')
     const { getAuth } = await import('firebase/auth')
     const { getFirestore } = await import('firebase/firestore')
+    const { getPerformance } = await import('firebase/performance')
 
     _app = initializeApp({
       apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -30,6 +32,11 @@ async function initFirebase() {
     })
     _auth = getAuth(_app)
     _db = getFirestore(_app)
+    try {
+      _perf = getPerformance(_app)
+    } catch (err) {
+      console.warn('[ElectoIQ] Performance monitoring unavailable:', err.message)
+    }
   } catch (err) {
     const msg = err instanceof Error
       ? err.message.replace(/key=[^&\s]*/g, 'key=REDACTED')
@@ -43,6 +50,7 @@ initFirebase()
 
 export function getFirebaseAuth() { return _auth }
 export function getFirebaseDb() { return _db }
+export function getFirebasePerformance() { return _perf }
 export function isFirebaseReady() { return !!_app }
 
-export { _app as app, _auth as auth, _db as db }
+export { _app as app, _auth as auth, _db as db, _perf as perf }

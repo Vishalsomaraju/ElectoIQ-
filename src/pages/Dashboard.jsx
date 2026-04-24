@@ -1,4 +1,5 @@
 // src/pages/Dashboard.jsx
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Trophy, BookOpen, MapPin, BarChart3, Zap, Star } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -26,25 +27,27 @@ const itemV = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }
 
 export default function Dashboard() {
   const { state } = useAppContext()
-  const { progress, quizState } = state
+  const { progress } = state
 
-  const avgScore = progress.quizzesCompleted > 0
-    ? Math.round(progress.totalScore / progress.quizzesCompleted)
-    : 0
+  const avgScore = useMemo(() => (
+    progress.quizzesCompleted > 0
+      ? Math.round(progress.totalScore / progress.quizzesCompleted)
+      : 0
+  ), [progress.quizzesCompleted, progress.totalScore])
   const grade = getGrade(avgScore)
 
-  const overallProgress = Math.round(
+  const overallProgress = useMemo(() => Math.round(
     ((progress.timelineViewed.length / electionStages.length) * 33 +
      (progress.glossaryViewed.length / glossaryTerms.length) * 33 +
      (Math.min(progress.quizzesCompleted, 5) / 5) * 34)
-  )
+  ), [progress])
 
-  const stats = [
+  const stats = useMemo(() => [
     { icon: <Trophy size={22} />, label: 'Quizzes Done', value: progress.quizzesCompleted, color: 'text-yellow-400', bg: 'bg-yellow-500/15' },
     { icon: <Star size={22} />, label: 'Avg Score', value: `${avgScore}%`, color: 'text-blue-400', bg: 'bg-blue-500/15' },
     { icon: <BookOpen size={22} />, label: 'Terms Viewed', value: progress.glossaryViewed.length, color: 'text-green-400', bg: 'bg-green-500/15' },
     { icon: <MapPin size={22} />, label: 'Timeline Steps', value: progress.timelineViewed.length, color: 'text-orange-400', bg: 'bg-orange-500/15' },
-  ]
+  ], [avgScore, progress])
 
   return (
     <AnimatedPage>

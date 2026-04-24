@@ -143,6 +143,7 @@ export default function Quiz() {
           </AnimatePresence>
 
           <button
+            aria-label={chatOpen ? 'Close AI assistant' : 'Open AI assistant'}
             onClick={() => setChatOpen(o => !o)}
             className="size-14 rounded-2xl bg-gradient-to-br from-[#1a56db] to-[#0ea5e9] flex items-center justify-center shadow-2xl shadow-blue-900/50 hover:scale-105 transition-transform"
           >

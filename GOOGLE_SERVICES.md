@@ -40,6 +40,15 @@ ElectoIQ integrates multiple Google services to deliver a real-time, AI-powered 
 
 ---
 
+## 5. Firebase Performance Monitoring
+
+- **Package**: `firebase/performance`
+- **Files**: `src/services/firebase.js`
+- **Usage**: Tracks page load and API response times in production, with a guarded fallback when performance monitoring is unavailable in the current runtime.
+- **Docs**: https://firebase.google.com/docs/perf-mon
+
+---
+
 ## Environment Variables Required
 
 ```env

@@ -6,7 +6,7 @@ import { useGemini } from '../../hooks/useGemini'
 
 export function ChatDrawer() {
   const { state, dispatch } = useAppContext()
-  const { messages, sendMessage, isLoading, error } = useGemini()
+  const { messages, sendMessage, streaming: isLoading, error } = useGemini()
   const inputRef = useRef(null)
   const bottomRef = useRef(null)
 
@@ -78,6 +78,7 @@ export function ChatDrawer() {
                 </div>
               </div>
               <button
+                aria-label="Close chat drawer"
                 onClick={closeDrawer}
                 className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-white/10 text-slate-500 dark:text-white/70 hover:text-slate-900 dark:hover:text-white transition-colors"
               >
