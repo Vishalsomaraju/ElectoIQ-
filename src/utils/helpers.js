@@ -94,7 +94,8 @@ export function shuffle(array) {
  * @returns {string} Truncated text
  */
 export function truncate(text, maxLen = 120) {
-  if (!text || text.length <= maxLen) return text
+  if (!text) return ''
+  if (text.length <= maxLen) return text
   return text.slice(0, maxLen).trimEnd() + '…'
 }
 

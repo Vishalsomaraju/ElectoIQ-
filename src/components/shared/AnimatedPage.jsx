@@ -7,6 +7,12 @@ const pageVariants = {
   exit: { opacity: 0, y: -10, transition: { duration: 0.25 } },
 }
 
+/**
+ * Wrapper component for page-level enter/exit animations.
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Page content
+ * @returns {JSX.Element} Animated wrapper
+ */
 export function AnimatedPage({ children }) {
   return (
     <motion.div

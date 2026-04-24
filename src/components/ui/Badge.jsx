@@ -13,6 +13,14 @@ const variants = {
   navy: 'bg-indigo-800/40 text-indigo-300 border border-indigo-700/30',
 }
 
+/**
+ * Badge component for displaying status or labels.
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Badge text or content
+ * @param {string} [props.variant='default'] - Visual variant
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Badge component
+ */
 export function Badge({ children, variant = 'default', className }) {
   return (
     <span className={cn(

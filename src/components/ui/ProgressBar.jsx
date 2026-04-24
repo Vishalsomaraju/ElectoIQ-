@@ -1,6 +1,19 @@
 // src/components/ui/ProgressBar.jsx
 import { cn } from '../../utils/helpers'
 
+/**
+ * Animated progress bar component.
+ * @param {Object} props - Component props
+ * @param {number} [props.value=0] - Current progress value
+ * @param {number} [props.max=100] - Maximum progress value
+ * @param {string} [props.label] - Optional label above the bar
+ * @param {boolean} [props.showPercent=false] - Display percentage text
+ * @param {string} [props.color='primary'] - Bar color variant
+ * @param {string} [props.size='md'] - Bar height
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {boolean} [props.animated=true] - Enable subtle pulsing animation
+ * @returns {JSX.Element} ProgressBar component
+ */
 export function ProgressBar({
   value = 0,
   max = 100,

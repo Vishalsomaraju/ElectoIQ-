@@ -3,26 +3,24 @@
 // SDK: firebase ^12.12.1
 // Docs: https://firebase.google.com/docs
 // src/services/firebase.js
-// Firebase is lazily initialized. Only bootstraps when real env vars are present.
+
+import { initializeApp } from 'firebase/app'
+import { getAuth } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
+import { getPerformance } from 'firebase/performance'
 
 const FIREBASE_CONFIGURED =
   import.meta.env.VITE_FIREBASE_API_KEY &&
   import.meta.env.VITE_FIREBASE_API_KEY !== 'your_firebase_api_key'
 
-let _app = null
-let _auth = null
-let _db = null
-let _perf = null
+let app = null
+let auth = null
+let db = null
+let perf = null
 
-async function initFirebase() {
-  if (!FIREBASE_CONFIGURED) return
+if (FIREBASE_CONFIGURED) {
   try {
-    const { initializeApp } = await import('firebase/app')
-    const { getAuth } = await import('firebase/auth')
-    const { getFirestore } = await import('firebase/firestore')
-    const { getPerformance } = await import('firebase/performance')
-
-    _app = initializeApp({
+    app = initializeApp({
       apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
       authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
       projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
@@ -30,10 +28,10 @@ async function initFirebase() {
       messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
       appId: import.meta.env.VITE_FIREBASE_APP_ID,
     })
-    _auth = getAuth(_app)
-    _db = getFirestore(_app)
+    auth = getAuth(app)
+    db = getFirestore(app)
     try {
-      _perf = getPerformance(_app)
+      perf = getPerformance(app)
     } catch (err) {
       console.warn('[ElectoIQ] Performance monitoring unavailable:', err.message)
     }
@@ -45,12 +43,9 @@ async function initFirebase() {
   }
 }
 
-// Initialize in background — only if configured
-initFirebase()
+export function getFirebaseAuth() { return auth }
+export function getFirebaseDb() { return db }
+export function getFirebasePerformance() { return perf }
+export function isFirebaseReady() { return !!app }
 
-export function getFirebaseAuth() { return _auth }
-export function getFirebaseDb() { return _db }
-export function getFirebasePerformance() { return _perf }
-export function isFirebaseReady() { return !!_app }
-
-export { _app as app, _auth as auth, _db as db, _perf as perf }
+export { app, auth, db, perf }

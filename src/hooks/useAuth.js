@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import {
   onAuthStateChanged,
-  signInWithPopup,
+  signInWithRedirect,
   GoogleAuthProvider,
   signInAnonymously,
   signOut,
@@ -40,8 +40,7 @@ export function useAuth() {
     if (!auth) { setError('Firebase not configured'); return }
     setError(null)
     try {
-      const result = await signInWithPopup(auth, googleProvider)
-      return result.user
+      await signInWithRedirect(auth, googleProvider)
     } catch (err) {
       console.warn('[signInWithGoogle] error:', err)
       setError(err.message)

@@ -7,6 +7,7 @@ import {
   useMotionValue,
   useSpring,
   AnimatePresence,
+  useMotionValueEvent,
 } from 'framer-motion'
 import {
   ArrowRight,
@@ -116,6 +117,7 @@ const cardVariant = {
 
 function AnimatedCounter({ to, suffix, color }) {
   const ref = useRef(null)
+  const prevValueRef = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
   const motionVal = useMotionValue(0)
   const spring = useSpring(motionVal, { stiffness: 55, damping: 20 })
@@ -123,13 +125,14 @@ function AnimatedCounter({ to, suffix, color }) {
 
   useEffect(() => {
     if (!inView) return
+    if (prevValueRef.current === to) return
+    prevValueRef.current = to
     motionVal.set(to)
   }, [inView, to, motionVal])
 
-  useEffect(() => {
-    const unsubscribe = spring.on('change', v => setDisplay(Math.round(v).toString()))
-    return unsubscribe
-  }, [spring])
+  useMotionValueEvent(spring, 'change', (v) => {
+    setDisplay(Math.round(v).toString())
+  })
 
   return (
     <span
@@ -226,17 +229,17 @@ function AshokaChakra({ size = 220 }) {
 // HERO HEADING (word-by-word animation)
 // ─────────────────────────────────────────────────────────────────────────────
 
+const wordVariants = {
+  hidden: { opacity: 0, y: 44 },
+  show: (i) => ({
+    opacity: 1, y: 0,
+    transition: { delay: i * 0.12, duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+  }),
+}
+
 function HeroHeading() {
   const line1 = ["Understand", "India's"]
   const line2 = ["Election", "Process"]
-
-  const wordVariants = {
-    hidden: { opacity: 0, y: 44 },
-    show: (i) => ({
-      opacity: 1, y: 0,
-      transition: { delay: i * 0.12, duration: 0.55, ease: [0.22, 1, 0.36, 1] },
-    }),
-  }
 
   return (
     <h1 className="font-display font-extrabold text-5xl sm:text-6xl md:text-7xl xl:text-8xl leading-[1.08] tracking-tight text-center mb-8">

@@ -25,6 +25,12 @@ const initialState = {
   ]
 }
 
+/**
+ * Reducer function for global app state.
+ * @param {Object} state - Current application state
+ * @param {Object} action - Dispatched action object
+ * @returns {Object} Updated state
+ */
 function appReducer(state, action) {
   switch (action.type) {
     case 'SET_PAGE':
@@ -105,6 +111,12 @@ function appReducer(state, action) {
 
 const AppContext = createContext(null)
 
+/**
+ * Provider component for global application context.
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Child components
+ * @returns {JSX.Element} Context provider
+ */
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(appReducer, initialState)
   return (
@@ -114,6 +126,11 @@ export function AppProvider({ children }) {
   )
 }
 
+/**
+ * Custom hook to access application context.
+ * @returns {Object} App state and dispatch method
+ * @throws {Error} If used outside of AppProvider
+ */
 export function useAppContext() {
   const ctx = useContext(AppContext)
   if (!ctx) throw new Error('useAppContext must be used within AppProvider')

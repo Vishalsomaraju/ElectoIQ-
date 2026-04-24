@@ -134,8 +134,8 @@ describe('truncate', () => {
     expect(truncate('Hi', 10)).toBe('Hi')
   })
   it('handles null/undefined input without throwing', () => {
-    expect(truncate(null)).toBe(null)
-    expect(truncate(undefined)).toBe(undefined)
+    expect(truncate(null)).toBe('')
+    expect(truncate(undefined)).toBe('')
   })
   it('returns text unchanged when exactly at maxLen', () => {
     expect(truncate('12345', 5)).toBe('12345')

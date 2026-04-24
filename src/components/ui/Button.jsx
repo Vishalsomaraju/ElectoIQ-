@@ -18,6 +18,19 @@ const sizes = {
   xl: 'px-9 py-4 text-lg rounded-xl',
 }
 
+/**
+ * Button component with various variants and sizes.
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Button content
+ * @param {string} [props.variant='primary'] - Visual variant (primary, accent, outline, ghost, danger, saffron, green)
+ * @param {string} [props.size='md'] - Button size (sm, md, lg, xl)
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {boolean} [props.disabled] - Disabled state
+ * @param {boolean} [props.loading] - Loading state
+ * @param {React.ReactNode} [props.icon] - Icon element to display before text
+ * @param {React.ReactNode} [props.iconRight] - Icon element to display after text
+ * @returns {JSX.Element} Button component
+ */
 export function Button({
   children,
   variant = 'primary',

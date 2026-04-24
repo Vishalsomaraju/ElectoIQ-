@@ -1,6 +1,16 @@
 // src/components/shared/SectionHeader.jsx
 import { cn } from '../../utils/helpers'
 
+/**
+ * Reusable section header component.
+ * @param {Object} props - Component props
+ * @param {string} [props.eyebrow] - Small uppercase text above title
+ * @param {string} props.title - Main section title
+ * @param {string} [props.description] - Subtitle or description text
+ * @param {boolean} [props.center=false] - Center align content
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} SectionHeader component
+ */
 export function SectionHeader({ eyebrow, title, description, center = false, className }) {
   return (
     <div className={cn('mb-10', center && 'text-center', className)}>

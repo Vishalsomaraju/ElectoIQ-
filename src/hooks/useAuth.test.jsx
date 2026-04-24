@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useAuth } from './useAuth'
-import { signInWithPopup, signInAnonymously, signOut, onAuthStateChanged } from 'firebase/auth'
+import { signInWithRedirect, signInAnonymously, signOut, onAuthStateChanged } from 'firebase/auth'
 
 // Mock the firebase auth module
 vi.mock('firebase/auth', () => ({
-  signInWithPopup: vi.fn(),
+  signInWithRedirect: vi.fn(),
   signInAnonymously: vi.fn(),
   signOut: vi.fn(),
   onAuthStateChanged: vi.fn(),
@@ -52,22 +52,20 @@ describe('useAuth hook', () => {
   })
 
   it('handles Google sign in successfully', async () => {
-    signInWithPopup.mockResolvedValueOnce({ user: { uid: 'user123' } })
+    signInWithRedirect.mockResolvedValueOnce()
     const { result } = renderHook(() => useAuth())
     
-    let user;
     await act(async () => {
-      user = await result.current.signInWithGoogle()
+      await result.current.signInWithGoogle()
     })
     
-    expect(signInWithPopup).toHaveBeenCalled()
-    expect(user).toEqual({ uid: 'user123' })
+    expect(signInWithRedirect).toHaveBeenCalled()
     expect(result.current.error).toBeNull()
   })
 
   it('handles Google sign in error', async () => {
-    const error = new Error('Popup closed')
-    signInWithPopup.mockRejectedValueOnce(error)
+    const error = new Error('Redirect failed')
+    signInWithRedirect.mockRejectedValueOnce(error)
     const { result } = renderHook(() => useAuth())
     
     await act(async () => {
@@ -78,7 +76,7 @@ describe('useAuth hook', () => {
       }
     })
     
-    expect(result.current.error).toBe('Popup closed')
+    expect(result.current.error).toBe('Redirect failed')
   })
 
   it('handles guest sign in successfully', async () => {
