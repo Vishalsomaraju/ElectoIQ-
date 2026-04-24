@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CheckCircle2, ChevronRight, ChevronLeft, Download, Share2, ClipboardList, Search, FileEdit, IdCard, CalendarDays, PartyPopper } from 'lucide-react'
+import { Download, Share2, ClipboardList, Search, FileEdit, IdCard, CalendarDays, PartyPopper } from 'lucide-react'
 import confetti from 'canvas-confetti'
-import { useNavigate } from 'react-router-dom'
 import { AnimatedPage } from '../components/shared/AnimatedPage'
 import { PageWrapper } from '../components/layout/PageWrapper'
 import { SectionHeader } from '../components/shared/SectionHeader'
@@ -10,6 +9,8 @@ import { Button } from '../components/ui/Button'
 import { useAuthContext } from '../context/AuthContext'
 import { useFirestore } from '../hooks/useFirestore'
 import { cn } from '../utils/helpers'
+import { StepProgressBar } from '../components/voter-journey/StepProgressBar'
+import { WizardNavigation } from '../components/voter-journey/WizardNavigation'
 
 const WIZARD_STEPS = [
   {
@@ -178,7 +179,6 @@ export default function VoterJourney() {
   const [direction, setDirection] = useState(1) // 1 = forward, -1 = backward
   const { currentUser } = useAuthContext()
   const { setDocument } = useFirestore('users')
-  const navigate = useNavigate()
 
   const handleNext = useCallback(() => {
     if (currentStep < WIZARD_STEPS.length) {
@@ -221,7 +221,7 @@ export default function VoterJourney() {
         })
       }
     }
-  }, [currentStep, currentUser, setDocument])
+  }, [currentStep, currentUser])
 
   const ActiveStepData = WIZARD_STEPS[currentStep - 1]
 
@@ -237,39 +237,7 @@ export default function VoterJourney() {
 
         <div className="max-w-2xl mx-auto mb-20">
           {/* Progress Bar Header */}
-          <div className="relative flex justify-between items-center mb-12">
-            <div className="absolute top-1/2 left-0 w-full h-[2px] bg-slate-200 dark:bg-white/10 -z-10 -translate-y-1/2"></div>
-            <motion.div 
-              className="absolute top-1/2 left-0 h-[2px] bg-gradient-to-r from-[#FF9933] to-[#138808] -z-10 -translate-y-1/2"
-              initial={{ width: 0 }}
-              animate={{ width: `${((currentStep - 1) / (WIZARD_STEPS.length - 1)) * 100}%` }}
-              transition={{ duration: 0.4 }}
-            />
-            
-            {WIZARD_STEPS.map((step) => {
-              const isPast = currentStep > step.id
-              const isActive = currentStep === step.id
-              
-              return (
-                <div key={step.id} className="relative flex flex-col items-center group">
-                  <div className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-colors duration-300 border-2",
-                    isPast ? "bg-green-500 border-green-500 text-white shadow-md" : 
-                    isActive ? "bg-[#FF9933] border-[#FF9933] text-white shadow-lg shadow-[#FF9933]/30" : 
-                    "bg-white dark:bg-[#0f172a] border-slate-200 dark:border-white/20 text-slate-400 dark:text-white/40 shadow-sm"
-                  )}>
-                    {isPast ? <CheckCircle2 size={18} /> : step.id}
-                  </div>
-                  <span className={cn(
-                    "absolute top-12 text-xs w-20 text-center font-medium transition-colors opacity-0 md:opacity-100",
-                    isActive ? "text-slate-900 dark:text-white" : "text-slate-400 dark:text-white/40"
-                  )}>
-                    {step.title}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
+          <StepProgressBar currentStep={currentStep} steps={WIZARD_STEPS} />
 
           {!currentUser && currentStep === 3 && (
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center text-sm text-blue-300">
@@ -306,34 +274,12 @@ export default function VoterJourney() {
             </div>
 
             {/* Navigation Footer */}
-            <div className="bg-slate-50 dark:bg-white/5 border-t border-slate-200 dark:border-white/10 p-4 md:px-10 flex items-center justify-between">
-              <Button 
-                variant="ghost" 
-                onClick={handlePrev} 
-                disabled={currentStep === 1}
-                icon={<ChevronLeft size={16} />}
-              >
-                Back
-              </Button>
-              
-              {currentStep < WIZARD_STEPS.length ? (
-                <Button 
-                  variant="primary" 
-                  onClick={handleNext}
-                  className="gap-2"
-                >
-                  Next Step <ChevronRight size={16} />
-                </Button>
-              ) : (
-                <Button 
-                  variant="primary" 
-                  className="bg-green-600 hover:bg-green-500 text-white border-none"
-                  onClick={() => navigate('/quiz')}
-                >
-                  Take the Quiz 🎉
-                </Button>
-              )}
-            </div>
+            <WizardNavigation 
+              currentStep={currentStep} 
+              totalSteps={WIZARD_STEPS.length} 
+              onPrev={handlePrev} 
+              onNext={handleNext} 
+            />
           </div>
         </div>
       </PageWrapper>
