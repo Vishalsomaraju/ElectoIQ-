@@ -58,10 +58,13 @@ export default function Quiz() {
   const grade = getGrade(score)
 
   const handleSend = async () => {
-    if (!input.trim() || streaming) return
-    const msg = input.trim()
+    const text = input.trim()
+    if (!text || streaming) return
     setInput('')
-    await sendMessage(msg)
+    await sendMessage(text, {
+      currentPage: 'quiz',
+      currentStage: current ? `Question about ${current.category}: ${current.question}` : null,
+    })
   }
 
   return (
