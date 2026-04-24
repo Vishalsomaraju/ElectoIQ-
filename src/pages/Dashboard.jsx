@@ -34,7 +34,7 @@ export default function Dashboard() {
       ? Math.round(progress.totalScore / progress.quizzesCompleted)
       : 0
   ), [progress.quizzesCompleted, progress.totalScore])
-  const grade = getGrade(avgScore)
+  const grade = useMemo(() => getGrade(avgScore), [avgScore])
 
   const overallProgress = useMemo(() => Math.round(
     ((progress.timelineViewed.length / electionStages.length) * 33 +

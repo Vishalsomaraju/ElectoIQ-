@@ -1,4 +1,5 @@
 // src/components/voter-journey/StepProgressBar.jsx
+import { memo } from 'react'
 import { motion } from 'framer-motion'
 import { CheckCircle2 } from 'lucide-react'
 import { cn } from '../../utils/helpers'
@@ -10,11 +11,12 @@ import { cn } from '../../utils/helpers'
  * @param {Array} props.steps
  * @returns {JSX.Element}
  */
-export function StepProgressBar({ currentStep, steps }) {
+export const StepProgressBar = memo(function StepProgressBar({ currentStep, steps }) {
   return (
     <div className="relative flex justify-between items-center mb-12">
-      <div className="absolute top-1/2 left-0 w-full h-[2px] bg-slate-200 dark:bg-white/10 -z-10 -translate-y-1/2"></div>
+      <div aria-hidden="true" className="absolute top-1/2 left-0 w-full h-[2px] bg-slate-200 dark:bg-white/10 -z-10 -translate-y-1/2"></div>
       <motion.div 
+        aria-hidden="true"
         className="absolute top-1/2 left-0 h-[2px] bg-gradient-to-r from-[#FF9933] to-[#138808] -z-10 -translate-y-1/2"
         initial={{ width: 0 }}
         animate={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
@@ -27,7 +29,9 @@ export function StepProgressBar({ currentStep, steps }) {
         
         return (
           <div key={step.id} className="relative flex flex-col items-center group">
-            <div className={cn(
+            <div
+              aria-label={`Step ${step.id}: ${step.title}${isPast ? ' - completed' : isActive ? ' - current' : ''}`}
+              className={cn(
               "w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-colors duration-300 border-2",
               isPast ? "bg-green-500 border-green-500 text-white shadow-md" : 
               isActive ? "bg-[#FF9933] border-[#FF9933] text-white shadow-lg shadow-[#FF9933]/30" : 
@@ -46,4 +50,4 @@ export function StepProgressBar({ currentStep, steps }) {
       })}
     </div>
   )
-}
+})

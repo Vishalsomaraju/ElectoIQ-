@@ -1,4 +1,5 @@
 // src/components/voter-journey/WizardNavigation.jsx
+import { memo } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { useNavigate } from 'react-router-dom'
@@ -12,7 +13,7 @@ import { useNavigate } from 'react-router-dom'
  * @param {Function} props.onNext
  * @returns {JSX.Element}
  */
-export function WizardNavigation({ currentStep, totalSteps, onPrev, onNext }) {
+export const WizardNavigation = memo(function WizardNavigation({ currentStep, totalSteps, onPrev, onNext }) {
   const navigate = useNavigate()
   
   return (
@@ -45,4 +46,4 @@ export function WizardNavigation({ currentStep, totalSteps, onPrev, onNext }) {
       )}
     </div>
   )
-}
+})

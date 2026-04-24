@@ -117,7 +117,7 @@ export function ChatDrawer() {
             {/* Message list */}
             <div
               role="log"
-              aria-label="Chat conversation with ElectoBot"
+              aria-label="Chat conversation"
               aria-live="polite"
               className="flex-1 overflow-y-auto p-4 space-y-4"
             >

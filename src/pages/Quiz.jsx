@@ -1,5 +1,5 @@
 // src/pages/Quiz.jsx
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Brain, ChevronRight, RotateCcw, Trophy, Send, Bot, X, Loader2 } from 'lucide-react'
 import { AnimatedPage } from '../components/shared/AnimatedPage'
@@ -26,38 +26,38 @@ export default function Quiz() {
   const [input, setInput] = useState('')
   const { messages, streaming, error: aiError, sendMessage, clearChat } = useGemini()
 
-  const current = questions[currentIdx]
+  const current = questions.at(currentIdx)
   const selectedAnswer = answers[currentIdx]
   const isAnswered = selectedAnswer !== undefined
 
-  const handleAnswer = (idx) => {
+  const handleAnswer = useCallback((idx) => {
     if (isAnswered) return
     setAnswers(prev => ({ ...prev, [currentIdx]: idx }))
     setRevealed(true)
-  }
+  }, [isAnswered, currentIdx])
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (currentIdx < questions.length - 1) {
       setCurrentIdx(i => i + 1)
       setRevealed(false)
     } else {
       setPhase('results')
     }
-  }
+  }, [currentIdx, questions.length])
 
-  const handleRestart = () => {
+  const handleRestart = useCallback(() => {
     setCurrentIdx(0)
     setAnswers({})
     setRevealed(false)
     setPhase('quiz')
     clearChat()
-  }
+  }, [clearChat])
 
   const correctCount = Object.values(answers).filter((a, i) => a === questions[i]?.correct).length
   const score = calcScore(correctCount, questions.length)
   const grade = getGrade(score)
 
-  const handleSend = async () => {
+  const handleSend = useCallback(async () => {
     const text = input.trim()
     if (!text || streaming) return
     setInput('')
@@ -65,7 +65,7 @@ export default function Quiz() {
       currentPage: 'quiz',
       currentStage: current ? `Question about ${current.category}: ${current.question}` : null,
     })
-  }
+  }, [input, streaming, sendMessage, current])
 
   return (
     <AnimatedPage>
@@ -156,7 +156,7 @@ export default function Quiz() {
 
         {/* Quiz / Results */}
         <div className="max-w-2xl mx-auto">
-          {phase === 'quiz' && (
+          {phase === 'quiz' && current && (
             <motion.div key={currentIdx} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }}>
               {/* Progress */}
               <div className="mb-6">
@@ -191,6 +191,8 @@ export default function Quiz() {
                   return (
                     <button
                       key={i}
+                      role="radio"
+                      aria-checked={isSelected}
                       onClick={() => handleAnswer(i)}
                       disabled={isAnswered}
                       className={cn(
@@ -238,9 +240,11 @@ export default function Quiz() {
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
               <Card className="text-center py-10">
                 <Trophy size={52} className="mx-auto mb-4 text-yellow-400" />
-                <h2 className="font-display font-extrabold text-4xl text-slate-900 dark:text-white mb-1">{score}%</h2>
-                <p className={cn('font-semibold text-lg mb-1', grade.color)}>{grade.emoji} {grade.label}</p>
-                <p className="text-slate-600 dark:text-white/50 text-sm mb-6">{correctCount} out of {questions.length} correct</p>
+                <div role="status" aria-live="polite" aria-atomic="true">
+                  <h2 className="font-display font-extrabold text-4xl text-slate-900 dark:text-white mb-1">{score}%</h2>
+                  <p className={cn('font-semibold text-lg mb-1', grade.color)}>{grade.emoji} {grade.label}</p>
+                  <p className="text-slate-600 dark:text-white/50 text-sm mb-6">{correctCount} out of {questions.length} correct</p>
+                </div>
                 <ProgressBar value={score} max={100} color="green" size="lg" showPercent className="mb-8 max-w-xs mx-auto" />
 
                 <div className="grid grid-cols-3 gap-3 mb-8 max-w-sm mx-auto">

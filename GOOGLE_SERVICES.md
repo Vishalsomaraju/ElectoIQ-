@@ -1,6 +1,6 @@
 # Google Services — ElectoIQ
 
-ElectoIQ integrates multiple Google services to deliver a real-time, AI-powered Indian election education platform.
+ElectoIQ integrates 5 Google Cloud services to deliver a real-time, AI-powered Indian election education platform.
 
 ---
 

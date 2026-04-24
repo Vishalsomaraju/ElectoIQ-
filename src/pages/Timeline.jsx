@@ -1,5 +1,5 @@
 // src/pages/Timeline.jsx
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, ChevronUp, Megaphone, ClipboardList, FileEdit, FolderOpen, Speaker, Vote, Monitor, Hash, Landmark, Bot } from 'lucide-react'
 import { AnimatedPage } from '../components/shared/AnimatedPage'
@@ -28,7 +28,7 @@ const TimelineStage = React.memo(function TimelineStage({
   onAskBot,
 }) {
   const isLeft = idx % 2 === 0
-  const Icon = iconMap[stage.icon]
+  const Icon = iconMap[stage.icon] ?? Megaphone
 
   return (
     <motion.div
@@ -45,7 +45,7 @@ const TimelineStage = React.memo(function TimelineStage({
       <div className={cn('flex-1 ml-14 md:ml-0', isLeft ? 'md:pr-12 md:text-right' : 'md:pl-12')}>
         <div
           className="bg-white dark:bg-white/5 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-white/10 shadow-sm cursor-pointer hover:border-slate-300 dark:hover:border-white/20 transition-all duration-300"
-          onClick={onToggle}
+          onClick={() => onToggle(stage.id)}
         >
           <div className={cn('flex items-start gap-3 mb-2', isLeft ? 'md:flex-row-reverse' : '')}>
             <Badge variant={phaseColors[stage.phase]}>{stage.phase}</Badge>
@@ -57,13 +57,18 @@ const TimelineStage = React.memo(function TimelineStage({
           </h3>
           <p className="text-slate-600 dark:text-white/60 text-sm leading-relaxed">{stage.description}</p>
 
-          <button className="mt-3 flex items-center gap-1 text-xs text-slate-400 dark:text-white/40 hover:text-slate-700 dark:hover:text-white/70 transition-colors">
+          <button
+            aria-expanded={isExpanded}
+            aria-controls={`stage-details-${stage.id}`}
+            className="mt-3 flex items-center gap-1 text-xs text-slate-400 dark:text-white/40 hover:text-slate-700 dark:hover:text-white/70 transition-colors"
+          >
             {isExpanded ? <><ChevronUp size={14} /> Less</> : <><ChevronDown size={14} /> Details</>}
           </button>
 
           <AnimatePresence>
             {isExpanded && (
               <motion.ul
+                id={`stage-details-${stage.id}`}
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
@@ -110,6 +115,16 @@ export default function Timeline() {
   const [expanded, setExpanded] = useState(null)
   const { dispatch } = useAppContext()
 
+  const handleToggle = useCallback((stageId) => {
+    setExpanded(prev => prev === stageId ? null : stageId)
+  }, [])
+
+  const handleAskBot = useCallback((stage) => {
+    dispatch({ type: 'SET_CHAT_CONTEXT', payload: { stageName: stage.title } })
+    dispatch({ type: 'SET_SUGGESTED_QUESTIONS', payload: [`Explain ${stage.title} in detail`, `What is the role of ECI during ${stage.title}?`, `Can you summarize ${stage.title}?`] })
+    dispatch({ type: 'TOGGLE_CHAT', payload: true })
+  }, [dispatch])
+
   const phases = useMemo(() => ['All', ...electionPhases], [])
   const filtered = useMemo(
     () => activePhase === 'All'
@@ -149,7 +164,7 @@ export default function Timeline() {
         {/* Timeline */}
         <div className="relative">
           {/* Vertical line */}
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-[#FF9933] via-[#1a56db] to-[#138808] opacity-40 dark:opacity-30" />
+          <div aria-hidden="true" className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-[#FF9933] via-[#1a56db] to-[#138808] opacity-40 dark:opacity-30" />
 
           <div className="space-y-8">
             {filtered.map((stage, idx) => {
@@ -161,12 +176,8 @@ export default function Timeline() {
                   idx={idx}
                   stage={stage}
                   isExpanded={isExpanded}
-                  onToggle={() => setExpanded(isExpanded ? null : stage.id)}
-                  onAskBot={(activeStage) => {
-                    dispatch({ type: 'SET_CHAT_CONTEXT', payload: { stageName: activeStage.title } })
-                    dispatch({ type: 'SET_SUGGESTED_QUESTIONS', payload: [`Explain ${activeStage.title} in detail`, `What is the role of ECI during ${activeStage.title}?`, `Can you summarize ${activeStage.title}?`] })
-                    dispatch({ type: 'TOGGLE_CHAT', payload: true })
-                  }}
+                  onToggle={handleToggle}
+                  onAskBot={handleAskBot}
                 />
               )
             })}

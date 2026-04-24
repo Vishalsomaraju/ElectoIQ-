@@ -1,5 +1,5 @@
 // src/components/layout/Navbar.jsx
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Sun, Moon, LogOut, Loader2 } from 'lucide-react'
@@ -83,11 +83,11 @@ function AuthButton({ compact = false }) {
   const { user, loading, signInWithGoogle, logout } = useAuthContext()
   const [signingIn, setSigningIn] = useState(false)
 
-  const handleSignIn = async () => {
+  const handleSignIn = useCallback(async () => {
     setSigningIn(true)
     try { await signInWithGoogle() } catch (err) { console.warn('[Navbar] Google login error:', err) }
     finally { setSigningIn(false) }
-  }
+  }, [signInWithGoogle])
 
   if (loading) return (
     <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-white/10 animate-pulse" aria-label="Loading auth state" />
@@ -150,17 +150,20 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const { pathname } = useLocation()
 
+  const onScroll = useCallback(() => setScrolled(window.scrollY > 20), [])
+
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [onScroll])
 
   // Close drawer on route change
   useEffect(() => { setOpen(false) }, [pathname])
 
-  const isActive = (to, exact) =>
-    exact ? pathname === to : pathname === to || pathname.startsWith(to + '/')
+  const isActive = useCallback((to, exact) =>
+    exact ? pathname === to : pathname === to || pathname.startsWith(to + '/'), [pathname])
+
+  const toggleMenu = useCallback(() => setOpen(o => !o), [])
 
   return (
     <header
@@ -236,7 +239,7 @@ export function Navbar() {
         {/* ── Hamburger ── */}
         <button
           className="md:hidden p-2 rounded-lg text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
-          onClick={() => setOpen(o => !o)}
+          onClick={toggleMenu}
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
           aria-controls="mobile-menu"

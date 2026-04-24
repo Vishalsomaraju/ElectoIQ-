@@ -1,5 +1,5 @@
 // src/pages/Glossary.jsx
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { Search, BookOpen, X } from 'lucide-react'
 import { AnimatedPage } from '../components/shared/AnimatedPage'
@@ -29,7 +29,7 @@ const GlossaryCard = React.memo(function GlossaryCard({ term, idx, isOpen, onTog
       <Card
         hover
         className={cn('h-full cursor-pointer', isOpen && 'border-blue-500/30')}
-        onClick={onToggle}
+        onClick={() => onToggle(term.id)}
       >
         <div className="flex items-start justify-between gap-2 mb-3">
           <Badge variant={categoryBadgeMap[term.category] || 'default'}>{term.category}</Badge>
@@ -54,6 +54,11 @@ export default function Glossary() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('All')
   const [expanded, setExpanded] = useState(null)
+
+  const handleSearch = useCallback((e) => setSearch(e.target.value), [])
+  const handleClear = useCallback(() => setSearch(''), [])
+  const handleCategoryChange = useCallback((cat) => setCategory(cat), [])
+  const handleExpand = useCallback((termId) => setExpanded(prev => prev === termId ? null : termId), [])
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase()
@@ -80,12 +85,13 @@ export default function Glossary() {
             <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/40" />
             <input
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={handleSearch}
               placeholder="Search terms or definitions…"
+              aria-label="Search election terms and definitions"
               className="w-full bg-white dark:bg-white/10 border border-slate-200 dark:border-white/15 rounded-xl pl-10 pr-10 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/40 outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50"
             />
             {search && (
-              <button onClick={() => setSearch('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/40 hover:text-slate-900 dark:hover:text-white">
+              <button onClick={handleClear} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/40 hover:text-slate-900 dark:hover:text-white">
                 <X size={16} />
               </button>
             )}
@@ -95,7 +101,8 @@ export default function Glossary() {
             {glossaryCategories.map(cat => (
               <button
                 key={cat}
-                onClick={() => setCategory(cat)}
+                onClick={() => handleCategoryChange(cat)}
+                aria-pressed={category === cat}
                 className={cn(
                   'px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border',
                   category === cat
@@ -110,13 +117,13 @@ export default function Glossary() {
         </div>
 
         {/* Count */}
-        <p className="text-slate-500 dark:text-white/40 text-sm text-center mb-8">
+        <p role="status" aria-live="polite" aria-atomic="true" className="text-slate-500 dark:text-white/40 text-sm text-center mb-8">
           Showing <span className="text-slate-900 dark:text-white font-medium">{filtered.length}</span> terms
         </p>
 
         {/* Terms */}
         {filtered.length === 0 ? (
-          <div className="text-center py-20 text-slate-500 dark:text-white/40">
+          <div role="status" className="text-center py-20 text-slate-500 dark:text-white/40">
             <BookOpen size={40} className="mx-auto mb-3 opacity-50" />
             <p>No terms found for "{search}"</p>
           </div>
@@ -133,7 +140,7 @@ export default function Glossary() {
                   idx={idx}
                   term={term}
                   isOpen={isOpen}
-                  onToggle={() => setExpanded(isOpen ? null : term.id)}
+                  onToggle={handleExpand}
                 />
               )
             })}

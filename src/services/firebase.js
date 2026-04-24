@@ -7,7 +7,6 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
-import { getPerformance } from 'firebase/performance'
 
 const FIREBASE_CONFIGURED =
   import.meta.env.VITE_FIREBASE_API_KEY &&
@@ -31,7 +30,11 @@ if (FIREBASE_CONFIGURED) {
     auth = getAuth(app)
     db = getFirestore(app)
     try {
-      perf = getPerformance(app)
+      import('firebase/performance').then(({ getPerformance }) => {
+        perf = getPerformance(app)
+      }).catch(err => {
+        console.warn('[ElectoIQ] Performance monitoring unavailable:', err.message)
+      })
     } catch (err) {
       console.warn('[ElectoIQ] Performance monitoring unavailable:', err.message)
     }

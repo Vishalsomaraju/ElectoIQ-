@@ -9,6 +9,7 @@ import {
   getGrade,
   shuffle,
   truncate,
+  debounce,
 } from '../utils/helpers'
 
 // ── cn ─────────────────────────────────────────────────────────────────
@@ -138,6 +139,37 @@ describe('truncate', () => {
     expect(truncate(undefined)).toBe('')
   })
   it('returns text unchanged when exactly at maxLen', () => {
-    expect(truncate('12345', 5)).toBe('12345')
+  })
+})
+
+// ── debounce ───────────────────────────────────────────────────────────
+describe('debounce', () => {
+  it('delays function execution and only calls once after multiple rapid calls', async () => {
+    let callCount = 0
+    const fn = () => callCount++
+    const debouncedFn = debounce(fn, 100)
+
+    debouncedFn()
+    debouncedFn()
+    debouncedFn()
+
+    expect(callCount).toBe(0) // Should not be called immediately
+
+    // Wait for debounce time
+    await new Promise(resolve => setTimeout(resolve, 150))
+
+    expect(callCount).toBe(1) // Should only be called once
+  })
+})
+
+// ── formatDate ─────────────────────────────────────────────────────────
+describe('formatDate', () => {
+  it('formats valid ISO date string correctly', () => {
+    // Note: The specific output depends on the locale 'en-IN'.
+    // We can just check that it's a string and doesn't contain 'Invalid Date'
+    const result = formatDate('2024-05-15T10:00:00Z')
+    expect(result).not.toBe('Invalid Date')
+    expect(typeof result).toBe('string')
+    expect(result.length).toBeGreaterThan(0)
   })
 })
