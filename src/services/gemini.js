@@ -62,7 +62,7 @@ export async function sendMessage(message, history = []) {
   const model = getChatModel()
   if (!model) throw new Error('Gemini API key not configured')
 
-  const safeMessage = sanitizeInput(message)
+  const safeMessage = sanitizeInput(message.slice(0, 1000))
   const chat = model.startChat({ history })
   
   const delays = [500, 1000, 2000]
@@ -87,7 +87,7 @@ export async function sendMessageStream(message, history = [], onChunk) {
   const model = getChatModel()
   if (!model) throw new Error('Gemini API key not configured')
 
-  const safeMessage = sanitizeInput(message)
+  const safeMessage = sanitizeInput(message.slice(0, 1000))
   const chat = model.startChat({ history })
 
   const delays = [500, 1000, 2000]
@@ -112,7 +112,11 @@ export async function generateQuiz(topic = "Indian elections and democratic proc
   const model = getChatModel()
   if (!model) throw new Error('Gemini API key not configured')
 
-  const prompt = `Generate exactly ${count} multiple choice questions about ${topic}.
+  // Sanitize and clamp inputs to prevent prompt injection
+  const safeTopic = sanitizeInput(String(topic)).slice(0, 150) || 'Indian elections and democratic process'
+  const safeCount = Math.min(Math.max(Number(count) || 10, 5), 20)
+
+  const prompt = `Generate exactly ${safeCount} multiple choice questions about ${safeTopic}.
 Return ONLY a raw JSON array of objects. Do not include markdown formatting or backticks.
 Each object must have exactly this structure:
 {
@@ -134,7 +138,19 @@ Each object must have exactly this structure:
         }
       })
       const text = result.response.text()
-      return JSON.parse(text)
+      let parsed
+      try {
+        parsed = JSON.parse(text)
+      } catch {
+        throw new Error('AI returned invalid quiz format')
+      }
+      if (!Array.isArray(parsed)) throw new Error('AI returned non-array quiz response')
+      // Validate and cap results
+      return parsed.slice(0, safeCount).filter(q =>
+        q && typeof q.question === 'string' &&
+        Array.isArray(q.options) && q.options.length === 4 &&
+        typeof q.correct === 'number'
+      )
     } catch (error) {
       if (attempt === delays.length) throw error
       await new Promise(res => setTimeout(res, delays[attempt]))

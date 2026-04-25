@@ -50,7 +50,8 @@ function DarkModeToggle() {
   const [dark, setDark] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('theme')
-      if (saved) return saved === 'dark'
+      // Whitelist: only accept known values to prevent stored-value injection
+      if (saved === 'dark' || saved === 'light') return saved === 'dark'
       return window.matchMedia('(prefers-color-scheme: dark)').matches
     }
     return true

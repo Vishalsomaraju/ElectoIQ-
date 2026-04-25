@@ -49,11 +49,13 @@ export function useGemini() {
         parts: [{ text: m.content }],
       }))
 
-      // Build context-aware prompt prefix
-      const contextPrefix = context.currentStage
-        ? `[User is viewing: ${context.currentStage}] `
-        : context.currentPage
-        ? `[User is on the ${context.currentPage} page] `
+      // Build context-aware prompt prefix — sanitize context values to prevent prompt injection
+      const safeStage = context.currentStage ? sanitizeInput(String(context.currentStage)).slice(0, 80) : ''
+      const safePage = context.currentPage ? sanitizeInput(String(context.currentPage)).slice(0, 40) : ''
+      const contextPrefix = safeStage
+        ? `[User is viewing: ${safeStage}] `
+        : safePage
+        ? `[User is on the ${safePage} page] `
         : ''
 
       const fullMessage = contextPrefix + sanitizeInput(trimmed)

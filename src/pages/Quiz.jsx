@@ -16,7 +16,6 @@ import { quizQuestions } from '../data/quizQuestions'
 import { shuffle, calcScore, getGrade } from '../utils/helpers'
 import { cn } from '../utils/helpers'
 import { Skeleton } from '../components/ui/Skeleton'
-import { useEffect } from 'react'
 
 const difficultyColor = { Easy: 'success', Medium: 'warning', Hard: 'danger' }
 

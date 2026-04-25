@@ -255,6 +255,7 @@ export function ChatDrawer() {
                   value={inputValue}
                   onChange={e => setInputValue(e.target.value)}
                   disabled={streaming}
+                  maxLength={1000}
                   placeholder="Ask about elections…"
                   aria-label="Message to ElectoBot"
                   className="flex-1 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full pl-4 pr-3 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 transition-all"

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, vi, beforeEach } from 'vitest'
 
 // Mock firebase
 vi.mock('firebase/app', () => ({
@@ -59,16 +59,15 @@ describe('Services', () => {
   })
 
   it('tests gemini functions', async () => {
-    const { generateQuiz, sendMessageStream, getChatHistory } = await import('../services/gemini')
+    const { generateQuiz, sendMessageStream } = await import('../services/gemini')
     
     try {
       await generateQuiz()
-    } catch (e) {}
+    } catch (_e) { /* ignore */ }
     
     try {
       await sendMessageStream('test')
-    } catch (e) {}
-        // getChatHistory is internal, so we don't test it directly here
+    } catch (_e) { /* ignore */ }
   })
 
   it('tests firebase functions', async () => {
@@ -76,18 +75,18 @@ describe('Services', () => {
     
     try {
       await loginWithGoogle()
-    } catch (e) {}
+    } catch (_e) { /* ignore */ }
     
     try {
       await logoutUser()
-    } catch (e) {}
+    } catch (_e) { /* ignore */ }
     
     try {
       await getUserProgress('test-uid')
-    } catch (e) {}
+    } catch (_e) { /* ignore */ }
     
     try {
       await updateUserProgress('test-uid', {})
-    } catch (e) {}
+    } catch (_e) { /* ignore */ }
   })
 })
