@@ -10,14 +10,18 @@ import { Badge } from '../components/ui/Badge'
 import { ProgressBar } from '../components/ui/ProgressBar'
 import { Card } from '../components/ui/Card'
 import { useGemini } from '../hooks/useGemini'
+import { generateQuiz } from '../services/gemini'
 import { quizQuestions } from '../data/quizQuestions'
 import { shuffle, calcScore, getGrade } from '../utils/helpers'
 import { cn } from '../utils/helpers'
+import { Skeleton } from '../components/ui/Skeleton'
+import { useEffect } from 'react'
 
 const difficultyColor = { Easy: 'success', Medium: 'warning', Hard: 'danger' }
 
 export default function Quiz() {
-  const [questions] = useState(() => shuffle(quizQuestions).slice(0, 10))
+  const [questions, setQuestions] = useState([])
+  const [loadingQuiz, setLoadingQuiz] = useState(true)
   const [currentIdx, setCurrentIdx] = useState(0)
   const [answers, setAnswers] = useState({})
   const [revealed, setRevealed] = useState(false)
@@ -25,6 +29,21 @@ export default function Quiz() {
   const [chatOpen, setChatOpen] = useState(false)
   const [input, setInput] = useState('')
   const { messages, streaming, error: aiError, sendMessage, clearChat } = useGemini()
+
+  useEffect(() => {
+    async function load() {
+      try {
+        setLoadingQuiz(true)
+        const q = await generateQuiz()
+        setQuestions(q)
+      } catch (err) {
+        setQuestions(shuffle(quizQuestions).slice(0, 10))
+      } finally {
+        setLoadingQuiz(false)
+      }
+    }
+    load()
+  }, [])
 
   const current = questions.at(currentIdx)
   const selectedAnswer = answers[currentIdx]
@@ -51,6 +70,8 @@ export default function Quiz() {
     setRevealed(false)
     setPhase('quiz')
     clearChat()
+    setLoadingQuiz(true)
+    generateQuiz().then(q => setQuestions(q)).catch(() => setQuestions(shuffle(quizQuestions).slice(0, 10))).finally(() => setLoadingQuiz(false))
   }, [clearChat])
 
   const correctCount = Object.values(answers).filter((a, i) => a === questions[i]?.correct).length
@@ -156,7 +177,27 @@ export default function Quiz() {
 
         {/* Quiz / Results */}
         <div className="max-w-2xl mx-auto">
-          {phase === 'quiz' && current && (
+          {loadingQuiz && (
+            <div className="space-y-6">
+              <div className="mb-6 space-y-2">
+                <Skeleton className="h-4 w-1/4" />
+                <Skeleton className="h-2 w-full" />
+              </div>
+              <Card className="mb-6 space-y-4">
+                <Skeleton className="h-6 w-1/5" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-4/5" />
+              </Card>
+              <div className="space-y-3">
+                <Skeleton className="h-14 w-full" />
+                <Skeleton className="h-14 w-full" />
+                <Skeleton className="h-14 w-full" />
+                <Skeleton className="h-14 w-full" />
+              </div>
+            </div>
+          )}
+
+          {!loadingQuiz && phase === 'quiz' && current && (
             <motion.div key={currentIdx} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }}>
               {/* Progress */}
               <div className="mb-6">
@@ -240,7 +281,7 @@ export default function Quiz() {
             </motion.div>
           )}
 
-          {phase === 'results' && (
+          {!loadingQuiz && phase === 'results' && (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
               <Card className="text-center py-10">
                 <Trophy size={52} className="mx-auto mb-4 text-yellow-400" />

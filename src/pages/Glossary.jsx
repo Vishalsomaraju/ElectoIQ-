@@ -9,6 +9,7 @@ import { Badge } from '../components/ui/Badge'
 import { Card } from '../components/ui/Card'
 import { glossaryTerms, glossaryCategories } from '../data/glossaryTerms'
 import { cn } from '../utils/helpers'
+import { Skeleton } from '../components/ui/Skeleton'
 
 const categoryBadgeMap = {
   Institution: 'primary', Regulation: 'warning', Voter: 'success',
@@ -55,28 +56,42 @@ const INITIAL_COUNT = 24
 
 export default function Glossary() {
   const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [category, setCategory] = useState('All')
   const [expanded, setExpanded] = useState(null)
   const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT)
+  const [loading, setLoading] = useState(true)
 
   const handleSearch = useCallback((e) => setSearch(e.target.value), [])
   const handleClear = useCallback(() => setSearch(''), [])
   const handleCategoryChange = useCallback((cat) => setCategory(cat), [])
   const handleExpand = useCallback((termId) => setExpanded(prev => prev === termId ? null : termId), [])
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search)
+    }, 200)
+    return () => clearTimeout(timer)
+  }, [search])
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 800)
+    return () => clearTimeout(t)
+  }, [])
+
   // Reset visible window whenever the user changes search or category
   useEffect(() => {
     setVisibleCount(INITIAL_COUNT)
-  }, [search, category])
+  }, [debouncedSearch, category])
 
   const filtered = useMemo(() => {
-    const q = search.toLowerCase()
+    const q = debouncedSearch.toLowerCase()
     return glossaryTerms.filter(t => {
       const matchCat = category === 'All' || t.category === category
       const matchSearch = !q || t.term.toLowerCase().includes(q) || t.definition.toLowerCase().includes(q)
       return matchCat && matchSearch
     })
-  }, [search, category])
+  }, [debouncedSearch, category])
 
   const visibleTerms = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount])
   const hasMore = visibleCount < filtered.length
@@ -138,7 +153,19 @@ export default function Glossary() {
         </p>
 
         {/* Terms */}
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <Card key={i} className="h-full">
+                <Skeleton className="h-6 w-1/3 mb-4" />
+                <Skeleton className="h-5 w-2/3 mb-3" />
+                <Skeleton className="h-4 w-full mb-1" />
+                <Skeleton className="h-4 w-full mb-1" />
+                <Skeleton className="h-4 w-4/5" />
+              </Card>
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
           <div role="status" className="text-center py-20 text-slate-500 dark:text-white/40">
             <BookOpen size={40} className="mx-auto mb-3 opacity-50" />
             <p>No terms found for &ldquo;{search}&rdquo;</p>

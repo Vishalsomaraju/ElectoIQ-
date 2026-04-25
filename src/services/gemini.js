@@ -3,12 +3,13 @@
 // SDK: @google/generative-ai ^0.24.1
 // Docs: https://ai.google.dev/docs
 import { GoogleGenerativeAI } from '@google/generative-ai'
+import { logger } from '../utils/logger'
 import { sanitizeInput } from '../utils/helpers'
 
 const API_KEY = import.meta.env.VITE_GEMINI_KEY
 
 if (!API_KEY || API_KEY === 'your_key_here') {
-  console.warn(
+  logger.warn(
     '%c[ElectoIQ] ⚠️ VITE_GEMINI_KEY is not set or is a placeholder. ' +
     'AI features will not work. Add your key to .env file.',
     'color: orange; font-weight: bold'
@@ -63,8 +64,17 @@ export async function sendMessage(message, history = []) {
 
   const safeMessage = sanitizeInput(message)
   const chat = model.startChat({ history })
-  const result = await chat.sendMessage(safeMessage)
-  return result.response.text()
+  
+  const delays = [500, 1000, 2000]
+  for (let attempt = 0; attempt <= delays.length; attempt++) {
+    try {
+      const result = await chat.sendMessage(safeMessage)
+      return result.response.text()
+    } catch (error) {
+      if (attempt === delays.length) throw error
+      await new Promise(res => setTimeout(res, delays[attempt]))
+    }
+  }
 }
 
 /**
@@ -79,13 +89,55 @@ export async function sendMessageStream(message, history = [], onChunk) {
 
   const safeMessage = sanitizeInput(message)
   const chat = model.startChat({ history })
-  const result = await chat.sendMessageStream(safeMessage)
 
-  let fullText = ''
-  for await (const chunk of result.stream) {
-    const chunkText = chunk.text()
-    fullText += chunkText
-    if (onChunk) onChunk(chunkText, fullText)
+  const delays = [500, 1000, 2000]
+  for (let attempt = 0; attempt <= delays.length; attempt++) {
+    try {
+      const result = await chat.sendMessageStream(safeMessage)
+      let fullText = ''
+      for await (const chunk of result.stream) {
+        const chunkText = chunk.text()
+        fullText += chunkText
+        if (onChunk) onChunk(chunkText, fullText)
+      }
+      return fullText
+    } catch (error) {
+      if (attempt === delays.length) throw error
+      await new Promise(res => setTimeout(res, delays[attempt]))
+    }
   }
-  return fullText
+}
+
+export async function generateQuiz(topic = "Indian elections and democratic process", count = 10) {
+  const model = getChatModel()
+  if (!model) throw new Error('Gemini API key not configured')
+
+  const prompt = `Generate exactly ${count} multiple choice questions about ${topic}.
+Return ONLY a raw JSON array of objects. Do not include markdown formatting or backticks.
+Each object must have exactly this structure:
+{
+  "category": "String",
+  "difficulty": "Easy" | "Medium" | "Hard",
+  "question": "String",
+  "options": ["String", "String", "String", "String"],
+  "correct": Number (0-3),
+  "explanation": "String"
+}`
+
+  const delays = [500, 1000, 2000]
+  for (let attempt = 0; attempt <= delays.length; attempt++) {
+    try {
+      const result = await model.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: "application/json",
+        }
+      })
+      const text = result.response.text()
+      return JSON.parse(text)
+    } catch (error) {
+      if (attempt === delays.length) throw error
+      await new Promise(res => setTimeout(res, delays[attempt]))
+    }
+  }
 }

@@ -1,5 +1,6 @@
 // src/hooks/useAuth.js
 import { useState, useEffect } from 'react'
+import { logger } from '../utils/logger'
 import {
   onAuthStateChanged,
   signInWithRedirect,
@@ -42,7 +43,7 @@ export function useAuth() {
     try {
       await signInWithRedirect(auth, googleProvider)
     } catch (err) {
-      console.warn('[signInWithGoogle] error:', err)
+      logger.warn('[signInWithGoogle] error:', err)
       setError(err.message)
       throw err
     }
@@ -55,7 +56,7 @@ export function useAuth() {
       const result = await signInAnonymously(auth)
       return result.user
     } catch (err) {
-      console.warn('[signInAsGuest] error:', err)
+      logger.warn('[signInAsGuest] error:', err)
       setError(err.message)
       throw err
     }
@@ -67,7 +68,7 @@ export function useAuth() {
     try {
       await signOut(auth)
     } catch (err) {
-      console.warn('[logout] error:', err)
+      logger.warn('[logout] error:', err)
       setError(err.message)
       throw err
     }

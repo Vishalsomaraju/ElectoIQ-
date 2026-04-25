@@ -1,5 +1,6 @@
 // src/hooks/useGemini.js
 import { useState, useRef, useCallback } from 'react'
+import { logger } from '../utils/logger'
 import { sendMessageStream } from '../services/gemini'
 import { sanitizeInput } from '../utils/helpers'
 
@@ -86,7 +87,7 @@ export function useGemini() {
         err instanceof Error
           ? err.message.replace(/key=[^&\s]*/g, 'key=REDACTED')
           : 'Failed to get a response. Please try again.'
-      console.warn('[useGemini] Error:', msg)
+      logger.warn('[useGemini] Error:', msg)
       setError(msg)
       // Remove the empty assistant bubble on error
       setMessages(prev => prev.filter(m => m.id !== assistantMsg.id))

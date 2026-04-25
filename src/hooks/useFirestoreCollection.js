@@ -3,6 +3,7 @@
 // SDK: firebase/firestore ^4.x
 // Docs: https://firebase.google.com/docs/firestore/query-data/listen
 import { useState, useEffect, useCallback } from 'react'
+import { logger } from '../utils/logger'
 import {
   collection, query, orderBy, limit,
   onSnapshot, where, Timestamp,
@@ -59,7 +60,7 @@ export function useFirestoreCollection(collectionName, options = {}) {
         setError(null)
       },
       (err) => {
-        console.warn(`[useFirestoreCollection] ${collectionName} error:`, err)
+        logger.warn(`[useFirestoreCollection] ${collectionName} error:`, err)
         setError(err.message)
         setLoading(false)
         setIsConnected(false)
@@ -68,7 +69,7 @@ export function useFirestoreCollection(collectionName, options = {}) {
 
     return () => {
       try { unsubscribe() } catch (err) {
-        console.warn('[useFirestoreCollection] Unsubscribe error:', err)
+        logger.warn('[useFirestoreCollection] Unsubscribe error:', err)
       }
     }
   }, [collectionName, limitCount, orderByField])

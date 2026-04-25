@@ -1,5 +1,6 @@
 // src/hooks/useFirestore.js
 import { useState, useCallback } from 'react'
+import { logger } from '../utils/logger'
 import {
   doc, getDoc, setDoc, updateDoc, deleteDoc,
   collection, addDoc, getDocs, query, where, orderBy, limit, serverTimestamp,
@@ -33,7 +34,7 @@ export function useFirestore(collectionName) {
       const snap = await getDoc(ref)
       return snap.exists() ? { id: snap.id, ...snap.data() } : null
     } catch (err) {
-      console.warn(`[getDocument] Error in ${collectionName}:`, err)
+      logger.warn(`[getDocument] Error in ${collectionName}:`, err)
       setError(err.message)
       return null
     } finally {
@@ -51,7 +52,7 @@ export function useFirestore(collectionName) {
       await setDoc(ref, { ...data, updatedAt: serverTimestamp() }, { merge: true })
       return true
     } catch (err) {
-      console.warn(`[setDocument] Error in ${collectionName}:`, err)
+      logger.warn(`[setDocument] Error in ${collectionName}:`, err)
       setError(err.message)
       return false
     } finally {
@@ -69,7 +70,7 @@ export function useFirestore(collectionName) {
       const docRef = await addDoc(ref, { ...data, createdAt: serverTimestamp() })
       return docRef.id
     } catch (err) {
-      console.warn(`[addDocument] Error in ${collectionName}:`, err)
+      logger.warn(`[addDocument] Error in ${collectionName}:`, err)
       setError(err.message)
       return null
     } finally {
@@ -87,7 +88,7 @@ export function useFirestore(collectionName) {
       await updateDoc(ref, { ...data, updatedAt: serverTimestamp() })
       return true
     } catch (err) {
-      console.warn(`[updateDocument] Error in ${collectionName}:`, err)
+      logger.warn(`[updateDocument] Error in ${collectionName}:`, err)
       setError(err.message)
       return false
     } finally {
@@ -104,7 +105,7 @@ export function useFirestore(collectionName) {
       await deleteDoc(doc(db, collectionName, id))
       return true
     } catch (err) {
-      console.warn(`[deleteDocument] Error in ${collectionName}:`, err)
+      logger.warn(`[deleteDocument] Error in ${collectionName}:`, err)
       setError(err.message)
       return false
     } finally {
@@ -124,7 +125,7 @@ export function useFirestore(collectionName) {
       const snap = await getDocs(q)
       return snap.docs.map(d => ({ id: d.id, ...d.data() }))
     } catch (err) {
-      console.warn(`[getCollection] Error in ${collectionName}:`, err)
+      logger.warn(`[getCollection] Error in ${collectionName}:`, err)
       setError(err.message)
       return []
     } finally {

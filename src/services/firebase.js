@@ -5,8 +5,9 @@
 // src/services/firebase.js
 
 import { initializeApp } from 'firebase/app'
+import { logger } from '../utils/logger'
 import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore'
 import { getPerformance } from 'firebase/performance'
 import { getAnalytics, logEvent } from 'firebase/analytics'
 
@@ -33,21 +34,26 @@ if (FIREBASE_CONFIGURED) {
     auth = getAuth(app)
     db = getFirestore(app)
     try {
+      enableIndexedDbPersistence(db).catch(err => {
+        logger.warn('[ElectoIQ] Persistence unavailable:', err.message)
+      })
+    } catch (e) {}
+    try {
       perf = getPerformance(app)
     } catch (err) {
-      console.warn('[ElectoIQ] Performance monitoring unavailable:', err.message)
+      logger.warn('[ElectoIQ] Performance monitoring unavailable:', err.message)
     }
     try {
       analytics = getAnalytics(app)
       logEvent(analytics, 'app_open', { platform: 'web' })
     } catch (err) {
-      console.warn('[ElectoIQ] Analytics unavailable:', err.message)
+      logger.warn('[ElectoIQ] Analytics unavailable:', err.message)
     }
   } catch (err) {
     const msg = err instanceof Error
       ? err.message.replace(/key=[^&\s]*/g, 'key=REDACTED')
       : 'Firebase init failed'
-    console.warn('[ElectoIQ] Firebase init failed:', msg)
+    logger.warn('[ElectoIQ] Firebase init failed:', msg)
   }
 }
 

@@ -1,5 +1,6 @@
 // src/components/layout/Navbar.jsx
 import { useState, useEffect, useCallback } from 'react'
+import { logger } from '../../utils/logger'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Sun, Moon, LogOut, Loader2 } from 'lucide-react'
@@ -85,7 +86,7 @@ function AuthButton({ compact = false }) {
 
   const handleSignIn = useCallback(async () => {
     setSigningIn(true)
-    try { await signInWithGoogle() } catch (err) { console.warn('[Navbar] Google login error:', err) }
+    try { await signInWithGoogle() } catch (err) { logger.warn('[Navbar] Google login error:', err) }
     finally { setSigningIn(false) }
   }, [signInWithGoogle])
 

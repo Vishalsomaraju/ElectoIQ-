@@ -1,4 +1,5 @@
 import { Component } from 'react'
+import { logger } from '../../utils/logger'
 
 /**
  * React error boundary — catches render errors and shows fallback UI.
@@ -15,7 +16,7 @@ export class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.warn('[ElectoIQ] ErrorBoundary caught:', error.message, errorInfo.componentStack)
+    logger.warn('[ElectoIQ] ErrorBoundary caught:', error.message, errorInfo.componentStack)
   }
 
   handleReset() {

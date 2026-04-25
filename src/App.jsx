@@ -10,6 +10,7 @@ import { Spinner } from './components/ui/Spinner'
 import { ChatDrawer } from './components/shared/ChatDrawer'
 import { FloatingChat } from './components/shared/FloatingChat'
 import { ErrorBoundary } from './components/shared/ErrorBoundary'
+import { RouteChangeAnnouncer } from './components/shared/RouteChangeAnnouncer'
 
 const Home = lazy(() => import('./pages/Home'))
 const Timeline = lazy(() => import('./pages/Timeline'))
@@ -41,6 +42,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
+        <RouteChangeAnnouncer />
         <AuthProvider>
           <AppProvider>
             <div className="min-h-screen flex flex-col">
