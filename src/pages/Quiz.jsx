@@ -21,8 +21,8 @@ import { useEffect } from 'react'
 const difficultyColor = { Easy: 'success', Medium: 'warning', Hard: 'danger' }
 
 export default function Quiz() {
-  const [questions, setQuestions] = useState([])
-  const [loadingQuiz, setLoadingQuiz] = useState(true)
+  const [questions, setQuestions] = useState(() => shuffle(quizQuestions).slice(0, 10))
+  const [loadingQuiz, setLoadingQuiz] = useState(false)
   const [currentIdx, setCurrentIdx] = useState(0)
   const [answers, setAnswers] = useState({})
   const [revealed, setRevealed] = useState(false)
@@ -30,21 +30,6 @@ export default function Quiz() {
   const [chatOpen, setChatOpen] = useState(false)
   const [input, setInput] = useState('')
   const { messages, streaming, error: aiError, sendMessage, clearChat } = useGemini()
-
-  useEffect(() => {
-    async function load() {
-      try {
-        setLoadingQuiz(true)
-        const q = await generateQuiz()
-        setQuestions(q)
-      } catch (_err) {
-        setQuestions(shuffle(quizQuestions).slice(0, 10))
-      } finally {
-        setLoadingQuiz(false)
-      }
-    }
-    load()
-  }, [])
 
   const current = questions.at(currentIdx)
   const selectedAnswer = answers[currentIdx]
@@ -71,8 +56,24 @@ export default function Quiz() {
     setRevealed(false)
     setPhase('quiz')
     clearChat()
+    setQuestions(shuffle(quizQuestions).slice(0, 10))
+  }, [clearChat])
+
+  const handleGenerateAI = useCallback(async () => {
+    setCurrentIdx(0)
+    setAnswers({})
+    setRevealed(false)
+    setPhase('quiz')
+    clearChat()
     setLoadingQuiz(true)
-    generateQuiz().then(q => setQuestions(q)).catch(() => setQuestions(shuffle(quizQuestions).slice(0, 10))).finally(() => setLoadingQuiz(false))
+    try {
+      const q = await generateQuiz()
+      setQuestions(q)
+    } catch (_err) {
+      setQuestions(shuffle(quizQuestions).slice(0, 10))
+    } finally {
+      setLoadingQuiz(false)
+    }
   }, [clearChat])
 
   const correctCount = Object.values(answers).filter((a, i) => a === questions[i]?.correct).length
@@ -201,10 +202,15 @@ export default function Quiz() {
           {!loadingQuiz && phase === 'quiz' && current && (
             <motion.div key={currentIdx} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }}>
               {/* Progress */}
-              <div className="mb-6">
-                <div className="flex justify-between text-sm text-slate-600 dark:text-white/60 mb-2">
-                  <span>Question {currentIdx + 1} of {questions.length}</span>
-                  <Badge variant={difficultyColor[current.difficulty]}>{current.difficulty}</Badge>
+              <div className="mb-6 flex flex-col gap-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-slate-600 dark:text-white/60 font-medium">Question {currentIdx + 1} of {questions.length}</span>
+                    <Badge variant={difficultyColor[current.difficulty]}>{current.difficulty}</Badge>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={handleGenerateAI} icon={<Brain size={14} className="text-blue-500" />}>
+                    Generate AI Quiz
+                  </Button>
                 </div>
                 <ProgressBar value={currentIdx + 1} max={questions.length} color="primary" />
               </div>
@@ -299,7 +305,10 @@ export default function Quiz() {
                   <div className="bg-slate-50 dark:bg-[#1e2433]/70 backdrop-blur-md rounded-xl py-4"><p className="text-2xl font-bold text-blue-400">{score}%</p><p className="text-xs text-slate-500 dark:text-white/50">Score</p></div>
                 </div>
 
-                <Button onClick={handleRestart} icon={<RotateCcw size={16} />}>Retry Quiz</Button>
+                <div className="flex justify-center gap-3">
+                  <Button onClick={handleRestart} variant="outline" icon={<RotateCcw size={16} />}>Retry Default</Button>
+                  <Button onClick={handleGenerateAI} icon={<Brain size={16} />}>Generate AI Quiz</Button>
+                </div>
               </Card>
             </motion.div>
           )}
