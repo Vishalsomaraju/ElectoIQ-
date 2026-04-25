@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion'
 import { Bot } from 'lucide-react'
 import { useAppContext } from '../../context/AppContext'

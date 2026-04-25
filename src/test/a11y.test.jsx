@@ -1,3 +1,4 @@
+import { expect, describe, it } from 'vitest'
 import { render } from '@testing-library/react'
 import { axe, toHaveNoViolations } from 'jest-axe'
 import { MemoryRouter } from 'react-router-dom'

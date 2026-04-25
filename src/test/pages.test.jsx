@@ -1,26 +1,22 @@
 // src/test/pages.test.jsx
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 
 // ── Mocks — must be hoisted before imports that use them ───────────────────
 
+// Strip framer-motion animation props that are not valid DOM attributes
+const stripMotionProps = ({ children, initial: _i, animate: _a, exit: _ex, transition: _tr,
+  whileInView: _wv, layout: _la, layoutId: _li, variants: _va, viewport: _vp, whileHover: _wh,
+  whileTap: _wt, ...rest }) => ({ children, ...rest })
+
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...p }) => {
-      const { initial, animate, exit, transition, whileInView, layout, layoutId, variants, viewport, ...rest } = p
-      return <div {...rest}>{children}</div>
-    },
-    ul: ({ children, ...p }) => {
-      const { initial, animate, exit, variants, ...rest } = p
-      return <ul {...rest}>{children}</ul>
-    },
-    span: ({ children, ...p }) => {
-      const { initial, animate, exit, transition, ...rest } = p
-      return <span {...rest}>{children}</span>
-    },
+    div: ({ children, ...props }) => <div {...stripMotionProps({ children, ...props })}>{children}</div>,
+    ul: ({ children, ...props }) => <ul {...stripMotionProps({ children, ...props })}>{children}</ul>,
+    span: ({ children, ...props }) => <span {...stripMotionProps({ children, ...props })}>{children}</span>,
   },
   AnimatePresence: ({ children }) => <>{children}</>,
   useInView: () => true,

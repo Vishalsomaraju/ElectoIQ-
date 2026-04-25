@@ -1,5 +1,6 @@
 // src/pages/Timeline.jsx
 import React, { useState, useMemo, useCallback } from 'react'
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, ChevronUp, Megaphone, ClipboardList, FileEdit, FolderOpen, Speaker, Vote, Monitor, Hash, Landmark, Bot } from 'lucide-react'
 import { AnimatedPage } from '../components/shared/AnimatedPage'

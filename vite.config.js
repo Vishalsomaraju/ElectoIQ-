@@ -36,11 +36,13 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/performance', 'firebase/analytics'],
-          gemini: ['@google/generative-ai'],
-          motion: ['framer-motion'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('firebase')) return 'firebase'
+            if (id.includes('@google/generative-ai')) return 'gemini'
+            if (id.includes('framer-motion')) return 'motion'
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) return 'vendor'
+          }
         },
       },
     },

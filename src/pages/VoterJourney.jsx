@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion'
 import { Download, Share2, ClipboardList, Search, FileEdit, IdCard, CalendarDays, PartyPopper } from 'lucide-react'
 import confetti from 'canvas-confetti'
@@ -236,11 +237,12 @@ export default function VoterJourney() {
         setDocument(currentUser.uid, {
           progress: {
             voterJourney: { completed: true, completedAt: new Date(), stepsViewed: 6 }
-          }
+          },
+          updatedAt: new Date(),
         })
       }
     }
-  }, [currentStep, currentUser])
+  }, [currentStep, currentUser, setDocument])
 
   const ActiveStepData = WIZARD_STEPS[currentStep - 1]
 

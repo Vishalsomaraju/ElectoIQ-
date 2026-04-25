@@ -1,6 +1,7 @@
 // src/pages/Glossary.jsx
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
-import { motion } from 'framer-motion'
+// eslint-disable-next-line no-unused-vars
+import { motion, AnimatePresence } from 'framer-motion'
 import { Search, BookOpen, X } from 'lucide-react'
 import { AnimatedPage } from '../components/shared/AnimatedPage'
 import { PageWrapper } from '../components/layout/PageWrapper'
@@ -79,9 +80,10 @@ export default function Glossary() {
     return () => clearTimeout(t)
   }, [])
 
-  // Reset visible window whenever the user changes search or category
+  // Reset pagination when filters change — intentional setState in effect
+  // Reset pagination when filters change — intentional setState in effect
   useEffect(() => {
-    setVisibleCount(INITIAL_COUNT)
+    setVisibleCount(INITIAL_COUNT)  
   }, [debouncedSearch, category])
 
   const filtered = useMemo(() => {

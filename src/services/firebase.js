@@ -37,7 +37,9 @@ if (FIREBASE_CONFIGURED) {
       enableIndexedDbPersistence(db).catch(err => {
         logger.warn('[ElectoIQ] Persistence unavailable:', err.message)
       })
-    } catch (e) {}
+    } catch (_e) {
+      logger.warn('[ElectoIQ] IndexedDB persistence not supported in this environment')
+    }
     try { perf = getPerformance(app) } catch (e) {
       logger.warn('[ElectoIQ] Performance unavailable:', e.message)
     }

@@ -27,7 +27,7 @@ describe('useAuth hook', () => {
 
   it('initializes with loading true and sets up listener', () => {
     const mockUnsubscribe = vi.fn()
-    onAuthStateChanged.mockImplementation((auth, callback) => {
+    onAuthStateChanged.mockImplementation((_auth, _callback) => {
       // Don't call callback immediately to test initial state
       return mockUnsubscribe
     })
@@ -71,7 +71,7 @@ describe('useAuth hook', () => {
     await act(async () => {
       try {
         await result.current.signInWithGoogle()
-      } catch (e) {
+      } catch (_err) {
         // Expected
       }
     })

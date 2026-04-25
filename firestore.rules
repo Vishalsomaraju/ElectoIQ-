@@ -2,19 +2,52 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // ── Helpers ────────────────────────────────────────────────────────────
     function isSignedIn() {
       return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
     }
     function isAdmin() {
       return isSignedIn() && request.auth.token.role == 'admin';
     }
 
-    // User quiz progress — own data only
+    // ── User progress — strict field allowlist on writes ─────────────────
     match /users/{userId} {
-      allow read, write: if isSignedIn() && request.auth.uid == userId;
+      allow read: if isOwner(userId);
+
+      // Only allow these specific fields — prevents privilege escalation
+      allow write: if isOwner(userId)
+        && request.resource.data.keys().hasOnly([
+          'progress', 'displayName', 'photoURL',
+          'createdAt', 'updatedAt', 'lastSeen'
+        ])
+        // Block any attempt to set a role or isAdmin via document field
+        && !('role' in request.resource.data)
+        && !('isAdmin' in request.resource.data)
+        && !('customClaims' in request.resource.data);
     }
 
-    // Public election data — read only for everyone
+    // ── Quiz results — own data only ──────────────────────────────────────
+    match /quizResults/{docId} {
+      // Users can only read their own results
+      allow read: if isSignedIn()
+        && resource.data.uid == request.auth.uid;
+
+      // Users can only create results assigned to themselves
+      allow create: if isSignedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          'uid', 'score', 'correctCount', 'totalQuestions',
+          'topic', 'difficulty', 'createdAt', 'durationMs'
+        ]);
+
+      // No updates or deletes on quiz results (immutable audit trail)
+      allow update, delete: if isAdmin();
+    }
+
+    // ── Public election data — read-only for everyone ─────────────────────
     match /glossaryTerms/{docId} {
       allow read: if true;
       allow write: if isAdmin();
@@ -25,7 +58,7 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Deny everything not explicitly allowed
+    // ── Catch-all: deny everything not explicitly allowed ─────────────────
     match /{document=**} {
       allow read, write: if false;
     }

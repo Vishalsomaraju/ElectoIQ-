@@ -2,6 +2,7 @@
 import { useRef, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
+  // eslint-disable-next-line no-unused-vars
   motion,
   useInView,
   useMotionValue,

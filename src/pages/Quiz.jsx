@@ -1,5 +1,6 @@
 // src/pages/Quiz.jsx
 import { useState, useCallback } from 'react'
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion'
 import { Brain, ChevronRight, RotateCcw, Trophy, Send, Bot, X, Loader2 } from 'lucide-react'
 import { AnimatedPage } from '../components/shared/AnimatedPage'
@@ -36,7 +37,7 @@ export default function Quiz() {
         setLoadingQuiz(true)
         const q = await generateQuiz()
         setQuestions(q)
-      } catch (err) {
+      } catch (_err) {
         setQuestions(shuffle(quizQuestions).slice(0, 10))
       } finally {
         setLoadingQuiz(false)
