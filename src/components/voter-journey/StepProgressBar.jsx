@@ -5,10 +5,12 @@ import { CheckCircle2 } from 'lucide-react'
 import { cn } from '../../utils/helpers'
 
 /**
- * Step progress bar for wizard navigation
+ * Horizontal step-progress indicator for the Voter Journey wizard.
+ * Renders a connected series of step circles with animated progress fill.
+ *
  * @param {Object} props
- * @param {number} props.currentStep
- * @param {Array} props.steps
+ * @param {number} props.currentStep - The 1-based index of the active step
+ * @param {Array<{id: number, title: string}>} props.steps - Ordered list of wizard steps
  * @returns {JSX.Element}
  */
 export const StepProgressBar = memo(function StepProgressBar({ currentStep, steps }) {

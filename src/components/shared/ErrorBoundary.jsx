@@ -2,31 +2,31 @@
 import { Component } from 'react'
 
 /**
- * React Error Boundary — catches unhandled render errors in the subtree
- * and displays a graceful fallback UI instead of a blank white screen.
+ * React error boundary that catches render errors and shows a fallback UI.
+ * Prevents the entire app from crashing on unexpected component errors.
+ * Wrap the root of the app (or sub-trees) with this component.
  *
- * Usage:
- *   <ErrorBoundary>
- *     <App />
- *   </ErrorBoundary>
+ * @example
+ * <ErrorBoundary>
+ *   <App />
+ * </ErrorBoundary>
  */
 export class ErrorBoundary extends Component {
   constructor(props) {
     super(props)
-    this.state = { hasError: false, error: null }
+    this.state = { hasError: false, errorMessage: '' }
   }
 
   static getDerivedStateFromError(error) {
-    return { hasError: true, error }
+    return { hasError: true, errorMessage: error.message }
   }
 
-  componentDidCatch(error, info) {
-    // In production this would send to an error tracking service (e.g. Sentry)
-    console.error('[ElectoIQ] Uncaught render error:', error, info.componentStack)
+  componentDidCatch(error, errorInfo) {
+    console.warn('[ElectoIQ] Caught by ErrorBoundary:', error.message, errorInfo.componentStack)
   }
 
-  handleReset = () => {
-    this.setState({ hasError: false, error: null })
+  handleReset() {
+    this.setState({ hasError: false, errorMessage: '' })
   }
 
   render() {
@@ -34,20 +34,29 @@ export class ErrorBoundary extends Component {
       return (
         <div
           role="alert"
-          className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4"
+          className="min-h-screen flex flex-col items-center justify-center text-center px-6 bg-slate-50 dark:bg-[#0f1524]"
         >
-          <div className="max-w-md w-full text-center">
-            <div className="text-6xl mb-6">⚠️</div>
-            <h1 className="text-2xl font-bold text-white mb-2">Something went wrong</h1>
-            <p className="text-white/60 text-sm mb-6">
-              ElectoIQ encountered an unexpected error. Your progress has been saved.
-            </p>
+          <div className="text-6xl mb-6" aria-hidden="true">⚠️</div>
+          <h1 className="font-display font-bold text-2xl text-slate-900 dark:text-white mb-3">
+            Something went wrong
+          </h1>
+          <p className="text-slate-600 dark:text-white/60 max-w-md mb-8 text-sm leading-relaxed">
+            ElectoIQ encountered an unexpected error. Your progress has been saved.
+            Try refreshing the page or returning to the home screen.
+          </p>
+          <div className="flex flex-wrap gap-3 justify-center">
             <button
-              onClick={this.handleReset}
-              className="px-6 py-2.5 rounded-xl bg-[#1a56db] text-white font-medium text-sm hover:bg-[#1e429f] transition-colors"
+              onClick={() => this.handleReset()}
+              className="px-6 py-3 rounded-xl bg-[#FF9933] text-white font-semibold hover:bg-[#e8891f] transition-colors"
             >
-              Try again
+              Try Again
             </button>
+            <a
+              href="/"
+              className="px-6 py-3 rounded-xl border border-slate-300 dark:border-white/20 text-slate-700 dark:text-white/80 font-semibold hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+            >
+              Go Home
+            </a>
           </div>
         </div>
       )

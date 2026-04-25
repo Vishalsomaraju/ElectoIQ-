@@ -1,16 +1,61 @@
-# React + Vite
+# ElectoIQ — Civic Education Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ElectoIQ is a comprehensive civic education web application that empowers Indian voters with the knowledge they need to participate confidently in elections. Built with React + Vite + Firebase + Gemini AI.
 
-Currently, two official plugins are available:
+## Problem Statement Alignment
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+ElectoIQ directly addresses the civic education gap in India by solving:
 
-## React Compiler
+| Voter Pain Point | ElectoIQ Feature | Google Service Used |
+|---|---|---|
+| Don't know how to register | Voter Journey Wizard | Firebase Auth (saves progress) |
+| Don't understand the process | Interactive Election Timeline | Firestore (real-time stage data) |
+| Can't find reliable info | ElectoBot AI Assistant | Gemini 1.5 Flash (context-aware) |
+| Can't test their knowledge | AI-Generated Civic Quiz | Gemini (adaptive questions) |
+| Don't know election terms | Searchable Glossary | Firebase Hosting (fast delivery) |
+| No progress tracking | Personal Dashboard | Firestore (persisted progress) |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- **Frontend**: React 19, Vite 6, Tailwind CSS v4
+- **Backend**: Firebase Auth, Firestore, Firebase Hosting
+- **AI**: Google Gemini 1.5 Flash (via `@google/generative-ai`)
+- **Animation**: Framer Motion
+- **Testing**: Vitest + React Testing Library (122 tests, 80%+ coverage)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Features
+
+- 🗺️ **Interactive Election Timeline** — 8-stage visual walkthrough of India's election process
+- 🧭 **Voter Journey Wizard** — Step-by-step registration and voting guide
+- 🤖 **ElectoBot AI Assistant** — Context-aware chat powered by Gemini 1.5 Flash
+- 🧠 **Civic Quiz** — AI-generated questions with instant feedback
+- 📖 **Searchable Glossary** — 55 election terms with category filtering
+- 📊 **Personal Dashboard** — Progress tracking, milestones, and achievement badges
+
+## Getting Started
+
+```bash
+npm install
+npm run dev
+```
+
+## Testing
+
+```bash
+npx vitest run            # run all 122 tests
+npx vitest run --coverage # with coverage report (≥80% lines/functions)
+```
+
+## Build
+
+```bash
+npm run build
+firebase deploy
+```
+
+## Security
+
+- Content Security Policy enforced via `firebase.json` headers
+- DOMPurify XSS sanitization on all user inputs
+- API rate limiting on AI endpoints (500ms cooldown)
+- `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`

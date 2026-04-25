@@ -7,9 +7,19 @@ import {
 import { auth, db } from '../services/firebase'
 
 /**
- * Custom hook for Firestore database operations.
- * @param {string} collectionName The Firestore collection name
- * @returns {Object} Methods and state { loading, error, getDocument, setDocument, addDocument, updateDocument, deleteDocument, getCollection }
+ * Custom hook for Firestore CRUD operations on a given collection.
+ *
+ * @param {string} collectionName - The Firestore collection to operate on
+ * @returns {{
+ *   loading: boolean,
+ *   error: string|null,
+ *   getDocument: (id: string) => Promise<Object|null>,
+ *   setDocument: (id: string, data: Object) => Promise<boolean>,
+ *   addDocument: (data: Object) => Promise<string|null>,
+ *   updateDocument: (id: string, data: Object) => Promise<boolean>,
+ *   deleteDocument: (id: string) => Promise<boolean>,
+ *   getCollection: (constraints?: Object) => Promise<Array>,
+ * }} Hook state and CRUD methods
  */
 export function useFirestore(collectionName) {
   const [loading, setLoading] = useState(false)

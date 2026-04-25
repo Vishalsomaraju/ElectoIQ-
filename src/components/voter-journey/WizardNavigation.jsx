@@ -5,12 +5,14 @@ import { Button } from '../ui/Button'
 import { useNavigate } from 'react-router-dom'
 
 /**
- * Navigation footer for wizard
+ * Navigation footer for the Voter Journey wizard.
+ * Renders Back / Next Step buttons and a "Take the Quiz" CTA on the final step.
+ *
  * @param {Object} props
- * @param {number} props.currentStep
- * @param {number} props.totalSteps
- * @param {Function} props.onPrev
- * @param {Function} props.onNext
+ * @param {number} props.currentStep - The 1-based index of the currently active step
+ * @param {number} props.totalSteps  - Total number of steps in the wizard
+ * @param {Function} props.onPrev    - Callback invoked when the Back button is clicked
+ * @param {Function} props.onNext    - Callback invoked when the Next Step button is clicked
  * @returns {JSX.Element}
  */
 export const WizardNavigation = memo(function WizardNavigation({ currentStep, totalSteps, onPrev, onNext }) {
