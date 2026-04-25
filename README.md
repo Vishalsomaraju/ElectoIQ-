@@ -34,6 +34,12 @@ ElectoIQ directly addresses the civic education gap in India by solving:
 
 ## Getting Started
 
+1. Create a `.env` file in the root directory and add your Gemini API key:
+```env
+VITE_GEMINI_KEY=your_gemini_api_key_here
+```
+
+2. Install dependencies and start the development server:
 ```bash
 npm install
 npm run dev
@@ -41,9 +47,11 @@ npm run dev
 
 ## Testing
 
+The project has a comprehensive test suite (138+ tests) verifying all core pages, hooks, and services to ensure >70% coverage.
+
 ```bash
-npx vitest run            # run all 122 tests
-npx vitest run --coverage # with coverage report (≥80% lines/functions)
+npm run test            # run all tests
+npm run test -- --coverage # generate coverage report
 ```
 
 ## Build

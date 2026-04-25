@@ -217,3 +217,109 @@ describe('Dashboard page', () => {
     expect(el.textContent).toBe('0')
   })
 })
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Timeline page
+// ═══════════════════════════════════════════════════════════════════════════
+describe('Timeline page', () => {
+  let Timeline
+
+  beforeEach(async () => {
+    vi.resetModules()
+    const mod = await import('../pages/Timeline')
+    Timeline = mod.default
+  })
+
+  it('renders the Timeline heading', () => {
+    render(<Timeline />)
+    expect(screen.getByText(/Election Timeline/i)).toBeInTheDocument()
+  })
+
+  it('renders the election timeline entries', () => {
+    render(<Timeline />)
+    expect(screen.getByText('Election Commission Announcement')).toBeInTheDocument()
+    expect(screen.getByText('Model Code of Conduct (MCC)')).toBeInTheDocument()
+  })
+})
+
+// ═══════════════════════════════════════════════════════════════════════════
+// VoterJourney page
+// ═══════════════════════════════════════════════════════════════════════════
+describe('VoterJourney page', () => {
+  let VoterJourney
+
+  beforeEach(async () => {
+    vi.resetModules()
+    const mod = await import('../pages/VoterJourney')
+    VoterJourney = mod.default
+  })
+
+  it('renders the Voter Journey heading', () => {
+    render(<VoterJourney />)
+    expect(screen.getByText(/The Voter Journey Wizard/i)).toBeInTheDocument()
+  })
+
+  it('progresses through steps when Next is clicked', async () => {
+    const user = userEvent.setup()
+    render(<VoterJourney />)
+    
+    // Step 1: Check Eligibility
+    expect(screen.getByText(/verify your eligibility to vote/i)).toBeInTheDocument()
+    
+    // Check all checkboxes to enable continuing
+    const checkboxes = screen.getAllByRole('checkbox')
+    for (const checkbox of checkboxes) {
+      await user.click(checkbox)
+    }
+
+    // Now clicking Next should work
+    const nextBtn = screen.getByRole('button', { name: /Next Step/i })
+    await user.click(nextBtn)
+    
+    // Step 2: Register as a Voter
+    expect(await screen.findByText(/Online \(Recommended\)/i)).toBeInTheDocument()
+    
+    // Click previous
+    const prevBtn = screen.getByRole('button', { name: /Back/i })
+    await user.click(prevBtn)
+    expect(await screen.findByText(/verify your eligibility to vote/i)).toBeInTheDocument()
+  })
+})
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Quiz page
+// ═══════════════════════════════════════════════════════════════════════════
+describe('Quiz page', () => {
+  let Quiz
+
+  beforeEach(async () => {
+    vi.resetModules()
+    const mod = await import('../pages/Quiz')
+    Quiz = mod.default
+  })
+
+  it('renders the Quiz initial state', () => {
+    render(<Quiz />)
+    expect(screen.getByText(/Test Your Knowledge/i)).toBeInTheDocument()
+    expect(screen.getByText(/Question 1 of 10/i)).toBeInTheDocument()
+  })
+
+  it('allows answering a question and moving to next', async () => {
+    const user = userEvent.setup()
+    render(<Quiz />)
+    
+    // Answer a question (click first option)
+    const options = screen.getAllByRole('radio')
+    expect(options.length).toBe(4)
+    await user.click(options[0])
+
+    // "Next Question" or "See Results" button should appear
+    const nextBtn = await screen.findByRole('button', { name: /Next Question|See Results/i })
+    expect(nextBtn).toBeInTheDocument()
+    
+    await user.click(nextBtn)
+    
+    // Should be on question 2
+    expect(await screen.findByText(/Question 2 of 10/i)).toBeInTheDocument()
+  })
+})
