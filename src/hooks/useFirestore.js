@@ -30,6 +30,8 @@ export function useFirestore(collectionName) {
     setLoading(true)
     setError(null)
     try {
+      const user = auth.currentUser
+      if (!user) throw new Error('[getDocument] requires authentication')
       const ref = doc(db, collectionName, id)
       const snap = await getDoc(ref)
       return snap.exists() ? { id: snap.id, ...snap.data() } : null

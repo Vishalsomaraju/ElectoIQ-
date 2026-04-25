@@ -13,7 +13,12 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.js'],
     coverage: {
       reporter: ['text', 'lcov'],
-      thresholds: { functions: 70, lines: 70 },
+      thresholds: {
+        functions: 80,
+        lines: 80,
+        branches: 70,
+        statements: 80,
+      },
     },
   },
   resolve: {

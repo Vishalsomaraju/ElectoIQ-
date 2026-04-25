@@ -1,5 +1,6 @@
 // src/context/AppContext.jsx
 import { createContext, useContext, useReducer } from 'react'
+import { SUGGESTED_QUESTIONS } from '../constants'
 
 const initialState = {
   currentPage: 'home',
@@ -18,11 +19,7 @@ const initialState = {
   },
   chatOpen: false,
   chatContext: null, // Stores specific context like { stageName: 'Voting' }
-  suggestedQuestions: [
-    "How do I register to vote?",
-    "What is NOTA?",
-    "When are the next elections?"
-  ]
+  suggestedQuestions: SUGGESTED_QUESTIONS.HOME,
 }
 
 /**

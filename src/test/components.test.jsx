@@ -6,6 +6,8 @@ import '@testing-library/jest-dom'
 import { MemoryRouter } from 'react-router-dom'
 
 // ── Mocks (must be declared before imports that use them) ──────────────────
+const mockDispatch = vi.hoisted(() => vi.fn())
+
 // Strip framer-motion animation props that are not valid DOM attributes
 const stripMotionProps = ({ children, initial: _i, animate: _a, whileHover: _wh, whileTap: _wt,
   transition: _tr, exit: _ex, layout: _la, layoutId: _li, whileInView: _wv,
@@ -46,8 +48,6 @@ import { SectionHeader } from '../components/shared/SectionHeader'
 import { StepProgressBar } from '../components/voter-journey/StepProgressBar'
 import { WizardNavigation } from '../components/voter-journey/WizardNavigation'
 import { sanitizeInput, calcScore, getGrade } from '../utils/helpers'
-
-const mockDispatch = vi.fn()
 
 // ── FloatingChat ─────────────────────────────────────────────────────────
 describe('FloatingChat', () => {

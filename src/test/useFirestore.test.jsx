@@ -19,6 +19,7 @@ const mockQuery = vi.fn((colRef) => colRef)
 const mockWhere = vi.fn()
 const mockOrderBy = vi.fn()
 const mockLimit = vi.fn()
+const mockAuth = vi.hoisted(() => ({ currentUser: { uid: 'test-user-123' } }))
 
 vi.mock('firebase/firestore', () => ({
   getDoc: (...args) => mockGetDoc(...args),
@@ -38,8 +39,7 @@ vi.mock('firebase/firestore', () => ({
 
 vi.mock('../services/firebase', () => ({
   db: { type: 'firestore' },
-  // auth.currentUser required by setDoc/addDoc/updateDoc/deleteDoc
-  auth: { currentUser: { uid: 'test-user-123' } },
+  auth: mockAuth,
 }))
 
 // Import after mocks
@@ -49,6 +49,7 @@ import { useFirestore } from '../hooks/useFirestore'
 describe('useFirestore', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockAuth.currentUser = { uid: 'test-user-123' }
   })
 
   describe('getDocument', () => {
@@ -97,6 +98,20 @@ describe('useFirestore', () => {
 
       expect(data).toBeNull()
       expect(result.current.error).toBe('Network error')
+    })
+
+    it('requires authentication before reading a document', async () => {
+      mockAuth.currentUser = null
+      const { result } = renderHook(() => useFirestore('users'))
+
+      let data
+      await act(async () => {
+        data = await result.current.getDocument('doc123')
+      })
+
+      expect(data).toBeNull()
+      expect(mockGetDoc).not.toHaveBeenCalled()
+      expect(result.current.error).toBe('[getDocument] requires authentication')
     })
   })
 

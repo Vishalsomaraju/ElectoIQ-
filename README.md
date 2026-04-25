@@ -10,24 +10,24 @@ ElectoIQ directly addresses the civic education gap in India by solving:
 |---|---|---|
 | Don't know how to register | Voter Journey Wizard | Firebase Auth (saves progress) |
 | Don't understand the process | Interactive Election Timeline | Firestore (real-time stage data) |
-| Can't find reliable info | ElectoBot AI Assistant | Gemini 1.5 Flash (context-aware) |
+| Can't find reliable info | ElectoBot AI Assistant | Gemini 2.5 Flash (context-aware) |
 | Can't test their knowledge | AI-Generated Civic Quiz | Gemini (adaptive questions) |
 | Don't know election terms | Searchable Glossary | Firebase Hosting (fast delivery) |
 | No progress tracking | Personal Dashboard | Firestore (persisted progress) |
 
 ## Tech Stack
 
-- **Frontend**: React 19, Vite 6, Tailwind CSS v4
+- **Frontend**: React 19, Vite 8, Tailwind CSS v4
 - **Backend**: Firebase Auth, Firestore, Firebase Hosting
-- **AI**: Google Gemini 1.5 Flash (via `@google/generative-ai`)
+- **AI**: Google Gemini 2.5 Flash (via `@google/generative-ai`)
 - **Animation**: Framer Motion
-- **Testing**: Vitest + React Testing Library (122 tests, 80%+ coverage)
+- **Testing**: Vitest + React Testing Library (139 passing tests, 80%+ coverage targets)
 
 ## Features
 
 - 🗺️ **Interactive Election Timeline** — 8-stage visual walkthrough of India's election process
 - 🧭 **Voter Journey Wizard** — Step-by-step registration and voting guide
-- 🤖 **ElectoBot AI Assistant** — Context-aware chat powered by Gemini 1.5 Flash
+- 🤖 **ElectoBot AI Assistant** — Context-aware chat powered by Gemini 2.5 Flash
 - 🧠 **Civic Quiz** — AI-generated questions with instant feedback
 - 📖 **Searchable Glossary** — 55 election terms with category filtering
 - 📊 **Personal Dashboard** — Progress tracking, milestones, and achievement badges
@@ -47,7 +47,7 @@ npm run dev
 
 ## Testing
 
-The project has a comprehensive test suite (138+ tests) verifying all core pages, hooks, and services to ensure >70% coverage.
+The project has a comprehensive test suite verifying all core pages, hooks, and services with 80% line/function coverage targets and 70% branch coverage.
 
 ```bash
 npm run test            # run all tests

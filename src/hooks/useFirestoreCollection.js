@@ -1,6 +1,6 @@
 // ─── Google Service: Cloud Firestore — Real-time subscriptions ────────
 // Purpose: Live onSnapshot listeners for real-time data sync
-// SDK: firebase/firestore ^4.x
+// SDK: firebase/firestore ^12.x
 // Docs: https://firebase.google.com/docs/firestore/query-data/listen
 import { useState, useEffect } from 'react'
 import { collection, query, orderBy, limit, onSnapshot, Timestamp } from 'firebase/firestore'

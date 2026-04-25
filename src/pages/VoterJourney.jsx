@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion'
 import { Download, Share2, ClipboardList, Search, FileEdit, IdCard, CalendarDays, PartyPopper } from 'lucide-react'
@@ -200,6 +200,7 @@ const WIZARD_STEPS = [
 export default function VoterJourney() {
   const [currentStep, setCurrentStep] = useState(1)
   const [direction, setDirection] = useState(1) // 1 = forward, -1 = backward
+  const previousStepRef = useRef(currentStep)
   const { currentUser } = useAuthContext()
   const { setDocument } = useFirestore('users')
 
@@ -229,8 +230,10 @@ export default function VoterJourney() {
 
   // Effects per step
   useEffect(() => {
-    
-    if (currentStep === WIZARD_STEPS.length) {
+    const previousStep = previousStepRef.current
+    previousStepRef.current = currentStep
+
+    if (currentStep === WIZARD_STEPS.length && previousStep !== WIZARD_STEPS.length) {
       confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors: ['#FF9933', '#ffffff', '#138808'] })
       
       if (currentUser) {

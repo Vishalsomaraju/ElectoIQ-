@@ -1,5 +1,5 @@
 // src/test/utils.test.js
-import { describe, it, expect } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   cn,
   sanitizeInput,
@@ -146,21 +146,23 @@ describe('truncate', () => {
 
 // ── debounce ───────────────────────────────────────────────────────────
 describe('debounce', () => {
-  it('delays function execution and only calls once after multiple rapid calls', async () => {
-    let callCount = 0
-    const fn = () => callCount++
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('delays function execution and only calls once after multiple rapid calls', () => {
+    vi.useFakeTimers()
+    const fn = vi.fn()
     const debouncedFn = debounce(fn, 100)
 
     debouncedFn()
     debouncedFn()
     debouncedFn()
 
-    expect(callCount).toBe(0) // Should not be called immediately
+    expect(fn).not.toHaveBeenCalled()
 
-    // Wait for debounce time
-    await new Promise(resolve => setTimeout(resolve, 150))
-
-    expect(callCount).toBe(1) // Should only be called once
+    vi.advanceTimersByTime(100)
+    expect(fn).toHaveBeenCalledTimes(1)
   })
 })
 
