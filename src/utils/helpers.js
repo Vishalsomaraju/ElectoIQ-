@@ -14,22 +14,20 @@ export function cn(...inputs) {
 
 /**
  * Sanitize user input before sending to external APIs or database.
- * Uses DOMPurify as the primary sanitizer with regex strips as defense-in-depth.
- * @param {string} raw - Raw user input string
- * @returns {string} Sanitized, safe string
+ * Uses DOMPurify as primary sanitizer with regex strips as defense-in-depth.
+ * @param {string} raw - Raw user input
+ * @returns {string} Sanitized safe string
  */
 export function sanitizeInput(raw) {
   if (!raw) return ''
-  // Primary layer: DOMPurify strips all HTML/SVG/MathML tags and attributes
   const purified = typeof window !== 'undefined'
     ? DOMPurify.sanitize(raw, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] })
-    : raw.replace(/<[^>]*>/g, '') // fallback for non-browser (SSR / test-env without DOM)
-  // Defense-in-depth: strip prompt injections and JS protocol patterns
+    : raw
   return purified
-    .replace(/\{[^}]*\}/g, '')                    // strip template injection patterns
-    .replace(/javascript:/gi, '')                  // strip JS protocol
+    .replace(/\{[^}]*\}/g, '')
+    .replace(/javascript:/gi, '')
     .trim()
-    .slice(0, 500)                                 // hard length cap
+    .slice(0, 500)
 }
 
 /**

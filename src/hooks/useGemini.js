@@ -8,14 +8,13 @@ import { sanitizeInput } from '../utils/helpers'
  * Hook for conversational Gemini AI interaction with streaming support.
  * @returns {{ messages: Array, streaming: boolean, error: string|null, sendMessage: Function, clearChat: Function }}
  */
-const COOLDOWN_MS = 500
-
 export function useGemini() {
   const [messages, setMessages] = useState([])
   const [streaming, setStreaming] = useState(false)
   const [error, setError] = useState(null)
   const historyRef = useRef([])
   const lastSendRef = useRef(0)
+  const COOLDOWN_MS = 500
 
   const sendMessage = useCallback(async (userText, context = {}) => {
     const trimmed = userText?.trim()
