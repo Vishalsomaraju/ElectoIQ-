@@ -23,7 +23,7 @@ AI-powered Indian civic education platform.
 ## 4. Gemini AI (Generative Language API)
 - **Package**: `@google/generative-ai ^0.24.1`
 - **Files**: `src/services/gemini.js`, `src/hooks/useGemini.js`
-- **Model**: `gemini-1.5-flash`
+- **Model**: `gemini-2.5-flash`
 - **Usage**: Multi-turn streaming chat sessions. System prompt restricts responses to Indian election domain. Current page context injected into every prompt so ElectoBot knows what the user is reading. User input sanitized via DOMPurify before any API call. Rate-limited to 500ms cooldown between sends.
 - **Docs**: https://ai.google.dev/docs
 
@@ -36,7 +36,8 @@ AI-powered Indian civic education platform.
 ## 6. Firebase Analytics
 - **Package**: `firebase/analytics`
 - **Files**: `src/services/firebase.js`
-- **Usage**: Tracks `app_open` and key civic engagement events. Helps identify which election topics users engage with most.
+- **Usage**: Tracks `app_open` event on load and key civic engagement
+  interactions. Helps identify which election topics resonate most with users.
 - **Docs**: https://firebase.google.com/docs/analytics
 
 ---

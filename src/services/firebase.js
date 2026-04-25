@@ -38,16 +38,14 @@ if (FIREBASE_CONFIGURED) {
         logger.warn('[ElectoIQ] Persistence unavailable:', err.message)
       })
     } catch (e) {}
-    try {
-      perf = getPerformance(app)
-    } catch (err) {
-      logger.warn('[ElectoIQ] Performance monitoring unavailable:', err.message)
+    try { perf = getPerformance(app) } catch (e) {
+      console.warn('[ElectoIQ] Performance unavailable:', e.message)
     }
     try {
       analytics = getAnalytics(app)
       logEvent(analytics, 'app_open', { platform: 'web' })
-    } catch (err) {
-      logger.warn('[ElectoIQ] Analytics unavailable:', err.message)
+    } catch (e) {
+      console.warn('[ElectoIQ] Analytics unavailable:', e.message)
     }
   } catch (err) {
     const msg = err instanceof Error

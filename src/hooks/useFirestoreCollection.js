@@ -1,58 +1,41 @@
-// ─── Google Service: Cloud Firestore (Real-time) ──────────────────────
-// Purpose: Real-time collection subscriptions via onSnapshot listeners
+// ─── Google Service: Cloud Firestore — Real-time subscriptions ────────
+// Purpose: Live onSnapshot listeners for real-time data sync
 // SDK: firebase/firestore ^4.x
 // Docs: https://firebase.google.com/docs/firestore/query-data/listen
-import { useState, useEffect, useCallback } from 'react'
-import { logger } from '../utils/logger'
-import {
-  collection, query, orderBy, limit,
-  onSnapshot, where, Timestamp,
-} from 'firebase/firestore'
+import { useState, useEffect } from 'react'
+import { collection, query, orderBy, limit, onSnapshot, Timestamp } from 'firebase/firestore'
 import { db } from '../services/firebase'
 
 /**
- * Real-time Firestore collection subscription using onSnapshot.
- * Automatically unsubscribes on component unmount.
- * @param {string} collectionName - Firestore collection to subscribe to
- * @param {Object} [options] - Query options
- * @param {number} [options.limitCount=50] - Max documents to fetch
- * @param {string} [options.orderByField] - Field to order results by
- * @param {Array} [options.filters] - Array of [field, op, value] filter tuples
+ * Real-time Firestore collection hook using onSnapshot.
+ * Automatically unsubscribes on unmount.
+ * @param {string} collectionName - Collection to subscribe to
+ * @param {Object} [options] - { limitCount?: number, orderByField?: string }
  * @returns {{ data: Array, loading: boolean, error: string|null, isConnected: boolean }}
  */
 export function useFirestoreCollection(collectionName, options = {}) {
-  const { limitCount = 50, orderByField = null, filters = [] } = options
+  const { limitCount = 50, orderByField = null } = options
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [isConnected, setIsConnected] = useState(false)
 
   useEffect(() => {
-    if (!db) {
-      setLoading(false)
-      setError('Firebase not configured')
-      return
-    }
-
+    if (!db) { setLoading(false); setError('Firebase not configured'); return }
     const constraints = []
-    filters.forEach(([field, op, value]) => {
-      constraints.push(where(field, op, value))
-    })
     if (orderByField) constraints.push(orderBy(orderByField))
     constraints.push(limit(limitCount))
-
     const q = query(collection(db, collectionName), ...constraints)
 
-    const unsubscribe = onSnapshot(
-      q,
+    const unsubscribe = onSnapshot(q,
       (snapshot) => {
         const docs = snapshot.docs.map((doc) => {
-          const docData = doc.data()
-          const converted = { id: doc.id }
-          for (const [key, value] of Object.entries(docData)) {
-            converted[key] = value instanceof Timestamp ? value.toDate() : value
+          const raw = doc.data()
+          const out = { id: doc.id }
+          for (const [k, v] of Object.entries(raw)) {
+            out[k] = v instanceof Timestamp ? v.toDate() : v
           }
-          return converted
+          return out
         })
         setData(docs)
         setLoading(false)
@@ -60,18 +43,13 @@ export function useFirestoreCollection(collectionName, options = {}) {
         setError(null)
       },
       (err) => {
-        logger.warn(`[useFirestoreCollection] ${collectionName} error:`, err)
+        console.warn(`[useFirestoreCollection] ${collectionName}:`, err)
         setError(err.message)
         setLoading(false)
         setIsConnected(false)
       }
     )
-
-    return () => {
-      try { unsubscribe() } catch (err) {
-        logger.warn('[useFirestoreCollection] Unsubscribe error:', err)
-      }
-    }
+    return () => { try { unsubscribe() } catch (e) { console.warn('[useFirestoreCollection] cleanup:', e) } }
   }, [collectionName, limitCount, orderByField])
 
   return { data, loading, error, isConnected }

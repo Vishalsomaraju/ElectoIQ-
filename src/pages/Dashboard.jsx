@@ -66,12 +66,8 @@ export default function Dashboard() {
         />
 
         {isConnected && (
-          <div
-            role="status"
-            aria-live="polite"
-            aria-label="Live data connection active"
-            className="flex items-center gap-1.5 text-xs text-green-400 mb-4"
-          >
+          <div role="status" aria-live="polite" aria-label="Live Firebase connection active"
+            className="flex items-center gap-1.5 text-xs text-green-400 mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" aria-hidden="true" />
             Live sync active
           </div>
