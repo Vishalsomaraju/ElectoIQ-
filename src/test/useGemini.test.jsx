@@ -1,6 +1,7 @@
+// src/test/useGemini.test.jsx
 import { renderHook, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { useGemini } from './useGemini'
+import { useGemini } from '../hooks/useGemini'
 import * as geminiService from '../services/gemini'
 
 // Mock the gemini service

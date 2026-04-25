@@ -1,4 +1,4 @@
-// src/hooks/useFirestore.test.jsx
+// src/test/useFirestore.test.jsx
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
@@ -43,7 +43,7 @@ vi.mock('../services/firebase', () => ({
 }))
 
 // Import after mocks
-import { useFirestore } from './useFirestore'
+import { useFirestore } from '../hooks/useFirestore'
 
 // ── Tests ─────────────────────────────────────────────────────────────────
 describe('useFirestore', () => {

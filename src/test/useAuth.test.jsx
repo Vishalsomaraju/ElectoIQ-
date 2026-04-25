@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
-import { useAuth } from './useAuth'
+import { useAuth } from '../hooks/useAuth'
 import { signInWithRedirect, signInAnonymously, signOut, onAuthStateChanged } from 'firebase/auth'
 
 // Mock the firebase auth module

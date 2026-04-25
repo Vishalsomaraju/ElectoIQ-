@@ -45,7 +45,7 @@ export default function App() {
           <AppProvider>
             <div className="min-h-screen flex flex-col">
               <Navbar />
-              <main className="flex-1 outline-none">
+              <main id="main-content" className="flex-1 outline-none">
                 <AnimatedRoutes />
               </main>
               <Footer />
