@@ -13,6 +13,7 @@ export function ChatDrawer() {
   const { messages, sendMessage, streaming, error, clearChat } = useGemini()
   const [inputValue, setInputValue] = useState('')
   const bottomRef = useRef(null)
+  const drawerRef = useRef(null)
 
   // Auto-scroll to latest message
   useEffect(() => {
@@ -42,6 +43,56 @@ export function ChatDrawer() {
     dispatch({ type: 'TOGGLE_CHAT', payload: false })
   }, [dispatch])
 
+  // ── Focus trap: cycle Tab/Shift+Tab within the drawer ──────────────────
+  useEffect(() => {
+    if (!state.chatOpen) return
+    const drawer = drawerRef.current
+    if (!drawer) return
+
+    const focusableSelectors = [
+      'button:not([disabled])',
+      'input:not([disabled])',
+      'textarea:not([disabled])',
+      'a[href]',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(', ')
+
+    const handleKeyDown = (e) => {
+      if (e.key !== 'Tab') return
+      const focusable = [...drawer.querySelectorAll(focusableSelectors)]
+      if (focusable.length === 0) return
+      const first = focusable.at(0)
+      const last = focusable.at(-1)
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault()
+          last?.focus()
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault()
+          first?.focus()
+        }
+      }
+    }
+
+    drawer.addEventListener('keydown', handleKeyDown)
+    // Move focus inside drawer when it opens
+    const firstFocusable = drawer.querySelector(focusableSelectors)
+    firstFocusable?.focus()
+
+    return () => drawer.removeEventListener('keydown', handleKeyDown)
+  }, [state.chatOpen])
+
+  // ── Escape key closes the drawer ────────────────────────────────────────
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape' && state.chatOpen) closeDrawer()
+    }
+    document.addEventListener('keydown', handleEsc)
+    return () => document.removeEventListener('keydown', handleEsc)
+  }, [state.chatOpen, closeDrawer])
+
   return (
     <AnimatePresence>
       {state.chatOpen && (
@@ -57,6 +108,7 @@ export function ChatDrawer() {
 
           {/* Drawer */}
           <motion.div
+            ref={drawerRef}
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -65,7 +117,12 @@ export function ChatDrawer() {
             role="dialog"
             aria-modal="true"
             aria-label="ElectoBot AI chat assistant"
+            aria-describedby="chat-drawer-desc"
           >
+            {/* Hidden description for screen readers */}
+            <p id="chat-drawer-desc" className="sr-only">
+              Chat with ElectoBot about Indian elections. Press Escape to close.
+            </p>
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 shrink-0">
               <div className="flex items-center gap-3">
