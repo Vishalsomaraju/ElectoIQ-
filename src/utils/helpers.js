@@ -1,6 +1,7 @@
 // src/utils/helpers.js
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import DOMPurify from 'dompurify'
 
 /**
  * Merge Tailwind classes safely.
