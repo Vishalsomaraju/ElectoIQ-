@@ -9,6 +9,14 @@
       ]
     },
     {
+      "collectionGroup": "quizResults",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "uid", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "glossaryTerms",
       "queryScope": "COLLECTION",
       "fields": [

@@ -14,6 +14,7 @@ import { useAppContext } from '../context/AppContext'
 import { glossaryTerms } from '../data/glossaryTerms'
 import { electionStages } from '../data/electionStages'
 import { getGrade } from '../utils/helpers'
+import { useFirestoreCollection } from '../hooks/useFirestoreCollection'
 
 const milestones = [
   { label: 'First Quiz', icon: '🎯', threshold: 1, key: 'quizzesCompleted' },
@@ -28,6 +29,11 @@ const itemV = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }
 export default function Dashboard() {
   const { state } = useAppContext()
   const { progress } = state
+
+  const { data: recentActivity, isConnected } = useFirestoreCollection(
+    'users',
+    { limitCount: 10 }
+  )
 
   const avgScore = useMemo(() => (
     progress.quizzesCompleted > 0
@@ -58,6 +64,18 @@ export default function Dashboard() {
           description="Track your civic education progress and unlock achievements."
           center
         />
+
+        {isConnected && (
+          <div
+            role="status"
+            aria-live="polite"
+            aria-label="Live data connection active"
+            className="flex items-center gap-1.5 text-xs text-green-400 mb-4"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" aria-hidden="true" />
+            Live sync active
+          </div>
+        )}
 
         {/* Overall Progress */}
         <Card className="mb-8 max-w-2xl mx-auto text-center py-8">

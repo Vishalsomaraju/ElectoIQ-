@@ -1,57 +1,48 @@
 # Google Services — ElectoIQ
 
-ElectoIQ integrates 5 Google Cloud services to deliver a real-time, AI-powered Indian election education platform.
-
----
+ElectoIQ integrates **6 Google Cloud services** to deliver a real-time,
+AI-powered Indian civic education platform.
 
 ## 1. Firebase Authentication
-
 - **Package**: `firebase/auth`
 - **Files**: `src/services/firebase.js`, `src/hooks/useAuth.js`, `src/context/AuthContext.jsx`
-- **Usage**: Anonymous sign-in for public users (no friction), Google OAuth for registered learners. OAuth configured with `email` and `profile` scopes, with `prompt: 'select_account'` to force account selection.
+- **Usage**: Anonymous sign-in for public users (zero friction), Google OAuth for registered learners with `email` and `profile` scopes. Auth guards on all Firestore write operations.
 - **Docs**: https://firebase.google.com/docs/auth
 
----
-
-## 2. Cloud Firestore
-
+## 2. Cloud Firestore (Real-time)
 - **Package**: `firebase/firestore`
-- **Files**: `src/services/firebase.js`, `src/hooks/useFirestore.js`
-- **Usage**: Stores and syncs user progress data (quiz scores, completed milestones) with auth guards on all write operations. Queries use `limit()` to avoid unbounded fetches. Security rules enforce `deny-all` fallback.
+- **Files**: `src/hooks/useFirestoreCollection.js`, `src/hooks/useFirestore.js`
+- **Usage**: Real-time data synchronization via `onSnapshot` listeners in `useFirestoreCollection`. User progress (quiz scores, journey completion) persisted and synced. Queries use `limit()` on all subscriptions. Composite indexes defined in `firestore.indexes.json`.
 - **Docs**: https://firebase.google.com/docs/firestore
 
----
-
 ## 3. Firebase Hosting
-
-- **Config**: `firebase.json`, `firestore.rules`, `firestore.indexes.json`
-- **Usage**: SPA deployment with client-side routing rewrites (`**` → `/index.html`). Firestore rules and indexes co-deployed.
+- **Config**: `firebase.json`, `firestore.rules`, `firestore.indexes.json`, `.firebaserc`
+- **Usage**: SPA deployment with client-side routing rewrites. Security headers configured: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, CSP. Static asset cache headers set to 1 year.
 - **Docs**: https://firebase.google.com/docs/hosting
 
----
-
 ## 4. Gemini AI (Generative Language API)
-
 - **Package**: `@google/generative-ai ^0.24.1`
 - **Files**: `src/services/gemini.js`, `src/hooks/useGemini.js`
 - **Model**: `gemini-1.5-flash`
-- **Usage**: Conversational AI assistant for Indian election education. Uses multi-turn streaming chat sessions. System prompt restricts responses to election domain. User input is sanitized via `sanitizeInput()` before any API call.
+- **Usage**: Multi-turn streaming chat sessions. System prompt restricts responses to Indian election domain. Current page context injected into every prompt so ElectoBot knows what the user is reading. User input sanitized via DOMPurify before any API call. Rate-limited to 500ms cooldown between sends.
 - **Docs**: https://ai.google.dev/docs
 
----
-
 ## 5. Firebase Performance Monitoring
-
 - **Package**: `firebase/performance`
 - **Files**: `src/services/firebase.js`
-- **Usage**: Tracks page load and API response times in production, with a guarded fallback when performance monitoring is unavailable in the current runtime.
+- **Usage**: Automatic page load and API response time tracking in production. Initialized with `getPerformance(app)` on app start.
 - **Docs**: https://firebase.google.com/docs/perf-mon
+
+## 6. Firebase Analytics
+- **Package**: `firebase/analytics`
+- **Files**: `src/services/firebase.js`
+- **Usage**: Tracks `app_open` and key civic engagement events. Helps identify which election topics users engage with most.
+- **Docs**: https://firebase.google.com/docs/analytics
 
 ---
 
-## Environment Variables Required
+## Environment Variables
 
-```env
 VITE_FIREBASE_API_KEY=
 VITE_FIREBASE_AUTH_DOMAIN=
 VITE_FIREBASE_PROJECT_ID=
@@ -59,4 +50,3 @@ VITE_FIREBASE_STORAGE_BUCKET=
 VITE_FIREBASE_MESSAGING_SENDER_ID=
 VITE_FIREBASE_APP_ID=
 VITE_GEMINI_KEY=
-```
