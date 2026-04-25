@@ -5,6 +5,7 @@
 import { useState, useEffect } from 'react'
 import { collection, query, orderBy, limit, onSnapshot, Timestamp } from 'firebase/firestore'
 import { db } from '../services/firebase'
+import { logger } from '../utils/logger'
 
 /**
  * Real-time Firestore collection hook using onSnapshot.
@@ -43,13 +44,13 @@ export function useFirestoreCollection(collectionName, options = {}) {
         setError(null)
       },
       (err) => {
-        console.warn(`[useFirestoreCollection] ${collectionName}:`, err)
+        logger.warn(`[useFirestoreCollection] ${collectionName}:`, err)
         setError(err.message)
         setLoading(false)
         setIsConnected(false)
       }
     )
-    return () => { try { unsubscribe() } catch (e) { console.warn('[useFirestoreCollection] cleanup:', e) } }
+    return () => { try { unsubscribe() } catch (e) { logger.warn('[useFirestoreCollection] cleanup:', e) } }
   }, [collectionName, limitCount, orderByField])
 
   return { data, loading, error, isConnected }

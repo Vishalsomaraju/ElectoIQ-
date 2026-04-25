@@ -39,13 +39,13 @@ if (FIREBASE_CONFIGURED) {
       })
     } catch (e) {}
     try { perf = getPerformance(app) } catch (e) {
-      console.warn('[ElectoIQ] Performance unavailable:', e.message)
+      logger.warn('[ElectoIQ] Performance unavailable:', e.message)
     }
     try {
       analytics = getAnalytics(app)
       logEvent(analytics, 'app_open', { platform: 'web' })
     } catch (e) {
-      console.warn('[ElectoIQ] Analytics unavailable:', e.message)
+      logger.warn('[ElectoIQ] Analytics unavailable:', e.message)
     }
   } catch (err) {
     const msg = err instanceof Error
