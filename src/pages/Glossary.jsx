@@ -1,5 +1,5 @@
 // src/pages/Glossary.jsx
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Search, BookOpen, X } from 'lucide-react'
 import { AnimatedPage } from '../components/shared/AnimatedPage'
@@ -51,16 +51,23 @@ const GlossaryCard = React.memo(function GlossaryCard({ term, idx, isOpen, onTog
   )
 })
 
+const INITIAL_COUNT = 24
+
 export default function Glossary() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('All')
   const [expanded, setExpanded] = useState(null)
-  const [visibleCount, setVisibleCount] = useState(24)
+  const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT)
 
-  const handleSearch = useCallback((e) => { setSearch(e.target.value); setVisibleCount(24) }, [])
-  const handleClear = useCallback(() => { setSearch(''); setVisibleCount(24) }, [])
-  const handleCategoryChange = useCallback((cat) => { setCategory(cat); setVisibleCount(24) }, [])
+  const handleSearch = useCallback((e) => setSearch(e.target.value), [])
+  const handleClear = useCallback(() => setSearch(''), [])
+  const handleCategoryChange = useCallback((cat) => setCategory(cat), [])
   const handleExpand = useCallback((termId) => setExpanded(prev => prev === termId ? null : termId), [])
+
+  // Reset visible window whenever the user changes search or category
+  useEffect(() => {
+    setVisibleCount(INITIAL_COUNT)
+  }, [search, category])
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase()
@@ -71,7 +78,8 @@ export default function Glossary() {
     })
   }, [search, category])
 
-  const visible = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount])
+  const visibleTerms = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount])
+  const hasMore = visibleCount < filtered.length
 
   return (
     <AnimatedPage>
@@ -141,24 +149,22 @@ export default function Glossary() {
               layout
               className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"
             >
-              {visible.map((term, idx) => {
-                const isOpen = expanded === term.id
-                return (
-                  <GlossaryCard
-                    key={term.id}
-                    idx={idx}
-                    term={term}
-                    isOpen={isOpen}
-                    onToggle={handleExpand}
-                  />
-                )
-              })}
+              {visibleTerms.map((term, idx) => (
+                <GlossaryCard
+                  key={term.id}
+                  idx={idx}
+                  term={term}
+                  isOpen={expanded === term.id}
+                  onToggle={handleExpand}
+                />
+              ))}
             </motion.div>
-            {visibleCount < filtered.length && (
-              <div className="text-center mt-8">
+            {hasMore && (
+              <div className="flex justify-center mt-8">
                 <button
-                  onClick={() => setVisibleCount(c => c + 24)}
-                  className="px-6 py-2.5 rounded-xl border border-slate-200 dark:border-white/15 text-sm font-medium text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-white/30 transition-all duration-200"
+                  onClick={() => setVisibleCount(c => c + INITIAL_COUNT)}
+                  aria-label={`Load more terms. Showing ${visibleCount} of ${filtered.length}`}
+                  className="px-6 py-3 rounded-xl border border-slate-200 dark:border-white/15 text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-white/30 transition-all text-sm font-medium"
                 >
                   Load more ({filtered.length - visibleCount} remaining)
                 </button>

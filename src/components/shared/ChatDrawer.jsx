@@ -29,7 +29,7 @@ export function ChatDrawer() {
       currentPage: state.currentPage,
       currentStage: state.chatContext?.stageName,
     })
-  }, [inputValue, streaming, sendMessage, state.currentPage, state.chatContext])
+  }, [inputValue, streaming, sendMessage, state.currentPage, state.chatContext?.stageName])
 
   const handleSuggestionClick = useCallback(async (suggestion) => {
     if (streaming) return
@@ -37,7 +37,7 @@ export function ChatDrawer() {
       currentPage: state.currentPage,
       currentStage: state.chatContext?.stageName,
     })
-  }, [streaming, sendMessage, state.currentPage, state.chatContext])
+  }, [streaming, sendMessage, state.currentPage, state.chatContext?.stageName])
 
   const closeDrawer = useCallback(() => {
     dispatch({ type: 'TOGGLE_CHAT', payload: false })
