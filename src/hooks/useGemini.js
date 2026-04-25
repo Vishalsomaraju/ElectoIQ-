@@ -2,6 +2,7 @@
 import { useState, useRef, useCallback } from 'react'
 import { logger } from '../utils/logger'
 import { sendMessageStream } from '../services/gemini'
+import { trackAnalyticsEvent } from '../services/firebase'
 import { sanitizeInput } from '../utils/helpers'
 
 /**
@@ -70,6 +71,11 @@ export function useGemini() {
         )
       })
 
+      trackAnalyticsEvent('gemini_message_sent', {
+        page: context.currentPage ?? 'unknown',
+        has_stage_context: Boolean(context.currentStage),
+      })
+
       // Update persistent history with the actual user text (no prefix)
       historyRef.current = [
         ...historyRef.current,
@@ -89,6 +95,9 @@ export function useGemini() {
           ? err.message.replace(/key=[^&\s]*/g, 'key=REDACTED')
           : 'Failed to get a response. Please try again.'
       logger.warn('[useGemini] Error:', msg)
+      trackAnalyticsEvent('gemini_message_failed', {
+        page: context.currentPage ?? 'unknown',
+      })
       setError(msg)
       // Remove the empty assistant bubble on error
       setMessages(prev => prev.filter(m => m.id !== assistantMsg.id))

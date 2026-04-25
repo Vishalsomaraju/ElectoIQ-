@@ -8,7 +8,7 @@ import {
   signInAnonymously,
   signOut,
 } from 'firebase/auth'
-import { auth } from '../services/firebase'
+import { auth, trackAnalyticsEvent } from '../services/firebase'
 
 const googleProvider = new GoogleAuthProvider()
 googleProvider.addScope('email')
@@ -41,6 +41,7 @@ export function useAuth() {
     if (!auth) { setError('Firebase not configured'); return }
     setError(null)
     try {
+      trackAnalyticsEvent('auth_google_sign_in_started')
       await signInWithRedirect(auth, googleProvider)
     } catch (err) {
       logger.warn('[signInWithGoogle] error:', err)
@@ -54,6 +55,7 @@ export function useAuth() {
     setError(null)
     try {
       const result = await signInAnonymously(auth)
+      trackAnalyticsEvent('auth_guest_sign_in', { provider: 'anonymous' })
       return result.user
     } catch (err) {
       logger.warn('[signInAsGuest] error:', err)
@@ -67,6 +69,7 @@ export function useAuth() {
     setError(null)
     try {
       await signOut(auth)
+      trackAnalyticsEvent('auth_sign_out')
     } catch (err) {
       logger.warn('[logout] error:', err)
       setError(err.message)

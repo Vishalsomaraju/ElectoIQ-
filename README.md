@@ -37,6 +37,12 @@ ElectoIQ directly addresses the civic education gap in India by solving:
 1. Create a `.env` file in the root directory and add your Gemini API key:
 ```env
 VITE_GEMINI_KEY=your_gemini_api_key_here
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
+VITE_FIREBASE_APP_ID=1:123456789:web:abc123
 ```
 
 2. Install dependencies and start the development server:
@@ -67,3 +73,16 @@ firebase deploy
 - DOMPurify XSS sanitization on all user inputs
 - API rate limiting on AI endpoints (500ms cooldown)
 - `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`
+
+## Google Services
+
+ElectoIQ actively uses all 6 configured Google services:
+
+| Service | Where it is used | What it powers |
+|---|---|---|
+| Firebase Authentication | Navbar sign-in and `useAuth` | Google sign-in and anonymous sessions |
+| Cloud Firestore | `useFirestore`, `useFirestoreCollection`, Dashboard, Voter Journey | Progress persistence and live quiz activity |
+| Firebase Hosting | `firebase.json` | SPA rewrites, security headers, cache policy |
+| Gemini API | `useGemini`, quiz generation, chat drawer | ElectoBot chat and AI quiz generation |
+| Firebase Performance Monitoring | `src/services/firebase.js` | Web performance instrumentation at app startup |
+| Firebase Analytics | `src/services/firebase.js`, auth/chat/quiz/timeline/journey flows | Product analytics and key engagement events |

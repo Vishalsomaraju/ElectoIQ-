@@ -22,8 +22,11 @@ export function useFirestoreCollection(collectionName, options = {}) {
   const [isConnected, setIsConnected] = useState(false)
 
   useEffect(() => {
-     
-    if (!db) { setLoading(false); setError('Firebase not configured'); return }
+    if (!db) {
+      setLoading(false)
+      setError('Firebase not configured')
+      return
+    }
     const constraints = []
     if (orderByField) constraints.push(orderBy(orderByField))
     constraints.push(limit(limitCount))
@@ -39,26 +42,29 @@ export function useFirestoreCollection(collectionName, options = {}) {
           }
           return out
         })
-         
+
         setData(docs)
-         
         setLoading(false)
-         
         setIsConnected(true)
-         
         setError(null)
       },
       (err) => {
         logger.warn(`[useFirestoreCollection] ${collectionName}:`, err)
-         
         setError(err.message)
-         
         setLoading(false)
-         
+        setIsConnected(false)
+        setLoading(false)
         setIsConnected(false)
       }
     )
-    return () => { try { unsubscribe() } catch (e) { logger.warn('[useFirestoreCollection] cleanup:', e) } }
+
+    return () => {
+      try {
+        unsubscribe()
+      } catch (e) {
+        logger.warn('[useFirestoreCollection] cleanup:', e)
+      }
+    }
   }, [collectionName, limitCount, orderByField])
 
   return { data, loading, error, isConnected }

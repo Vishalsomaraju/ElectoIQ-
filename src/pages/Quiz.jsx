@@ -11,6 +11,7 @@ import { Badge } from '../components/ui/Badge'
 import { ProgressBar } from '../components/ui/ProgressBar'
 import { Card } from '../components/ui/Card'
 import { useGemini } from '../hooks/useGemini'
+import { trackAnalyticsEvent } from '../services/firebase'
 import { generateQuiz } from '../services/gemini'
 import { quizQuestions } from '../data/quizQuestions'
 import { shuffle, calcScore, getGrade } from '../utils/helpers'
@@ -38,16 +39,26 @@ export default function Quiz() {
     if (isAnswered) return
     setAnswers(prev => ({ ...prev, [currentIdx]: idx }))
     setRevealed(true)
-  }, [isAnswered, currentIdx])
+    trackAnalyticsEvent('quiz_answered', {
+      question_index: currentIdx + 1,
+      category: current?.category ?? 'unknown',
+    })
+  }, [current?.category, currentIdx, isAnswered])
 
   const handleNext = useCallback(() => {
     if (currentIdx < questions.length - 1) {
       setCurrentIdx(i => i + 1)
       setRevealed(false)
     } else {
+      trackAnalyticsEvent('quiz_completed', {
+        score: calcScore(
+          Object.values(answers).filter((answer, index) => answer === questions[index]?.correct).length,
+          questions.length
+        ),
+      })
       setPhase('results')
     }
-  }, [currentIdx, questions.length])
+  }, [answers, currentIdx, questions])
 
   const handleRestart = useCallback(() => {
     setCurrentIdx(0)
@@ -68,6 +79,7 @@ export default function Quiz() {
     try {
       const q = await generateQuiz()
       setQuestions(q)
+      trackAnalyticsEvent('quiz_generated_ai', { question_count: q.length })
     } catch (_err) {
       setQuestions(shuffle(quizQuestions).slice(0, 10))
     } finally {

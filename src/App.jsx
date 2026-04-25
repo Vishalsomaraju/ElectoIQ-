@@ -11,6 +11,7 @@ import { ChatDrawer } from './components/shared/ChatDrawer'
 import { FloatingChat } from './components/shared/FloatingChat'
 import { ErrorBoundary } from './components/shared/ErrorBoundary'
 import { RouteChangeAnnouncer } from './components/shared/RouteChangeAnnouncer'
+import { RouteStateSync } from './components/shared/RouteStateSync'
 
 const Home = lazy(() => import('./pages/Home'))
 const Timeline = lazy(() => import('./pages/Timeline'))
@@ -45,6 +46,7 @@ export default function App() {
         <RouteChangeAnnouncer />
         <AuthProvider>
           <AppProvider>
+            <RouteStateSync />
             <div className="min-h-screen flex flex-col">
               <Navbar />
               <main id="main-content" className="flex-1 outline-none">

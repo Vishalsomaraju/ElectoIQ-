@@ -48,6 +48,19 @@ vi.mock('../services/gemini', () => ({
   sendMessageStream: vi.fn(),
 }))
 
+vi.mock('../services/firebase', () => ({
+  trackAnalyticsEvent: vi.fn(),
+}))
+
+vi.mock('../hooks/useFirestoreCollection', () => ({
+  useFirestoreCollection: vi.fn(() => ({
+    data: [],
+    loading: false,
+    error: null,
+    isConnected: true,
+  })),
+}))
+
 vi.mock('react-router-dom', () => ({
   Link: ({ children, to, ...p }) => <a href={to} {...p}>{children}</a>,
   useNavigate: () => vi.fn(),

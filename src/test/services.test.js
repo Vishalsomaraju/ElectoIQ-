@@ -1,92 +1,107 @@
-import { describe, it, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-// Mock firebase
-vi.mock('firebase/app', () => ({
-  initializeApp: vi.fn(),
+const mockInitializeApp = vi.fn(() => ({ name: 'electoiq-app' }))
+const mockGetAuth = vi.fn(() => ({ currentUser: null }))
+const mockGetFirestore = vi.fn(() => ({ type: 'firestore' }))
+const mockEnableIndexedDbPersistence = vi.fn(() => Promise.resolve())
+const mockGetPerformance = vi.fn(() => ({ type: 'performance' }))
+const mockGetAnalytics = vi.fn(() => ({ type: 'analytics' }))
+const mockLogEvent = vi.fn()
+const mockStartChat = vi.fn()
+const mockGenerateContent = vi.fn()
+const mockGetGenerativeModel = vi.fn(() => ({
+  startChat: mockStartChat,
+  generateContent: mockGenerateContent,
 }))
 
-vi.mock('firebase/firestore', () => ({
-  getFirestore: vi.fn(),
-  collection: vi.fn(),
-  doc: vi.fn(),
-  getDoc: vi.fn(),
-  setDoc: vi.fn(),
-  addDoc: vi.fn(),
-  query: vi.fn(),
-  where: vi.fn(),
-  getDocs: vi.fn(),
-  orderBy: vi.fn(),
-  limit: vi.fn(),
+vi.mock('firebase/app', () => ({
+  initializeApp: mockInitializeApp,
 }))
 
 vi.mock('firebase/auth', () => ({
-  getAuth: vi.fn(),
-  GoogleAuthProvider: vi.fn(),
-  signInWithPopup: vi.fn(),
-  signOut: vi.fn(),
-  onAuthStateChanged: vi.fn(),
+  getAuth: mockGetAuth,
 }))
 
-vi.mock('@google/generative-ai', () => {
-  const mockChatSession = {
-    sendMessageStream: vi.fn().mockResolvedValue({
-      stream: [{ text: () => 'Mock stream text' }]
-    })
-  }
-  
-  const mockModel = {
-    generateContent: vi.fn().mockResolvedValue({
-      response: {
-        text: () => 'Mock generate content'
-      }
-    }),
-    startChat: vi.fn().mockReturnValue(mockChatSession)
-  }
+vi.mock('firebase/firestore', () => ({
+  getFirestore: mockGetFirestore,
+  enableIndexedDbPersistence: mockEnableIndexedDbPersistence,
+}))
 
-  return {
-    GoogleGenerativeAI: class {
-      constructor() {
-        this.getGenerativeModel = vi.fn().mockReturnValue(mockModel)
-      }
+vi.mock('firebase/performance', () => ({
+  getPerformance: mockGetPerformance,
+}))
+
+vi.mock('firebase/analytics', () => ({
+  getAnalytics: mockGetAnalytics,
+  logEvent: mockLogEvent,
+}))
+
+vi.mock('@google/generative-ai', () => ({
+  GoogleGenerativeAI: class MockGoogleGenerativeAI {
+    getGenerativeModel(...args) {
+      return mockGetGenerativeModel(...args)
     }
-  }
-})
+  },
+}))
 
-describe('Services', () => {
+describe('service modules', () => {
   beforeEach(() => {
     vi.resetModules()
     vi.clearAllMocks()
+    vi.stubEnv('VITE_FIREBASE_API_KEY', 'firebase-api-key')
+    vi.stubEnv('VITE_FIREBASE_AUTH_DOMAIN', 'electoiq.firebaseapp.com')
+    vi.stubEnv('VITE_FIREBASE_PROJECT_ID', 'electoiq')
+    vi.stubEnv('VITE_FIREBASE_STORAGE_BUCKET', 'electoiq.appspot.com')
+    vi.stubEnv('VITE_FIREBASE_MESSAGING_SENDER_ID', '123456789')
+    vi.stubEnv('VITE_FIREBASE_APP_ID', '1:123456789:web:abc123')
+    vi.stubEnv('VITE_GEMINI_KEY', 'gemini-key')
   })
 
-  it('tests gemini functions', async () => {
-    const { generateQuiz, sendMessageStream } = await import('../services/gemini')
-    
-    try {
-      await generateQuiz()
-    } catch (_e) { /* ignore */ }
-    
-    try {
-      await sendMessageStream('test')
-    } catch (_e) { /* ignore */ }
+  it('initializes all Firebase services and logs app_open', async () => {
+    const firebaseService = await import('../services/firebase')
+
+    expect(mockInitializeApp).toHaveBeenCalledTimes(1)
+    expect(mockGetAuth).toHaveBeenCalled()
+    expect(mockGetFirestore).toHaveBeenCalled()
+    expect(mockEnableIndexedDbPersistence).toHaveBeenCalled()
+    expect(mockGetPerformance).toHaveBeenCalled()
+    expect(mockGetAnalytics).toHaveBeenCalled()
+    expect(mockLogEvent).toHaveBeenCalledWith(
+      firebaseService.analytics,
+      'app_open',
+      { platform: 'web' }
+    )
+    expect(firebaseService.isFirebaseReady()).toBe(true)
   })
 
-  it('tests firebase functions', async () => {
-    const { loginWithGoogle, logoutUser, getUserProgress, updateUserProgress } = await import('../services/firebase')
-    
-    try {
-      await loginWithGoogle()
-    } catch (_e) { /* ignore */ }
-    
-    try {
-      await logoutUser()
-    } catch (_e) { /* ignore */ }
-    
-    try {
-      await getUserProgress('test-uid')
-    } catch (_e) { /* ignore */ }
-    
-    try {
-      await updateUserProgress('test-uid', {})
-    } catch (_e) { /* ignore */ }
+  it('sanitizes analytics events before logging', async () => {
+    const { trackAnalyticsEvent } = await import('../services/firebase')
+
+    const success = trackAnalyticsEvent('chat-drawer opened!', {
+      page: '<b>quiz</b>',
+      step: 2,
+      nested: { stage: 'Voting' },
+    })
+
+    expect(success).toBe(true)
+    expect(mockLogEvent).toHaveBeenLastCalledWith(
+      { type: 'analytics' },
+      'chat_drawer_opened_',
+      {
+        page: 'quiz',
+        step: 2,
+        nested: '',
+      }
+    )
+  })
+
+  it('configures the Gemini model with the documented model name', async () => {
+    const { getChatModel } = await import('../services/gemini')
+
+    getChatModel()
+
+    expect(mockGetGenerativeModel).toHaveBeenCalledWith(
+      expect.objectContaining({ model: 'gemini-2.5-flash' })
+    )
   })
 })

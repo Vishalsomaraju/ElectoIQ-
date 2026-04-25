@@ -31,3 +31,12 @@ export const SUGGESTED_QUESTIONS = {
   GLOSSARY: ['What is an EPIC card?', 'Explain VVPAT simply', 'What does Delimitation mean?'],
   DASHBOARD: ['How can I improve my Civic Readiness Score?', 'What badges can I earn?', 'Show me a summary of my progress'],
 }
+
+export const PAGE_CONTEXT = {
+  [ROUTES.HOME]: { page: 'home', suggestedQuestions: SUGGESTED_QUESTIONS.HOME },
+  [ROUTES.TIMELINE]: { page: 'timeline', suggestedQuestions: SUGGESTED_QUESTIONS.TIMELINE },
+  [ROUTES.VOTER_JOURNEY]: { page: 'voter-journey', suggestedQuestions: SUGGESTED_QUESTIONS.VOTER_JOURNEY },
+  [ROUTES.QUIZ]: { page: 'quiz', suggestedQuestions: SUGGESTED_QUESTIONS.QUIZ },
+  [ROUTES.GLOSSARY]: { page: 'glossary', suggestedQuestions: SUGGESTED_QUESTIONS.GLOSSARY },
+  [ROUTES.DASHBOARD]: { page: 'dashboard', suggestedQuestions: SUGGESTED_QUESTIONS.DASHBOARD },
+}

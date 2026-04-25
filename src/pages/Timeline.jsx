@@ -10,6 +10,7 @@ import { Badge } from '../components/ui/Badge'
 import { electionStages, electionPhases } from '../data/electionStages'
 import { cn } from '../utils/helpers'
 import { useAppContext } from '../context/AppContext'
+import { trackAnalyticsEvent } from '../services/firebase'
 
 const iconMap = {
   Megaphone, ClipboardList, FileEdit, FolderOpen, Speaker, Vote, Monitor, Hash, Landmark
@@ -121,6 +122,7 @@ export default function Timeline() {
   }, [])
 
   const handleAskBot = useCallback((stage) => {
+    trackAnalyticsEvent('timeline_stage_ask_bot', { stage: stage.title })
     dispatch({ type: 'SET_CHAT_CONTEXT', payload: { stageName: stage.title } })
     dispatch({ type: 'SET_SUGGESTED_QUESTIONS', payload: [`Explain ${stage.title} in detail`, `What is the role of ECI during ${stage.title}?`, `Can you summarize ${stage.title}?`] })
     dispatch({ type: 'TOGGLE_CHAT', payload: true })

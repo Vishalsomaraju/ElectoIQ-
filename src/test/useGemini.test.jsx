@@ -9,6 +9,10 @@ vi.mock('../services/gemini', () => ({
   sendMessageStream: vi.fn(),
 }))
 
+vi.mock('../services/firebase', () => ({
+  trackAnalyticsEvent: vi.fn(),
+}))
+
 describe('useGemini Hook', () => {
   beforeEach(() => {
     vi.clearAllMocks()

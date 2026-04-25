@@ -6,6 +6,7 @@
 
 import { initializeApp } from 'firebase/app'
 import { logger } from '../utils/logger'
+import { sanitizeInput } from '../utils/helpers'
 import { getAuth } from 'firebase/auth'
 import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore'
 import { getPerformance } from 'firebase/performance'
@@ -54,6 +55,38 @@ if (FIREBASE_CONFIGURED) {
       ? err.message.replace(/key=[^&\s]*/g, 'key=REDACTED')
       : 'Firebase init failed'
     logger.warn('[ElectoIQ] Firebase init failed:', msg)
+  }
+}
+
+function sanitizeAnalyticsParams(params = {}) {
+  return Object.fromEntries(
+    Object.entries(params).flatMap(([key, value]) => {
+      if (!key || value == null) return []
+      const safeKey = String(key).replace(/[^a-zA-Z0-9_]/g, '').slice(0, 40)
+      if (!safeKey) return []
+
+      if (typeof value === 'string') {
+        return [[safeKey, sanitizeInput(value).slice(0, 100)]]
+      }
+      if (typeof value === 'number' || typeof value === 'boolean') {
+        return [[safeKey, value]]
+      }
+      return [[safeKey, sanitizeInput(JSON.stringify(value)).slice(0, 100)]]
+    })
+  )
+}
+
+export function trackAnalyticsEvent(eventName, params = {}) {
+  if (!analytics) return false
+  const safeEventName = String(eventName).replace(/[^a-zA-Z0-9_]/g, '_').slice(0, 40)
+  if (!safeEventName) return false
+
+  try {
+    logEvent(analytics, safeEventName, sanitizeAnalyticsParams(params))
+    return true
+  } catch (error) {
+    logger.warn('[ElectoIQ] Analytics event failed:', error instanceof Error ? error.message : error)
+    return false
   }
 }
 

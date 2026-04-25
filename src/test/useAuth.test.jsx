@@ -17,7 +17,8 @@ vi.mock('firebase/auth', () => ({
 
 // Mock our local firebase service
 vi.mock('../services/firebase', () => ({
-  auth: { currentUser: null }
+  auth: { currentUser: null },
+  trackAnalyticsEvent: vi.fn(),
 }))
 
 describe('useAuth hook', () => {
