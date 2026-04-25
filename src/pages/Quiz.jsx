@@ -173,11 +173,15 @@ export default function Quiz() {
                   <Brain size={20} className="text-blue-400" />
                   <Badge variant="primary">{current.category}</Badge>
                 </div>
-                <h3 className="font-display font-bold text-xl text-slate-900 dark:text-white leading-snug">{current.question}</h3>
+                <h3 id="question-heading" className="font-display font-bold text-xl text-slate-900 dark:text-white leading-snug">{current.question}</h3>
               </Card>
 
               {/* Options */}
-              <div className="space-y-3 mb-6">
+              <div
+                role="radiogroup"
+                aria-labelledby="question-heading"
+                className="space-y-3 mb-6"
+              >
                 {current.options.map((opt, i) => {
                   const isSelected = selectedAnswer === i
                   const isCorrect = current.correct === i

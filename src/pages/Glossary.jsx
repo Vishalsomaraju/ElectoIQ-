@@ -28,6 +28,7 @@ const GlossaryCard = React.memo(function GlossaryCard({ term, idx, isOpen, onTog
     >
       <Card
         hover
+        aria-expanded={isOpen}
         className={cn('h-full cursor-pointer', isOpen && 'border-blue-500/30')}
         onClick={() => onToggle(term.id)}
       >
@@ -44,7 +45,7 @@ const GlossaryCard = React.memo(function GlossaryCard({ term, idx, isOpen, onTog
             <p className="text-xs text-slate-700 dark:text-white/70 italic">{term.example}</p>
           </div>
         )}
-        <p className="mt-2 text-xs text-blue-400">{isOpen ? '▲ Show less' : '▼ Show more'}</p>
+        <p className="mt-2 text-xs text-blue-400" aria-hidden="true">{isOpen ? '▲ Show less' : '▼ Show more'}</p>
       </Card>
     </motion.div>
   )
@@ -54,10 +55,11 @@ export default function Glossary() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('All')
   const [expanded, setExpanded] = useState(null)
+  const [visibleCount, setVisibleCount] = useState(24)
 
-  const handleSearch = useCallback((e) => setSearch(e.target.value), [])
-  const handleClear = useCallback(() => setSearch(''), [])
-  const handleCategoryChange = useCallback((cat) => setCategory(cat), [])
+  const handleSearch = useCallback((e) => { setSearch(e.target.value); setVisibleCount(24) }, [])
+  const handleClear = useCallback(() => { setSearch(''); setVisibleCount(24) }, [])
+  const handleCategoryChange = useCallback((cat) => { setCategory(cat); setVisibleCount(24) }, [])
   const handleExpand = useCallback((termId) => setExpanded(prev => prev === termId ? null : termId), [])
 
   const filtered = useMemo(() => {
@@ -68,6 +70,8 @@ export default function Glossary() {
       return matchCat && matchSearch
     })
   }, [search, category])
+
+  const visible = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount])
 
   return (
     <AnimatedPage>
@@ -91,7 +95,11 @@ export default function Glossary() {
               className="w-full bg-white dark:bg-white/10 border border-slate-200 dark:border-white/15 rounded-xl pl-10 pr-10 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/40 outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50"
             />
             {search && (
-              <button onClick={handleClear} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/40 hover:text-slate-900 dark:hover:text-white">
+              <button
+                onClick={handleClear}
+                aria-label="Clear search"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/40 hover:text-slate-900 dark:hover:text-white"
+              >
                 <X size={16} />
               </button>
             )}
@@ -118,33 +126,45 @@ export default function Glossary() {
 
         {/* Count */}
         <p role="status" aria-live="polite" aria-atomic="true" className="text-slate-500 dark:text-white/40 text-sm text-center mb-8">
-          Showing <span className="text-slate-900 dark:text-white font-medium">{filtered.length}</span> terms
+          Showing <span className="text-slate-900 dark:text-white font-medium">{Math.min(visibleCount, filtered.length)}</span> of <span className="text-slate-900 dark:text-white font-medium">{filtered.length}</span> terms
         </p>
 
         {/* Terms */}
         {filtered.length === 0 ? (
           <div role="status" className="text-center py-20 text-slate-500 dark:text-white/40">
             <BookOpen size={40} className="mx-auto mb-3 opacity-50" />
-            <p>No terms found for "{search}"</p>
+            <p>No terms found for &ldquo;{search}&rdquo;</p>
           </div>
         ) : (
-          <motion.div
-            layout
-            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"
-          >
-            {filtered.map((term, idx) => {
-              const isOpen = expanded === term.id
-              return (
-                <GlossaryCard
-                  key={term.id}
-                  idx={idx}
-                  term={term}
-                  isOpen={isOpen}
-                  onToggle={handleExpand}
-                />
-              )
-            })}
-          </motion.div>
+          <>
+            <motion.div
+              layout
+              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"
+            >
+              {visible.map((term, idx) => {
+                const isOpen = expanded === term.id
+                return (
+                  <GlossaryCard
+                    key={term.id}
+                    idx={idx}
+                    term={term}
+                    isOpen={isOpen}
+                    onToggle={handleExpand}
+                  />
+                )
+              })}
+            </motion.div>
+            {visibleCount < filtered.length && (
+              <div className="text-center mt-8">
+                <button
+                  onClick={() => setVisibleCount(c => c + 24)}
+                  className="px-6 py-2.5 rounded-xl border border-slate-200 dark:border-white/15 text-sm font-medium text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-white/30 transition-all duration-200"
+                >
+                  Load more ({filtered.length - visibleCount} remaining)
+                </button>
+              </div>
+            )}
+          </>
         )}
       </PageWrapper>
     </AnimatedPage>

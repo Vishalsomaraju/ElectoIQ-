@@ -9,6 +9,7 @@ import { Footer } from './components/layout/Footer'
 import { Spinner } from './components/ui/Spinner'
 import { ChatDrawer } from './components/shared/ChatDrawer'
 import { FloatingChat } from './components/shared/FloatingChat'
+import { ErrorBoundary } from './components/shared/ErrorBoundary'
 
 const Home = lazy(() => import('./pages/Home'))
 const Timeline = lazy(() => import('./pages/Timeline'))
@@ -38,20 +39,22 @@ function AnimatedRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <AppProvider>
-          <div className="min-h-screen flex flex-col">
-            <Navbar />
-            <main className="flex-1 outline-none">
-              <AnimatedRoutes />
-            </main>
-            <Footer />
-            <FloatingChat />
-            <ChatDrawer />
-          </div>
-        </AppProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <AppProvider>
+            <div className="min-h-screen flex flex-col">
+              <Navbar />
+              <main className="flex-1 outline-none">
+                <AnimatedRoutes />
+              </main>
+              <Footer />
+              <FloatingChat />
+              <ChatDrawer />
+            </div>
+          </AppProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   )
 }

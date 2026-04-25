@@ -1,5 +1,5 @@
 // src/components/shared/ChatDrawer.jsx
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Send, Bot, User, Loader2 } from 'lucide-react'
 import { useAppContext } from '../../context/AppContext'
@@ -19,7 +19,7 @@ export function ChatDrawer() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, streaming])
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault()
     const text = inputValue.trim()
     if (!text || streaming) return
@@ -28,19 +28,19 @@ export function ChatDrawer() {
       currentPage: state.currentPage,
       currentStage: state.chatContext?.stageName,
     })
-  }
+  }, [inputValue, streaming, sendMessage, state.currentPage, state.chatContext])
 
-  const handleSuggestionClick = async (suggestion) => {
+  const handleSuggestionClick = useCallback(async (suggestion) => {
     if (streaming) return
     await sendMessage(suggestion, {
       currentPage: state.currentPage,
       currentStage: state.chatContext?.stageName,
     })
-  }
+  }, [streaming, sendMessage, state.currentPage, state.chatContext])
 
-  const closeDrawer = () => {
+  const closeDrawer = useCallback(() => {
     dispatch({ type: 'TOGGLE_CHAT', payload: false })
-  }
+  }, [dispatch])
 
   return (
     <AnimatePresence>

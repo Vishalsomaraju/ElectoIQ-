@@ -12,14 +12,21 @@ import { cn } from '../../utils/helpers'
  * @returns {JSX.Element} Card component
  */
 export function Card({ children, className, hover = false, glow = false, onClick }) {
+  const handleKeyDown = onClick
+    ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(e) } }
+    : undefined
+
   return (
     <div
       onClick={onClick}
+      onKeyDown={handleKeyDown}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
       className={cn(
         'glass rounded-2xl p-6 transition-all duration-300',
         hover && 'hover:border-blue-500/30 hover:scale-[1.01] cursor-pointer',
         glow && 'hover:glow-primary',
-        onClick && 'cursor-pointer',
+        onClick && 'cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50',
         className,
       )}
     >

@@ -19,11 +19,12 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.js'],
     css: false,
     coverage: {
-      reporter: ['text', 'lcov'],
+      provider: 'v8',
+      reporter: ['text', 'lcov', 'html'],
       thresholds: {
-        functions: 70,
-        lines: 70,
-        branches: 60,
+        functions: 80,
+        lines: 80,
+        branches: 70,
       },
     },
   },

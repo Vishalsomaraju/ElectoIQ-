@@ -61,6 +61,7 @@ describe('useGemini Hook', () => {
   })
 
   it('should maintain conversation history', async () => {
+    vi.useFakeTimers()
     geminiService.sendMessageStream.mockResolvedValue()
 
     const { result } = renderHook(() => useGemini())
@@ -70,10 +71,15 @@ describe('useGemini Hook', () => {
       await result.current.sendMessage('Msg 1')
     })
 
+    // Advance past the 500ms rate-limit cooldown
+    vi.advanceTimersByTime(600)
+
     // Second message
     await act(async () => {
       await result.current.sendMessage('Msg 2')
     })
+
+    vi.useRealTimers()
 
     // Check that the second call passed the history of the first turn
     expect(geminiService.sendMessageStream).toHaveBeenNthCalledWith(

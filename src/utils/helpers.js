@@ -14,17 +14,19 @@ export function cn(...inputs) {
 
 /**
  * Sanitize user input before sending to external APIs or database.
- * Strips HTML tags, template injections, JS protocol, trims, and caps length.
+ * Uses DOMPurify as the primary sanitizer with regex strips as defense-in-depth.
  * @param {string} raw - Raw user input string
  * @returns {string} Sanitized, safe string
  */
 export function sanitizeInput(raw) {
   if (!raw) return ''
-  return raw
-    .replace(/<script[^>]*>.*?<\/script>/gis, '') // strip script blocks + content
-    .replace(/<style[^>]*>.*?<\/style>/gis, '')   // strip style blocks + content
-    .replace(/<[^>]*>/g, '')                       // strip remaining HTML tags
-    .replace(/\{[^}]*\}/g, '')                    // strip template injections
+  // Primary layer: DOMPurify strips all HTML/SVG/MathML tags and attributes
+  const purified = typeof window !== 'undefined'
+    ? DOMPurify.sanitize(raw, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] })
+    : raw.replace(/<[^>]*>/g, '') // fallback for non-browser (SSR / test-env without DOM)
+  // Defense-in-depth: strip prompt injections and JS protocol patterns
+  return purified
+    .replace(/\{[^}]*\}/g, '')                    // strip template injection patterns
     .replace(/javascript:/gi, '')                  // strip JS protocol
     .trim()
     .slice(0, 500)                                 // hard length cap

@@ -139,6 +139,8 @@ describe('truncate', () => {
     expect(truncate(undefined)).toBe('')
   })
   it('returns text unchanged when exactly at maxLen', () => {
+    const exactText = 'a'.repeat(5)
+    expect(truncate(exactText, 5)).toBe(exactText)
   })
 })
 

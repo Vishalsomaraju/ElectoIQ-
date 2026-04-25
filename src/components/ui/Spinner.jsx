@@ -11,11 +11,15 @@ import { cn } from '../../utils/helpers'
 export function Spinner({ size = 'md', className }) {
   const sizes = { sm: 'size-4', md: 'size-6', lg: 'size-10', xl: 'size-16' }
   return (
-    <span className={cn(
-      'inline-block rounded-full border-2 border-white/20 border-t-blue-400 animate-spin',
-      sizes[size],
-      className,
-    )} />
+    <span
+      role="status"
+      aria-label="Loading…"
+      className={cn(
+        'inline-block rounded-full border-2 border-white/20 border-t-blue-400 animate-spin',
+        sizes[size],
+        className,
+      )}
+    />
   )
 }
 
