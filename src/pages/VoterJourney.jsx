@@ -39,7 +39,7 @@ function Step1Content() {
       ))}
       {allChecked && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl mt-6 text-center">
-          <p className="text-green-400 font-semibold">You are eligible! Let's register.</p>
+          <p className="text-green-700 dark:text-green-400 font-semibold">You are eligible! Let's register.</p>
         </motion.div>
       )}
     </div>
@@ -52,7 +52,7 @@ function Step2Content() {
       <div className="bg-slate-50 dark:bg-white/5 p-5 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm">
         <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2"><span className="bg-blue-500 text-xs px-2 py-0.5 rounded text-white shadow-sm">Method 1</span> Online (Recommended)</h4>
         <ul className="list-disc pl-5 space-y-1">
-          <li>Go to <a href="https://voters.eci.gov.in" target="_blank" rel="noreferrer" className="text-blue-400 hover:underline">voters.eci.gov.in</a></li>
+          <li>Go to <a href="https://voters.eci.gov.in" target="_blank" rel="noreferrer" className="text-blue-700 dark:text-blue-400 hover:underline">voters.eci.gov.in</a></li>
           <li>Click "New Registration" → Fill <strong>Form 6</strong></li>
           <li>Upload: Age proof (Aadhaar/Birth Certificate) + Address proof + Passport photo</li>
           <li>Submit and note your Application Reference Number</li>
@@ -75,13 +75,13 @@ function Step3Content() {
     <div className="space-y-6 text-sm text-slate-700 dark:text-white/80">
       <p>Before voting day, you must verify that your name is on the Electoral Roll.</p>
       <ul className="list-disc pl-5 space-y-2">
-        <li>Visit <a href="https://electoralsearch.eci.gov.in" target="_blank" rel="noreferrer" className="text-purple-400 hover:underline">electoralsearch.eci.gov.in</a></li>
+        <li>Visit <a href="https://electoralsearch.eci.gov.in" target="_blank" rel="noreferrer" className="text-purple-700 dark:text-purple-400 hover:underline">electoralsearch.eci.gov.in</a></li>
         <li>Search by Name + State + District + Assembly Constituency</li>
         <li><strong>OR</strong> search by EPIC number (Voter ID card number)</li>
       </ul>
       <div className="bg-red-500/10 p-4 rounded-xl border border-red-500/20 mt-4">
-        <p className="font-bold text-red-300 mb-1">If your name is not found:</p>
-        <p className="text-red-200/80 text-xs">File a complaint online, contact your BLO, or submit Form 6 again with supporting documents.</p>
+        <p className="font-bold text-red-700 dark:text-red-300 mb-1">If your name is not found:</p>
+        <p className="text-red-800 dark:text-red-200/80 text-xs">File a complaint online, contact your BLO, or submit Form 6 again with supporting documents.</p>
       </div>
     </div>
   )
@@ -91,7 +91,7 @@ function Step4Content() {
   return (
     <div className="space-y-4 text-sm text-slate-700 dark:text-white/80">
       <p><strong>EPIC</strong> (Electors Photo Identity Card) is your official voter identity document.</p>
-      <p>You can download the digital version (<strong>e-EPIC</strong>) from <a href="https://voters.eci.gov.in/e-epic" target="_blank" rel="noreferrer" className="text-orange-500 dark:text-orange-400 hover:underline">voters.eci.gov.in/e-epic</a> which is fully valid for voting.</p>
+      <p>You can download the digital version (<strong>e-EPIC</strong>) from <a href="https://voters.eci.gov.in/e-epic" target="_blank" rel="noreferrer" className="text-orange-700 dark:text-orange-400 hover:underline">voters.eci.gov.in/e-epic</a> which is fully valid for voting.</p>
       <div className="mt-6">
         <h4 className="font-bold text-slate-900 dark:text-white mb-2">Approved alternate IDs (if you don't have Voter ID):</h4>
         <div className="grid grid-cols-2 gap-2 text-xs">

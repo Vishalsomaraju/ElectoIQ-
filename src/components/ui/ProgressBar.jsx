@@ -23,6 +23,7 @@ export function ProgressBar({
   size = 'md',
   className,
   animated = true,
+  ariaLabel = 'Progress',
 }) {
   const pct = Math.min(100, Math.max(0, (value / max) * 100))
 
@@ -49,6 +50,7 @@ export function ProgressBar({
           className={cn('rounded-full transition-all duration-700 ease-out', colors[color], heights[size], animated && 'animate-pulse-subtle')}
           style={{ width: `${pct}%` }}
           role="progressbar"
+          aria-label={label || ariaLabel}
           aria-valuenow={Math.min(max, Math.max(0, value))}
           aria-valuemin={0}
           aria-valuemax={max}
