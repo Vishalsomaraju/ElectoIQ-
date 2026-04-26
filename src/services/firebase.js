@@ -41,14 +41,14 @@ if (FIREBASE_CONFIGURED) {
     } catch (_e) {
       logger.warn('[ElectoIQ] IndexedDB persistence not supported in this environment')
     }
-    try { perf = getPerformance(app) } catch (e) {
-      logger.warn('[ElectoIQ] Performance unavailable:', e.message)
+    try { perf = getPerformance(app) } catch (_e) {
+      logger.warn('[ElectoIQ] Performance unavailable:', _e.message)
     }
     try {
       analytics = getAnalytics(app)
       logEvent(analytics, 'app_open', { platform: 'web' })
-    } catch (e) {
-      logger.warn('[ElectoIQ] Analytics unavailable:', e.message)
+    } catch (_e) {
+      logger.warn('[ElectoIQ] Analytics unavailable:', _e.message)
     }
   } catch (err) {
     const msg = err instanceof Error

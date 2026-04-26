@@ -187,7 +187,7 @@ function AshokaChakra({ size = 220 }) {
       width={size}
       height={size}
       viewBox="0 0 220 220"
-      className="chakra-spin opacity-[0.07]"
+      className="chakra-spin opacity-[0.06] dark:opacity-[0.07]"
       aria-hidden="true"
       focusable="false"
     >
@@ -315,7 +315,7 @@ export default function Home() {
           initial="hidden"
           animate="show"
           transition={{ duration: 0.5 }}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-white/5 backdrop-blur-md border border-slate-200 dark:border-white/10 text-sm text-slate-700 dark:text-white/70 mb-8 shadow-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-white/5 backdrop-blur-md border border-slate-200 dark:border-white/10 text-sm text-slate-600 dark:text-white/70 mb-8 shadow-sm"
         >
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" aria-hidden="true" />
           India's AI-Powered Civic Education Platform

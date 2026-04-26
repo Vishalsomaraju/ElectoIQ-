@@ -4,6 +4,7 @@ import { logger } from '../utils/logger'
 import {
   onAuthStateChanged,
   signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   signInAnonymously,
   signOut,
@@ -30,6 +31,12 @@ export function useAuth() {
       return
     }
     setLoading(true)
+
+    // Handle redirect result (Google Sign-In completes via redirect)
+    getRedirectResult(auth).catch(err => {
+      logger.warn('[useAuth] Redirect result error:', err.message)
+    })
+
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser)
       setLoading(false)

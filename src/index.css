@@ -60,9 +60,14 @@ body {
 }
 
 .glass {
-  background: rgba(30, 36, 51, 0.7);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.dark .glass {
+  background: rgba(30, 36, 51, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -78,7 +83,14 @@ body {
 }
 
 .text-gradient-tricolor {
-  background: linear-gradient(90deg, #FF9933, #ffffff, #138808);
+  background: linear-gradient(90deg, #FF9933, #6b7280, #138808);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark .text-gradient-tricolor {
+  background: linear-gradient(90deg, #FF9933, #e2e8f0, #138808);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

@@ -20,14 +20,14 @@ export function SectionHeader({ eyebrow, title, description, center = false, cla
         </p>
       )}
       <h2 className={cn(
-        'font-display font-bold text-white leading-tight',
+        'font-display font-bold text-slate-900 dark:text-white leading-tight',
         'text-3xl md:text-4xl',
       )}>
         {title}
       </h2>
       {description && (
         <p className={cn(
-          'mt-3 text-white/60 text-base md:text-lg leading-relaxed max-w-2xl',
+          'mt-3 text-slate-600 dark:text-white/60 text-base md:text-lg leading-relaxed max-w-2xl',
           center && 'mx-auto',
         )}>
           {description}

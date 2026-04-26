@@ -3,12 +3,12 @@ import { cn } from '../../utils/helpers'
 
 const variants = {
   primary: 'bg-[#1a56db] hover:bg-[#1e429f] text-white shadow-lg shadow-blue-900/30 hover:shadow-blue-900/50',
-  accent: 'bg-[#0ea5e9] hover:bg-[#0284c7] text-white shadow-lg shadow-sky-900/30',
-  outline: 'border border-white/20 text-white hover:bg-white/10 hover:border-white/40',
-  ghost: 'text-white/70 hover:text-white hover:bg-white/10',
-  danger: 'bg-red-600 hover:bg-red-700 text-white',
+  accent:  'bg-[#0ea5e9] hover:bg-[#0284c7] text-white shadow-lg shadow-sky-900/30',
+  outline: 'border border-slate-300 text-slate-700 hover:bg-slate-100 hover:border-slate-400 dark:border-white/20 dark:text-white dark:hover:bg-white/10 dark:hover:border-white/40',
+  ghost:   'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-white/70 dark:hover:text-white dark:hover:bg-white/10',
+  danger:  'bg-red-600 hover:bg-red-700 text-white',
   saffron: 'bg-[#FF9933] hover:bg-[#e8871f] text-white shadow-lg shadow-orange-900/30',
-  green: 'bg-[#138808] hover:bg-[#0f6a06] text-white shadow-lg shadow-green-900/30',
+  green:   'bg-[#138808] hover:bg-[#0f6a06] text-white shadow-lg shadow-green-900/30',
 }
 
 const sizes = {

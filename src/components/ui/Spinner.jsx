@@ -15,7 +15,7 @@ export function Spinner({ size = 'md', className }) {
       role="status"
       aria-label="Loading…"
       className={cn(
-        'inline-block rounded-full border-2 border-white/20 border-t-blue-400 animate-spin',
+        'inline-block rounded-full border-2 border-slate-200 dark:border-white/20 border-t-blue-500 dark:border-t-blue-400 animate-spin',
         sizes[size],
         className,
       )}
@@ -31,7 +31,7 @@ export function FullPageSpinner() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4">
       <Spinner size="xl" />
-      <p className="text-white/60 text-sm animate-pulse">Loading ElectoIQ…</p>
+      <p className="text-slate-500 dark:text-white/60 text-sm animate-pulse">Loading ElectoIQ…</p>
     </div>
   )
 }

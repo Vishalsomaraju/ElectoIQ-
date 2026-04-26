@@ -53,8 +53,6 @@ export function useFirestoreCollection(collectionName, options = {}) {
         setError(err.message)
         setLoading(false)
         setIsConnected(false)
-        setLoading(false)
-        setIsConnected(false)
       }
     )
 

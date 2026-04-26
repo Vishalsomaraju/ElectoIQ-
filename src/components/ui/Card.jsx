@@ -61,7 +61,7 @@ export function CardHeader({ children, className }) {
  */
 export function CardTitle({ children, className }) {
   return (
-    <h3 className={cn('font-display font-bold text-lg text-white', className)}>
+    <h3 className={cn('font-display font-bold text-lg text-slate-900 dark:text-white', className)}>
       {children}
     </h3>
   )
@@ -76,7 +76,7 @@ export function CardTitle({ children, className }) {
  */
 export function CardDescription({ children, className }) {
   return (
-    <p className={cn('text-sm text-white/60 mt-1', className)}>
+    <p className={cn('text-sm text-slate-500 dark:text-white/60 mt-1', className)}>
       {children}
     </p>
   )
@@ -102,7 +102,7 @@ export function CardContent({ children, className }) {
  */
 export function CardFooter({ children, className }) {
   return (
-    <div className={cn('mt-4 pt-4 border-t border-white/5 flex items-center justify-between', className)}>
+    <div className={cn('mt-4 pt-4 border-t border-slate-200 dark:border-white/5 flex items-center justify-between', className)}>
       {children}
     </div>
   )

@@ -41,11 +41,11 @@ export function ProgressBar({
     <div className={cn('w-full', className)}>
       {(label || showPercent) && (
         <div className="flex justify-between items-center mb-1.5">
-          {label && <span className="text-sm text-white/70">{label}</span>}
-          {showPercent && <span className="text-sm font-medium text-white/90">{Math.round(pct)}%</span>}
+          {label && <span className="text-sm text-slate-600 dark:text-white/70">{label}</span>}
+          {showPercent && <span className="text-sm font-medium text-slate-800 dark:text-white/90">{Math.round(pct)}%</span>}
         </div>
       )}
-      <div className={cn('w-full rounded-full bg-white/10 overflow-hidden', heights[size])}>
+      <div className={cn('w-full rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden', heights[size])}>
         <div
           className={cn('rounded-full transition-all duration-700 ease-out', colors[color], heights[size], animated && 'animate-pulse-subtle')}
           style={{ width: `${pct}%` }}
