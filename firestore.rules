@@ -38,6 +38,11 @@ service cloud.firestore {
       // Users can only create results assigned to themselves
       allow create: if isSignedIn()
         && request.resource.data.uid == request.auth.uid
+        && request.resource.data.uid is string
+        && request.resource.data.score is number
+        && request.resource.data.correctCount is number
+        && request.resource.data.totalQuestions is number
+        && (!('durationMs' in request.resource.data) || request.resource.data.durationMs is number)
         && request.resource.data.keys().hasOnly([
           'uid', 'score', 'correctCount', 'totalQuestions',
           'topic', 'difficulty', 'createdAt', 'durationMs'

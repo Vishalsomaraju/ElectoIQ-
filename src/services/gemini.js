@@ -94,7 +94,7 @@ async function withRetry(fn, maxRetries = 3, baseDelay = 500) {
       const isRetryable = err?.status === 429 || err?.status === 503 || err?.status === 500
       if (!isRetryable || attempt === maxRetries) throw err
       const delay = baseDelay * Math.pow(2, attempt)
-      console.warn(`[gemini] Attempt ${attempt + 1} failed, retrying in ${delay}ms`)
+      logger.warn(`[gemini] Attempt ${attempt + 1} failed, retrying in ${delay}ms`)
       await new Promise(r => setTimeout(r, delay))
     }
   }

@@ -2,8 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockInitializeApp = vi.fn(() => ({ name: 'electoiq-app' }))
 const mockGetAuth = vi.fn(() => ({ currentUser: null }))
-const mockGetFirestore = vi.fn(() => ({ type: 'firestore' }))
-const mockEnableIndexedDbPersistence = vi.fn(() => Promise.resolve())
+const mockInitializeFirestore = vi.fn(() => ({ type: 'firestore' }))
+const mockPersistentLocalCache = vi.fn(() => ({ type: 'localCache' }))
+const mockPersistentMultipleTabManager = vi.fn(() => ({ type: 'tabManager' }))
+const mockInitializeAppCheck = vi.fn(() => ({ type: 'appCheck' }))
+const mockReCaptchaV3Provider = vi.fn()
 const mockGetPerformance = vi.fn(() => ({ type: 'performance' }))
 const mockGetAnalytics = vi.fn(() => ({ type: 'analytics' }))
 const mockLogEvent = vi.fn()
@@ -23,8 +26,14 @@ vi.mock('firebase/auth', () => ({
 }))
 
 vi.mock('firebase/firestore', () => ({
-  getFirestore: mockGetFirestore,
-  enableIndexedDbPersistence: mockEnableIndexedDbPersistence,
+  initializeFirestore: mockInitializeFirestore,
+  persistentLocalCache: mockPersistentLocalCache,
+  persistentMultipleTabManager: mockPersistentMultipleTabManager,
+}))
+
+vi.mock('firebase/app-check', () => ({
+  initializeAppCheck: mockInitializeAppCheck,
+  ReCaptchaV3Provider: mockReCaptchaV3Provider,
 }))
 
 vi.mock('firebase/performance', () => ({
@@ -55,6 +64,7 @@ describe('service modules', () => {
     vi.stubEnv('VITE_FIREBASE_MESSAGING_SENDER_ID', '123456789')
     vi.stubEnv('VITE_FIREBASE_APP_ID', '1:123456789:web:abc123')
     vi.stubEnv('VITE_GEMINI_KEY', 'gemini-key')
+    vi.stubEnv('VITE_RECAPTCHA_SITE_KEY', 'recaptcha-key')
   })
 
   it('initializes all Firebase services and logs app_open', async () => {
@@ -62,8 +72,11 @@ describe('service modules', () => {
 
     expect(mockInitializeApp).toHaveBeenCalledTimes(1)
     expect(mockGetAuth).toHaveBeenCalled()
-    expect(mockGetFirestore).toHaveBeenCalled()
-    expect(mockEnableIndexedDbPersistence).toHaveBeenCalled()
+    expect(mockInitializeFirestore).toHaveBeenCalled()
+    expect(mockPersistentLocalCache).toHaveBeenCalled()
+    expect(mockPersistentMultipleTabManager).toHaveBeenCalled()
+    expect(mockInitializeAppCheck).toHaveBeenCalled()
+    expect(mockReCaptchaV3Provider).toHaveBeenCalledWith('recaptcha-key')
     expect(mockGetPerformance).toHaveBeenCalled()
     expect(mockGetAnalytics).toHaveBeenCalled()
     expect(mockLogEvent).toHaveBeenCalledWith(

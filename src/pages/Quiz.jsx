@@ -36,26 +36,8 @@ export default function Quiz() {
     setGenerating(true)
     setGenError(null)
     try {
-      const { sendMessage } = await import('../services/gemini')
-      const prompt = `Generate exactly 10 multiple choice questions about Indian elections.
-Return ONLY a valid JSON array, no markdown, no explanation:
-[{
-  "id": 1,
-  "question": "Question text?",
-  "options": ["A", "B", "C", "D"],
-  "correct": 0,
-  "explanation": "Why this is correct (2-3 sentences).",
-  "category": "Category",
-  "difficulty": "Easy"
-}]
-Topics: ECI, EVM, voter registration, MCC, Lok Sabha, election process.
-Mix difficulties: 4 Easy, 4 Medium, 2 Hard.`
-
-      const raw = await sendMessage(prompt)
-      const clean = raw.replace(/```json|```/g, '').trim()
-      const parsed = JSON.parse(clean)
-      if (!Array.isArray(parsed) || parsed.length < 5) throw new Error('Invalid response')
-      setQuestions(shuffle(parsed).slice(0, 10))
+      const q = await generateQuiz()
+      setQuestions(q)
     } catch (err) {
       console.warn('[Quiz] Generation failed, using fallback:', err)
       const { quizQuestions } = await import('../data/quizQuestions')
@@ -324,6 +306,15 @@ Mix difficulties: 4 Easy, 4 Medium, 2 Hard.`
                     </button>
                   )
                 })}
+              </div>
+
+              {/* Screen Reader Feedback */}
+              <div role="status" aria-live="polite" className="sr-only">
+                {revealed && isAnswered && (
+                  current.correct === selectedAnswer
+                    ? "Correct!"
+                    : `Incorrect — the right answer was ${current.options[current.correct]}`
+                )}
               </div>
 
               {/* Explanation */}
