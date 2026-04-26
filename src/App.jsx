@@ -19,7 +19,7 @@ const VoterJourney = lazy(() => import('./pages/VoterJourney'))
 const Quiz = lazy(() => import('./pages/Quiz'))
 const Glossary = lazy(() => import('./pages/Glossary'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
-import NotFound from './pages/NotFound'
+const NotFound = lazy(() => import('./pages/NotFound'))
 
 const pageNames = {
   '/': 'Home — ElectoIQ',
@@ -85,6 +85,9 @@ export default function App() {
           <AppProvider>
             <RouteStateSync />
             <div className="min-h-screen flex flex-col">
+              <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-white focus:text-blue-600">
+                Skip to main content
+              </a>
               <Navbar />
               <main id="main-content" className="flex-1 outline-none">
                 <AnimatedRoutes />

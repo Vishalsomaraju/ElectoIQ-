@@ -8,7 +8,8 @@ import { initializeApp } from 'firebase/app'
 import { logger } from '../utils/logger'
 import { sanitizeInput } from '../utils/helpers'
 import { getAuth } from 'firebase/auth'
-import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore'
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore'
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 import { getPerformance } from 'firebase/performance'
 import { getAnalytics, logEvent } from 'firebase/analytics'
 
@@ -33,14 +34,21 @@ if (FIREBASE_CONFIGURED) {
       appId: import.meta.env.VITE_FIREBASE_APP_ID,
     })
     auth = getAuth(app)
-    db = getFirestore(app)
-    try {
-      enableIndexedDbPersistence(db).catch(err => {
-        logger.warn('[ElectoIQ] Persistence unavailable:', err.message)
-      })
-    } catch (_e) {
-      logger.warn('[ElectoIQ] IndexedDB persistence not supported in this environment')
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+    })
+
+    if (import.meta.env.VITE_RECAPTCHA_SITE_KEY && import.meta.env.VITE_RECAPTCHA_SITE_KEY !== 'your_recaptcha_key') {
+      try {
+        initializeAppCheck(app, {
+          provider: new ReCaptchaV3Provider(import.meta.env.VITE_RECAPTCHA_SITE_KEY),
+          isTokenAutoRefreshEnabled: true
+        })
+      } catch (err) {
+        logger.warn('[ElectoIQ] App Check init failed:', err.message)
+      }
     }
+
     try { perf = getPerformance(app) } catch (_e) {
       logger.warn('[ElectoIQ] Performance unavailable:', _e.message)
     }

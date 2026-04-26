@@ -101,6 +101,22 @@ async function withRetry(fn, maxRetries = 3, baseDelay = 500) {
   throw lastErr
 }
 
+const RATE_LIMIT_WINDOW_MS = 60000;
+const MAX_REQUESTS_PER_WINDOW = 15;
+const requestTimestamps = [];
+
+function isRateLimited() {
+  const now = Date.now();
+  while (requestTimestamps.length > 0 && requestTimestamps[0] < now - RATE_LIMIT_WINDOW_MS) {
+    requestTimestamps.shift();
+  }
+  if (requestTimestamps.length >= MAX_REQUESTS_PER_WINDOW) {
+    return true;
+  }
+  requestTimestamps.push(now);
+  return false;
+}
+
 /**
  * Send a message and stream the response
  * @param {string} message
@@ -108,6 +124,7 @@ async function withRetry(fn, maxRetries = 3, baseDelay = 500) {
  * @param {function} onChunk - callback for each text chunk
  */
 export async function sendMessageStream(message, history = [], onChunk) {
+  if (isRateLimited()) throw new Error('Rate limit exceeded. Please try again later.')
   const model = getChatModel()
   if (!model) throw new Error('Gemini API key not configured')
   const safeMessage = sanitizeInput(message)
