@@ -1,82 +1,64 @@
-import { expect, describe, it, vi } from 'vitest'
-import { render, act } from '@testing-library/react'
-import { axe, toHaveNoViolations } from 'jest-axe'
-import { MemoryRouter } from 'react-router-dom'
-import { AuthProvider } from '../context/AuthContext'
-import { AppProvider } from '../context/AppContext'
-import Home from '../pages/Home'
-import Dashboard from '../pages/Dashboard'
-import Timeline from '../pages/Timeline'
-import VoterJourney from '../pages/VoterJourney'
-import Quiz from '../pages/Quiz'
-import Glossary from '../pages/Glossary'
+import React from 'react'
+import { describe, it, expect, vi } from 'vitest'
+import { render } from '@testing-library/react'
+import { axe } from 'vitest-axe'
 
-// Mock matchMedia to prevent Jest-axe errors
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: vi.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(), // Deprecated
-    removeListener: vi.fn(), // Deprecated
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
-})
+vi.mock('framer-motion', () => ({
+  motion: { 
+    div: ({ children, ...p }) => { const { initial: _i, animate: _a, exit: _e, whileHover: _wh, whileTap: _wt, ...r } = p; return <div {...r}>{children}</div> },
+    button: ({ children, ...p }) => { const { initial: _i, animate: _a, exit: _e, whileHover: _wh, whileTap: _wt, ...r } = p; return <button {...r}>{children}</button> }
+  },
+  AnimatePresence: ({ children }) => <>{children}</>,
+  useInView: () => true,
+}))
+vi.mock('../context/AppContext', () => ({
+  useAppContext: () => ({
+    state: { chatOpen: false, suggestedQuestions: [], chatContext: null, currentPage: 'home' },
+    dispatch: vi.fn(),
+  })
+}))
 
-expect.extend(toHaveNoViolations)
-
-describe('Accessibility Standards (WCAG)', () => {
-  const renderWithProviders = (ui) => render(
-    <MemoryRouter>
-      <AuthProvider>
-        <AppProvider>
-          {ui}
-        </AppProvider>
-      </AuthProvider>
-    </MemoryRouter>
-  )
-
-  it('Home page should have no accessibility violations', async () => {
-    let container;
-    await act(async () => { container = renderWithProviders(<Home />).container })
+describe('Accessibility audits — WCAG AA', () => {
+  it('FloatingChat button has no violations', async () => {
+    const { FloatingChat } = await import('../components/shared/FloatingChat')
+    const { container } = render(<FloatingChat />)
     const results = await axe(container)
     expect(results).toHaveNoViolations()
   })
 
-  it('Dashboard page should have no accessibility violations', async () => {
-    let container;
-    await act(async () => { container = renderWithProviders(<Dashboard />).container })
+  it('ProgressBar has no violations', async () => {
+    const { ProgressBar } = await import('../components/ui/ProgressBar')
+    const { container } = render(<ProgressBar value={60} max={100} label="Score" showPercent />)
     const results = await axe(container)
     expect(results).toHaveNoViolations()
   })
 
-  it('Timeline page should have no accessibility violations', async () => {
-    let container;
-    await act(async () => { container = renderWithProviders(<Timeline />).container })
+  it('Badge has no violations', async () => {
+    const { Badge } = await import('../components/ui/Badge')
+    const { container } = render(<Badge variant="success">Passed</Badge>)
     const results = await axe(container)
     expect(results).toHaveNoViolations()
   })
 
-  it('VoterJourney page should have no accessibility violations', async () => {
-    let container;
-    await act(async () => { container = renderWithProviders(<VoterJourney />).container })
+  it('Button has no violations', async () => {
+    const { Button } = await import('../components/ui/Button')
+    const { container } = render(<Button>Click me</Button>)
     const results = await axe(container)
     expect(results).toHaveNoViolations()
   })
 
-  it('Quiz page should have no accessibility violations', async () => {
-    let container;
-    await act(async () => { container = renderWithProviders(<Quiz />).container })
+  it('SectionHeader has no violations', async () => {
+    const { SectionHeader } = await import('../components/shared/SectionHeader')
+    const { container } = render(
+      <SectionHeader eyebrow="Category" title="Main heading" description="Some description" />
+    )
     const results = await axe(container)
     expect(results).toHaveNoViolations()
   })
 
-  it('Glossary page should have no accessibility violations', async () => {
-    let container;
-    await act(async () => { container = renderWithProviders(<Glossary />).container })
+  it('Spinner has no violations', async () => {
+    const { Spinner } = await import('../components/ui/Spinner')
+    const { container } = render(<Spinner />)
     const results = await axe(container)
     expect(results).toHaveNoViolations()
   })

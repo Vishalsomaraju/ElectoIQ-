@@ -1,5 +1,5 @@
 // src/pages/Quiz.jsx
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion'
 import { Brain, ChevronRight, RotateCcw, Trophy, Send, Bot, X, Loader2 } from 'lucide-react'
@@ -11,9 +11,8 @@ import { Badge } from '../components/ui/Badge'
 import { ProgressBar } from '../components/ui/ProgressBar'
 import { Card } from '../components/ui/Card'
 import { useGemini } from '../hooks/useGemini'
-import { trackAnalyticsEvent } from '../services/firebase'
+import { trackAnalyticsEvent, logAnalyticsEvent } from '../services/firebase'
 import { generateQuiz } from '../services/gemini'
-import { quizQuestions } from '../data/quizQuestions'
 import { shuffle, calcScore, getGrade } from '../utils/helpers'
 import { cn } from '../utils/helpers'
 import { Skeleton } from '../components/ui/Skeleton'
@@ -21,7 +20,9 @@ import { Skeleton } from '../components/ui/Skeleton'
 const difficultyColor = { Easy: 'success', Medium: 'warning', Hard: 'danger' }
 
 export default function Quiz() {
-  const [questions, setQuestions] = useState(() => shuffle(quizQuestions).slice(0, 10))
+  const [questions, setQuestions] = useState([])
+  const [generating, setGenerating] = useState(false)
+  const [_genError, setGenError] = useState(null)
   const [loadingQuiz, setLoadingQuiz] = useState(false)
   const [currentIdx, setCurrentIdx] = useState(0)
   const [answers, setAnswers] = useState({})
@@ -30,6 +31,42 @@ export default function Quiz() {
   const [chatOpen, setChatOpen] = useState(false)
   const [input, setInput] = useState('')
   const { messages, streaming, error: aiError, sendMessage, clearChat } = useGemini()
+
+  const generateQuestions = useCallback(async () => {
+    setGenerating(true)
+    setGenError(null)
+    try {
+      const { sendMessage } = await import('../services/gemini')
+      const prompt = `Generate exactly 10 multiple choice questions about Indian elections.
+Return ONLY a valid JSON array, no markdown, no explanation:
+[{
+  "id": 1,
+  "question": "Question text?",
+  "options": ["A", "B", "C", "D"],
+  "correct": 0,
+  "explanation": "Why this is correct (2-3 sentences).",
+  "category": "Category",
+  "difficulty": "Easy"
+}]
+Topics: ECI, EVM, voter registration, MCC, Lok Sabha, election process.
+Mix difficulties: 4 Easy, 4 Medium, 2 Hard.`
+
+      const raw = await sendMessage(prompt)
+      const clean = raw.replace(/```json|```/g, '').trim()
+      const parsed = JSON.parse(clean)
+      if (!Array.isArray(parsed) || parsed.length < 5) throw new Error('Invalid response')
+      setQuestions(shuffle(parsed).slice(0, 10))
+    } catch (err) {
+      console.warn('[Quiz] Generation failed, using fallback:', err)
+      const { quizQuestions } = await import('../data/quizQuestions')
+      setQuestions(shuffle(quizQuestions).slice(0, 10))
+      setGenError('Using local questions — AI generation unavailable')
+    } finally {
+      setGenerating(false)
+    }
+  }, [])
+
+  useEffect(() => { generateQuestions() }, [generateQuestions])
 
   const current = questions.at(currentIdx)
   const selectedAnswer = answers[currentIdx]
@@ -50,22 +87,22 @@ export default function Quiz() {
       setCurrentIdx(i => i + 1)
       setRevealed(false)
     } else {
-      trackAnalyticsEvent('quiz_completed', {
-        score: calcScore(
-          Object.values(answers).filter((answer, index) => answer === questions[index]?.correct).length,
-          questions.length
-        ),
-      })
+      const correctCount = Object.values(answers).filter((a, i) => a === questions[i]?.correct).length
+      const score = calcScore(correctCount, questions.length)
+      
+      trackAnalyticsEvent('quiz_completed', { score })
       setPhase('results')
+      logAnalyticsEvent('quiz_completed', { score, correct: correctCount, total: questions.length })
     }
   }, [answers, currentIdx, questions])
 
-  const handleRestart = useCallback(() => {
+  const handleRestart = useCallback(async () => {
     setCurrentIdx(0)
     setAnswers({})
     setRevealed(false)
     setPhase('quiz')
     clearChat()
+    const { quizQuestions } = await import('../data/quizQuestions')
     setQuestions(shuffle(quizQuestions).slice(0, 10))
   }, [clearChat])
 
@@ -81,6 +118,7 @@ export default function Quiz() {
       setQuestions(q)
       trackAnalyticsEvent('quiz_generated_ai', { question_count: q.length })
     } catch (_err) {
+      const { quizQuestions } = await import('../data/quizQuestions')
       setQuestions(shuffle(quizQuestions).slice(0, 10))
     } finally {
       setLoadingQuiz(false)
@@ -100,6 +138,19 @@ export default function Quiz() {
       currentStage: current ? `Question about ${current.category}: ${current.question}` : null,
     })
   }, [input, streaming, sendMessage, current])
+
+  if (generating) return (
+    <AnimatedPage>
+      <PageWrapper>
+        <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+          <div className="w-12 h-12 rounded-full border-2 border-white/20 border-t-[#FF9933] animate-spin" />
+          <p className="text-slate-500 dark:text-white/60 text-sm">
+            ElectoBot is generating your questions...
+          </p>
+        </div>
+      </PageWrapper>
+    </AnimatedPage>
+  )
 
   return (
     <AnimatedPage>

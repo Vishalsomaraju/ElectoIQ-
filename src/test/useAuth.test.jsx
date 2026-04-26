@@ -9,6 +9,7 @@ vi.mock('firebase/auth', () => ({
   signInAnonymously: vi.fn(),
   signOut: vi.fn(),
   onAuthStateChanged: vi.fn(),
+  getRedirectResult: vi.fn(() => Promise.resolve()),
   GoogleAuthProvider: class {
     addScope() {}
     setCustomParameters() {}

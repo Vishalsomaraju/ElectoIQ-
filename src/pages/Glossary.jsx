@@ -11,6 +11,7 @@ import { Card } from '../components/ui/Card'
 import { glossaryTerms, glossaryCategories } from '../data/glossaryTerms'
 import { cn } from '../utils/helpers'
 import { Skeleton } from '../components/ui/Skeleton'
+import { logAnalyticsEvent } from '../services/firebase'
 
 const categoryBadgeMap = {
   Institution: 'primary', Regulation: 'warning', Voter: 'success',
@@ -32,7 +33,7 @@ const GlossaryCard = React.memo(function GlossaryCard({ term, idx, isOpen, onTog
         hover
         aria-expanded={isOpen}
         className={cn('h-full cursor-pointer', isOpen && 'border-blue-500/30')}
-        onClick={() => onToggle(term.id)}
+        onClick={() => onToggle(term)}
       >
         <div className="flex items-start justify-between gap-2 mb-3">
           <Badge variant={categoryBadgeMap[term.category] || 'default'}>{term.category}</Badge>
@@ -66,7 +67,15 @@ export default function Glossary() {
   const handleSearch = useCallback((e) => setSearch(e.target.value), [])
   const handleClear = useCallback(() => setSearch(''), [])
   const handleCategoryChange = useCallback((cat) => setCategory(cat), [])
-  const handleExpand = useCallback((termId) => setExpanded(prev => prev === termId ? null : termId), [])
+  const handleExpand = useCallback((term) => {
+    setExpanded(prev => {
+      const isExpanding = prev !== term.id
+      if (isExpanding) {
+        logAnalyticsEvent('glossary_term_viewed', { term: term.term, category: term.category })
+      }
+      return isExpanding ? term.id : null
+    })
+  }, [])
 
   useEffect(() => {
     const timer = setTimeout(() => {

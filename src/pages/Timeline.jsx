@@ -10,7 +10,7 @@ import { Badge } from '../components/ui/Badge'
 import { electionStages, electionPhases } from '../data/electionStages'
 import { cn } from '../utils/helpers'
 import { useAppContext } from '../context/AppContext'
-import { trackAnalyticsEvent } from '../services/firebase'
+import { trackAnalyticsEvent, logAnalyticsEvent } from '../services/firebase'
 
 const iconMap = {
   Megaphone, ClipboardList, FileEdit, FolderOpen, Speaker, Vote, Monitor, Hash, Landmark
@@ -47,7 +47,7 @@ const TimelineStage = React.memo(function TimelineStage({
       <div className={cn('flex-1 ml-14 md:ml-0', isLeft ? 'md:pr-12 md:text-right' : 'md:pl-12')}>
         <div
           className="bg-white dark:bg-white/5 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-white/10 shadow-sm cursor-pointer hover:border-slate-300 dark:hover:border-white/20 transition-all duration-300"
-          onClick={() => onToggle(stage.id)}
+          onClick={() => onToggle(stage)}
         >
           <div className={cn('flex items-start gap-3 mb-2', isLeft ? 'md:flex-row-reverse' : '')}>
             <Badge variant={phaseColors[stage.phase]}>{stage.phase}</Badge>
@@ -117,8 +117,14 @@ export default function Timeline() {
   const [expanded, setExpanded] = useState(null)
   const { dispatch } = useAppContext()
 
-  const handleToggle = useCallback((stageId) => {
-    setExpanded(prev => prev === stageId ? null : stageId)
+  const handleToggle = useCallback((stage) => {
+    setExpanded(prev => {
+      const isExpanding = prev !== stage.id
+      if (isExpanding) {
+        logAnalyticsEvent('timeline_stage_viewed', { stage: stage.title, phase: stage.phase })
+      }
+      return isExpanding ? stage.id : null
+    })
   }, [])
 
   const handleAskBot = useCallback((stage) => {

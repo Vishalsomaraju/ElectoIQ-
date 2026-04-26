@@ -78,6 +78,30 @@ export async function sendMessage(message, history = []) {
 }
 
 /**
+ * Retry an async function with exponential backoff.
+ * @param {Function} fn - Async function to retry
+ * @param {number} [maxRetries=3] - Maximum number of retry attempts
+ * @param {number} [baseDelay=500] - Base delay in ms (doubles each attempt)
+ * @returns {Promise<any>}
+ */
+async function withRetry(fn, maxRetries = 3, baseDelay = 500) {
+  let lastErr
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn()
+    } catch (err) {
+      lastErr = err
+      const isRetryable = err?.status === 429 || err?.status === 503 || err?.status === 500
+      if (!isRetryable || attempt === maxRetries) throw err
+      const delay = baseDelay * Math.pow(2, attempt)
+      console.warn(`[gemini] Attempt ${attempt + 1} failed, retrying in ${delay}ms`)
+      await new Promise(r => setTimeout(r, delay))
+    }
+  }
+  throw lastErr
+}
+
+/**
  * Send a message and stream the response
  * @param {string} message
  * @param {Array} history
@@ -86,26 +110,19 @@ export async function sendMessage(message, history = []) {
 export async function sendMessageStream(message, history = [], onChunk) {
   const model = getChatModel()
   if (!model) throw new Error('Gemini API key not configured')
-
-  const safeMessage = sanitizeInput(message.slice(0, 1000))
+  const safeMessage = sanitizeInput(message)
   const chat = model.startChat({ history })
 
-  const delays = [500, 1000, 2000]
-  for (let attempt = 0; attempt <= delays.length; attempt++) {
-    try {
-      const result = await chat.sendMessageStream(safeMessage)
-      let fullText = ''
-      for await (const chunk of result.stream) {
-        const chunkText = chunk.text()
-        fullText += chunkText
-        if (onChunk) onChunk(chunkText, fullText)
-      }
-      return fullText
-    } catch (error) {
-      if (attempt === delays.length) throw error
-      await new Promise(res => setTimeout(res, delays[attempt]))
+  return withRetry(async () => {
+    const result = await chat.sendMessageStream(safeMessage)
+    let fullText = ''
+    for await (const chunk of result.stream) {
+      const chunkText = chunk.text()
+      fullText += chunkText
+      if (onChunk) onChunk(chunkText, fullText)
     }
-  }
+    return fullText
+  })
 }
 
 export async function generateQuiz(topic = "Indian elections and democratic process", count = 10) {

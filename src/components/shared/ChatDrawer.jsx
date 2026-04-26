@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Send, Bot, User, Loader2 } from 'lucide-react'
 import { useAppContext } from '../../context/AppContext'
 import { useGemini } from '../../hooks/useGemini'
+import { logAnalyticsEvent } from '../../services/firebase'
 
 /**
  * Slide-in chat drawer for ElectoBot AI assistant.
@@ -21,11 +22,16 @@ export function ChatDrawer() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, streaming])
 
+  useEffect(() => {
+    return () => clearChat()
+  }, [clearChat])
+
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault()
     const text = inputValue.trim()
     if (!text || streaming) return
     setInputValue('')
+    logAnalyticsEvent('electobot_message_sent', { page: state.currentPage })
     await sendMessage(text, {
       currentPage: state.currentPage,
       currentStage: state.chatContext?.stageName,
@@ -34,6 +40,7 @@ export function ChatDrawer() {
 
   const handleSuggestionClick = useCallback(async (suggestion) => {
     if (streaming) return
+    logAnalyticsEvent('electobot_message_sent', { page: state.currentPage })
     await sendMessage(suggestion, {
       currentPage: state.currentPage,
       currentStage: state.chatContext?.stageName,

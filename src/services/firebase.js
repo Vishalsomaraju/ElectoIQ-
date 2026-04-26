@@ -90,6 +90,20 @@ export function trackAnalyticsEvent(eventName, params = {}) {
   }
 }
 
+/**
+ * Log a Firebase Analytics event safely.
+ * @param {string} eventName - Analytics event name
+ * @param {Object} [params] - Event parameters
+ */
+export function logAnalyticsEvent(eventName, params = {}) {
+  if (!analytics) return
+  try {
+    logEvent(analytics, eventName, params)
+  } catch (err) {
+    console.warn('[Analytics] logEvent failed:', err.message)
+  }
+}
+
 export function getFirebaseAuth() { return auth }
 export function getFirebaseDb() { return db }
 export function getFirebasePerformance() { return perf }

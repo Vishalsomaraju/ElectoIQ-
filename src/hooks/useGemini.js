@@ -15,11 +15,17 @@ export function useGemini() {
   const [error, setError] = useState(null)
   const historyRef = useRef([])
   const lastSendRef = useRef(0)
+  const abortControllerRef = useRef(null)
   const COOLDOWN_MS = 500
 
   const sendMessage = useCallback(async (userText, context = {}) => {
     const trimmed = userText?.trim()
     if (!trimmed || streaming) return
+
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+    abortControllerRef.current = new AbortController()
 
     // Rate limiting — minimum 500ms between sends to prevent API abuse
     const now = Date.now()
@@ -107,6 +113,10 @@ export function useGemini() {
   }, [streaming])
 
   const clearChat = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = null
+    }
     setMessages([])
     historyRef.current = []
     setError(null)

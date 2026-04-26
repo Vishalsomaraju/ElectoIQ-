@@ -46,10 +46,19 @@ vi.mock('../context/AuthContext', () => ({
 
 vi.mock('../services/gemini', () => ({
   sendMessageStream: vi.fn(),
+  sendMessage: vi.fn().mockResolvedValue(`[{"id": "mock-1", "question": "Test question?", "options": ["A", "B", "C", "D"], "correct": 0, "explanation": "Because A."}]`),
+  generateQuiz: vi.fn().mockResolvedValue([{
+    id: 'mock-1',
+    question: "Test question?",
+    options: ["A", "B", "C", "D"],
+    correct: 0,
+    explanation: "Because A."
+  }]),
 }))
 
 vi.mock('../services/firebase', () => ({
   trackAnalyticsEvent: vi.fn(),
+  logAnalyticsEvent: vi.fn(),
 }))
 
 vi.mock('../hooks/useFirestoreCollection', () => ({
@@ -311,15 +320,18 @@ describe('Quiz page', () => {
     Quiz = mod.default
   })
 
-  it('renders the Quiz initial state', () => {
+  it('renders the Quiz initial state', async () => {
     render(<Quiz />)
-    expect(screen.getByText(/Test Your Knowledge/i)).toBeInTheDocument()
+    expect(await screen.findByText(/Test Your Knowledge/i)).toBeInTheDocument()
     expect(screen.getByText(/Question 1 of 10/i)).toBeInTheDocument()
   })
 
   it('allows answering a question and moving to next', async () => {
     const user = userEvent.setup()
     render(<Quiz />)
+    
+    // Wait for the quiz to generate
+    await screen.findByText(/Question 1 of 10/i)
     
     // Answer a question (click first option)
     const options = screen.getAllByRole('radio')

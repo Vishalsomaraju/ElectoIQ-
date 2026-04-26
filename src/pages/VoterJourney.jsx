@@ -9,7 +9,7 @@ import { SectionHeader } from '../components/shared/SectionHeader'
 import { Button } from '../components/ui/Button'
 import { useAuthContext } from '../context/AuthContext'
 import { useFirestore } from '../hooks/useFirestore'
-import { trackAnalyticsEvent } from '../services/firebase'
+import { trackAnalyticsEvent, logAnalyticsEvent } from '../services/firebase'
 import { cn } from '../utils/helpers'
 import { StepProgressBar } from '../components/voter-journey/StepProgressBar'
 import { WizardNavigation } from '../components/voter-journey/WizardNavigation'
@@ -235,6 +235,7 @@ export default function VoterJourney() {
     previousStepRef.current = currentStep
 
     if (currentStep === WIZARD_STEPS.length && previousStep !== WIZARD_STEPS.length) {
+      logAnalyticsEvent('voter_journey_completed', { stepsViewed: 6 })
       trackAnalyticsEvent('voter_journey_completed', { steps_viewed: WIZARD_STEPS.length })
       confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors: ['#FF9933', '#ffffff', '#138808'] })
       
