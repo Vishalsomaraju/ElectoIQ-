@@ -46,14 +46,18 @@ vi.mock('../context/AuthContext', () => ({
 
 vi.mock('../services/gemini', () => ({
   sendMessageStream: vi.fn(),
-  sendMessage: vi.fn().mockResolvedValue(`[{"id": "mock-1", "question": "Test question?", "options": ["A", "B", "C", "D"], "correct": 0, "explanation": "Because A."}]`),
-  generateQuiz: vi.fn().mockResolvedValue([{
-    id: 'mock-1',
-    question: "Test question?",
-    options: ["A", "B", "C", "D"],
-    correct: 0,
-    explanation: "Because A."
-  }]),
+  sendMessage: vi.fn().mockResolvedValue('Mock AI response'),
+  generateQuiz: vi.fn().mockResolvedValue(
+    Array.from({ length: 10 }, (_, index) => ({
+      id: `mock-${index + 1}`,
+      category: 'Practice',
+      difficulty: 'Easy',
+      question: `Test question ${index + 1}?`,
+      options: ['A', 'B', 'C', 'D'],
+      correct: 0,
+      explanation: 'Because A.',
+    }))
+  ),
 }))
 
 vi.mock('../services/firebase', () => ({

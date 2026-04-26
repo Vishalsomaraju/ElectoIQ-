@@ -18,6 +18,10 @@ vi.mock('../context/AppContext', () => ({
   })
 }))
 
+vi.mock('../services/firebase', () => ({
+  trackAnalyticsEvent: vi.fn(),
+}))
+
 describe('Accessibility audits — WCAG AA', () => {
   it('FloatingChat button has no violations', async () => {
     const { FloatingChat } = await import('../components/shared/FloatingChat')
