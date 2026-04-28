@@ -1,6 +1,6 @@
 // src/pages/Home.jsx
-import { useRef, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useRef, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   // eslint-disable-next-line no-unused-vars
   motion,
@@ -9,7 +9,7 @@ import {
   useSpring,
   AnimatePresence,
   useMotionValueEvent,
-} from 'framer-motion'
+} from "framer-motion";
 import {
   ArrowRight,
   Sparkles,
@@ -19,76 +19,76 @@ import {
   ClipboardList,
   BookOpenText,
   BarChart3,
-} from 'lucide-react'
-import { AnimatedPage } from '../components/shared/AnimatedPage'
+} from "lucide-react";
+import { AnimatedPage } from "../components/shared/AnimatedPage";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DATA
 // ─────────────────────────────────────────────────────────────────────────────
 
 const stats = [
-  { value: 543, suffix: '', label: 'Constituencies', color: '#FF9933' },
-  { value: 96, suffix: ' Cr+', label: 'Registered Voters', color: '#138808' },
-  { value: 7, suffix: '', label: 'Election Phases', color: '#1a56db' },
-  { value: 18, suffix: '+', label: 'Age to Vote', color: '#0ea5e9' },
-]
+  { value: 543, suffix: "", label: "Constituencies", color: "#FF9933" },
+  { value: 96, suffix: " Cr+", label: "Registered Voters", color: "#138808" },
+  { value: 7, suffix: "", label: "Election Phases", color: "#1a56db" },
+  { value: 18, suffix: "+", label: "Age to Vote", color: "#0ea5e9" },
+];
 
 const features = [
   {
     Icon: CalendarDays,
-    title: 'Election Timeline',
-    desc: 'Learn the complete election cycle from announcement to results — every stage explained.',
-    to: '/timeline',
-    accent: '#FF9933',
-    bg: 'rgba(255,153,51,0.08)',
-    ring: 'rgba(255,153,51,0.25)',
+    title: "Election Timeline",
+    desc: "Learn the complete election cycle from announcement to results — every stage explained.",
+    to: "/timeline",
+    accent: "#FF9933",
+    bg: "rgba(255,153,51,0.08)",
+    ring: "rgba(255,153,51,0.25)",
   },
   {
     Icon: UserCheck,
-    title: 'Voter Journey',
-    desc: 'Step-by-step guide from registration to casting your vote on polling day.',
-    to: '/voter-journey',
-    accent: '#138808',
-    bg: 'rgba(19,136,8,0.08)',
-    ring: 'rgba(19,136,8,0.25)',
+    title: "Voter Journey",
+    desc: "Step-by-step guide from registration to casting your vote on polling day.",
+    to: "/voter-journey",
+    accent: "#138808",
+    bg: "rgba(19,136,8,0.08)",
+    ring: "rgba(19,136,8,0.25)",
   },
   {
     Icon: BotMessageSquare,
-    title: 'AI Assistant',
-    desc: 'Ask any question about elections in plain language — powered by Gemini AI.',
-    to: '/quiz',
-    accent: '#1a56db',
-    bg: 'rgba(26,86,219,0.08)',
-    ring: 'rgba(26,86,219,0.25)',
+    title: "AI Assistant",
+    desc: "Ask any question about elections in plain language — powered by Gemini AI.",
+    to: "/quiz",
+    accent: "#1a56db",
+    bg: "rgba(26,86,219,0.08)",
+    ring: "rgba(26,86,219,0.25)",
   },
   {
     Icon: ClipboardList,
-    title: 'Civic Quiz',
-    desc: 'Test your election knowledge with AI-generated adaptive questions.',
-    to: '/quiz',
-    accent: '#0ea5e9',
-    bg: 'rgba(14,165,233,0.08)',
-    ring: 'rgba(14,165,233,0.25)',
+    title: "Civic Quiz",
+    desc: "Test your election knowledge with AI-generated adaptive questions.",
+    to: "/quiz",
+    accent: "#0ea5e9",
+    bg: "rgba(14,165,233,0.08)",
+    ring: "rgba(14,165,233,0.25)",
   },
   {
     Icon: BookOpenText,
-    title: 'Glossary',
-    desc: '50+ election terms explained simply — EVM, MCC, EPIC and more.',
-    to: '/glossary',
-    accent: '#7c3aed',
-    bg: 'rgba(124,58,237,0.08)',
-    ring: 'rgba(124,58,237,0.25)',
+    title: "Glossary",
+    desc: "50+ election terms explained simply — EVM, MCC, EPIC and more.",
+    to: "/glossary",
+    accent: "#7c3aed",
+    bg: "rgba(124,58,237,0.08)",
+    ring: "rgba(124,58,237,0.25)",
   },
   {
     Icon: BarChart3,
-    title: 'Progress Tracker',
-    desc: 'Track your learning journey, quiz scores, and civic readiness score.',
-    to: '/dashboard',
-    accent: '#ec4899',
-    bg: 'rgba(236,72,153,0.08)',
-    ring: 'rgba(236,72,153,0.25)',
+    title: "Progress Tracker",
+    desc: "Track your learning journey, quiz scores, and civic readiness score.",
+    to: "/dashboard",
+    accent: "#ec4899",
+    bg: "rgba(236,72,153,0.08)",
+    ring: "rgba(236,72,153,0.25)",
   },
-]
+];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ANIMATION VARIANTS
@@ -97,43 +97,44 @@ const features = [
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
   show: { opacity: 1, y: 0 },
-}
+};
 
 const staggerContainer = {
   hidden: {},
   show: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
-}
+};
 
 const cardVariant = {
   hidden: { opacity: 0, y: 32 },
   show: {
-    opacity: 1, y: 0,
+    opacity: 1,
+    y: 0,
     transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
   },
-}
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ANIMATED COUNTER
 // ─────────────────────────────────────────────────────────────────────────────
 
 function AnimatedCounter({ to, suffix, color }) {
-  const ref = useRef(null)
-  const prevValueRef = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-60px' })
-  const motionVal = useMotionValue(0)
-  const spring = useSpring(motionVal, { stiffness: 55, damping: 20 })
-  const [display, setDisplay] = useState('0')
+  const ref = useRef(null);
+  const prevValueRef = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+  const motionVal = useMotionValue(0);
+  const spring = useSpring(motionVal, { stiffness: 55, damping: 20 });
+  const [display, setDisplay] = useState("0");
 
   useEffect(() => {
-    if (!inView) return
-    if (prevValueRef.current === to) return
-    prevValueRef.current = to
-    motionVal.set(to)
-  }, [inView, to, motionVal])
+    if (!inView) return;
+    if (prevValueRef.current === to) return;
+    prevValueRef.current = to;
+    motionVal.set(to);
+  }, [inView, to, motionVal]);
 
-  useMotionValueEvent(spring, 'change', (v) => {
-    setDisplay(Math.round(v).toString())
-  })
+  useMotionValueEvent(spring, "change", (v) => {
+    setDisplay(Math.round(v).toString());
+  });
 
   return (
     <span
@@ -142,9 +143,10 @@ function AnimatedCounter({ to, suffix, color }) {
       style={{ color }}
       aria-hidden="true"
     >
-      {display}{suffix}
+      {display}
+      {suffix}
     </span>
-  )
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -158,23 +160,37 @@ const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
   size: 2 + Math.random() * 3,
   duration: 6 + Math.random() * 8,
   delay: Math.random() * 5,
-  color: ['#FF9933', '#138808', '#1a56db', '#0ea5e9'][i % 4],
-}))
+  color: ["#FF9933", "#138808", "#1a56db", "#0ea5e9"][i % 4],
+}));
 
 function FloatingParticles() {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-      {PARTICLES.map(p => (
+    <div
+      className="absolute inset-0 overflow-hidden pointer-events-none"
+      aria-hidden="true"
+    >
+      {PARTICLES.map((p) => (
         <motion.div
           key={p.id}
           className="absolute rounded-full opacity-20"
-          style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size, background: p.color }}
+          style={{
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            width: p.size,
+            height: p.size,
+            background: p.color,
+          }}
           animate={{ y: [0, -24, 0], opacity: [0.12, 0.28, 0.12] }}
-          transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: 'easeInOut' }}
+          transition={{
+            duration: p.duration,
+            delay: p.delay,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
         />
       ))}
     </div>
-  )
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -192,38 +208,69 @@ function AshokaChakra({ size = 220 }) {
       focusable="false"
     >
       {/* Outer ring */}
-      <circle cx="110" cy="110" r="104" fill="none" stroke="#000080" strokeWidth="6" />
-      <circle cx="110" cy="110" r="60" fill="none" stroke="#000080" strokeWidth="3" />
+      <circle
+        cx="110"
+        cy="110"
+        r="104"
+        fill="none"
+        stroke="#000080"
+        strokeWidth="6"
+      />
+      <circle
+        cx="110"
+        cy="110"
+        r="60"
+        fill="none"
+        stroke="#000080"
+        strokeWidth="3"
+      />
       {/* Hub */}
       <circle cx="110" cy="110" r="14" fill="#000080" />
       {/* 24 spokes */}
       {Array.from({ length: 24 }).map((_, i) => {
-        const angle = (i * 360) / 24
-        const rad = (angle * Math.PI) / 180
-        const x1 = 110 + 60 * Math.sin(rad)
-        const y1 = 110 - 60 * Math.cos(rad)
-        const x2 = 110 + 104 * Math.sin(rad)
-        const y2 = 110 - 104 * Math.cos(rad)
+        const angle = (i * 360) / 24;
+        const rad = (angle * Math.PI) / 180;
+        const x1 = 110 + 60 * Math.sin(rad);
+        const y1 = 110 - 60 * Math.cos(rad);
+        const x2 = 110 + 104 * Math.sin(rad);
+        const y2 = 110 - 104 * Math.cos(rad);
         return (
-          <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-            stroke="#000080" strokeWidth="3" strokeLinecap="round" />
-        )
+          <line
+            key={i}
+            x1={x1}
+            y1={y1}
+            x2={x2}
+            y2={y2}
+            stroke="#000080"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+        );
       })}
       {/* 24 teardrop spokes (every other one slightly wider) */}
       {Array.from({ length: 24 }).map((_, i) => {
-        const angle = (i * 360) / 24 + 7.5
-        const rad = (angle * Math.PI) / 180
-        const x1 = 110 + 14 * Math.sin(rad)
-        const y1 = 110 - 14 * Math.cos(rad)
-        const x2 = 110 + 60 * Math.sin(rad)
-        const y2 = 110 - 60 * Math.cos(rad)
+        const angle = (i * 360) / 24 + 7.5;
+        const rad = (angle * Math.PI) / 180;
+        const x1 = 110 + 14 * Math.sin(rad);
+        const y1 = 110 - 14 * Math.cos(rad);
+        const x2 = 110 + 60 * Math.sin(rad);
+        const y2 = 110 - 60 * Math.cos(rad);
         return (
-          <line key={`t${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
-            stroke="#000080" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
-        )
+          <line
+            key={`t${i}`}
+            x1={x1}
+            y1={y1}
+            x2={x2}
+            y2={y2}
+            stroke="#000080"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            opacity="0.5"
+          />
+        );
       })}
     </svg>
-  )
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -233,14 +280,15 @@ function AshokaChakra({ size = 220 }) {
 const wordVariants = {
   hidden: { opacity: 0, y: 44 },
   show: (i) => ({
-    opacity: 1, y: 0,
+    opacity: 1,
+    y: 0,
     transition: { delay: i * 0.12, duration: 0.55, ease: [0.22, 1, 0.36, 1] },
   }),
-}
+};
 
 function HeroHeading() {
-  const line1 = ["Understand", "India's"]
-  const line2 = ["Election", "Process"]
+  const line1 = ["Understand", "India's"];
+  const line2 = ["Election", "Process"];
 
   return (
     <h1 className="font-display font-extrabold text-5xl sm:text-6xl md:text-7xl xl:text-8xl leading-[1.08] tracking-tight text-center mb-8">
@@ -275,7 +323,7 @@ function HeroHeading() {
         ))}
       </span>
     </h1>
-  )
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -294,18 +342,27 @@ export default function Home() {
         <FloatingParticles />
 
         {/* Radial glow blobs */}
-        <div className="absolute inset-0 -z-10 pointer-events-none" aria-hidden="true">
+        <div
+          className="absolute inset-0 -z-10 pointer-events-none"
+          aria-hidden="true"
+        >
           <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-blue-600/10 blur-[120px]" />
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-[#FF9933]/8 blur-[80px]" />
-          <div className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full bg-[#138808]/8 blur-[80px]" />
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-india-saffron/8 blur-[80px]" />
+          <div className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full bg-india-green/8 blur-[80px]" />
         </div>
 
         {/* Ashoka Chakra — top right, decorative */}
-        <div className="absolute top-20 right-0 md:right-8 translate-x-1/3 md:translate-x-0 pointer-events-none" aria-hidden="true">
+        <div
+          className="absolute top-20 right-0 md:right-8 translate-x-1/3 md:translate-x-0 pointer-events-none"
+          aria-hidden="true"
+        >
           <AshokaChakra size={260} />
         </div>
         {/* Second chakra — bottom left mirror */}
-        <div className="absolute bottom-8 left-0 -translate-x-1/3 md:translate-x-0 pointer-events-none" aria-hidden="true">
+        <div
+          className="absolute bottom-8 left-0 -translate-x-1/3 md:translate-x-0 pointer-events-none"
+          aria-hidden="true"
+        >
           <AshokaChakra size={180} />
         </div>
 
@@ -317,7 +374,10 @@ export default function Home() {
           transition={{ duration: 0.5 }}
           className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-white/5 backdrop-blur-md border border-slate-200 dark:border-white/10 text-sm text-slate-600 dark:text-white/70 mb-8 shadow-sm"
         >
-          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" aria-hidden="true" />
+          <span
+            className="w-2 h-2 rounded-full bg-green-400 animate-pulse"
+            aria-hidden="true"
+          />
           India's AI-Powered Civic Education Platform
         </motion.div>
 
@@ -334,8 +394,8 @@ export default function Home() {
           transition={{ duration: 0.55, delay: 0.5 }}
           className="text-slate-600 dark:text-white/55 text-lg md:text-xl max-w-2xl text-center mx-auto mb-10 leading-relaxed"
         >
-          Interactive, AI-powered civic education for every Indian voter —
-          from registration to results, demystified.
+          Interactive, AI-powered civic education for every Indian voter — from
+          registration to results, demystified.
         </motion.p>
 
         {/* ── CTAs ── */}
@@ -349,10 +409,13 @@ export default function Home() {
           {/* Primary — saffron filled */}
           <Link
             to="/timeline"
-            className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-base bg-[#FF9933] hover:bg-[#e8891f] text-white shadow-xl shadow-orange-900/30 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-orange-900/50"
+            className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-base bg-india-saffron hover:bg-[#e8891f] text-white shadow-xl shadow-orange-900/30 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-orange-900/50"
           >
             Explore Timeline
-            <ArrowRight size={17} className="group-hover:translate-x-0.5 transition-transform" />
+            <ArrowRight
+              size={17}
+              className="group-hover:translate-x-0.5 transition-transform"
+            />
           </Link>
 
           {/* Secondary — outlined */}
@@ -360,7 +423,7 @@ export default function Home() {
             to="/quiz"
             className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-base border border-slate-300 dark:border-white/20 text-slate-700 dark:text-white/80 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/8 hover:border-slate-400 dark:hover:border-white/35 transition-all duration-200 hover:-translate-y-0.5"
           >
-            <Sparkles size={16} className="text-[#0ea5e9]" aria-hidden="true" />
+            <Sparkles size={16} className="text-accent" aria-hidden="true" />
             Ask ElectoBot
           </Link>
         </motion.div>
@@ -375,9 +438,9 @@ export default function Home() {
           aria-hidden="true"
         >
           <div className="flex h-[3px] w-36 rounded-full overflow-hidden">
-            <div className="flex-1 bg-[#FF9933]" />
+            <div className="flex-1 bg-india-saffron" />
             <div className="flex-1 bg-slate-300 dark:bg-white/70" />
-            <div className="flex-1 bg-[#138808]" />
+            <div className="flex-1 bg-india-green" />
           </div>
         </motion.div>
       </section>
@@ -394,7 +457,7 @@ export default function Home() {
           viewport={{ once: true, amount: 0.3 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-4"
         >
-          {stats.map(s => (
+          {stats.map((s) => (
             <motion.div
               key={s.label}
               variants={cardVariant}
@@ -405,7 +468,12 @@ export default function Home() {
               className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/10 rounded-2xl p-6 text-center hover:border-slate-300 dark:hover:border-white/20 transition-all duration-300 shadow-sm hover:shadow-lg"
             >
               <AnimatedCounter to={s.value} suffix={s.suffix} color={s.color} />
-              <p className="text-slate-500 dark:text-white/50 text-sm font-medium" aria-hidden="true">{s.label}</p>
+              <p
+                className="text-slate-500 dark:text-white/50 text-sm font-medium"
+                aria-hidden="true"
+              >
+                {s.label}
+              </p>
             </motion.div>
           ))}
         </motion.div>
@@ -425,7 +493,7 @@ export default function Home() {
           transition={{ duration: 0.5 }}
           className="text-center mb-14"
         >
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#FF9933] mb-3">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-india-saffron mb-3">
             Everything You Need
           </p>
           <h2
@@ -435,7 +503,8 @@ export default function Home() {
             Your Complete Election Companion
           </h2>
           <p className="mt-3 text-slate-600 dark:text-white/45 max-w-xl mx-auto text-base">
-            Six powerful tools to help every Indian voter understand, prepare, and participate confidently.
+            Six powerful tools to help every Indian voter understand, prepare,
+            and participate confidently.
           </p>
         </motion.div>
 
@@ -447,7 +516,7 @@ export default function Home() {
           viewport={{ once: true, amount: 0.15 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
         >
-          {features.map(f => (
+          {features.map((f) => (
             <motion.div key={f.title} variants={cardVariant}>
               <Link
                 to={f.to}
@@ -456,7 +525,9 @@ export default function Home() {
                 {/* Subtle accent glow on hover */}
                 <div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none"
-                  style={{ background: `radial-gradient(ellipse at top left, ${f.bg} 0%, transparent 70%)` }}
+                  style={{
+                    background: `radial-gradient(ellipse at top left, ${f.bg} 0%, transparent 70%)`,
+                  }}
                   aria-hidden="true"
                 />
 
@@ -519,36 +590,43 @@ export default function Home() {
           whileInView="show"
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-[#FF9933]/20 bg-white dark:bg-gradient-to-br dark:from-[#0f172a] dark:via-[#111827] dark:to-[#0f172a] shadow-lg dark:shadow-none p-10 md:p-16 text-center"
+          className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-india-saffron/20 bg-white dark:bg-linear-to-br dark:from-[#0f172a] dark:via-[#111827] dark:to-[#0f172a] shadow-lg dark:shadow-none p-10 md:p-16 text-center"
           aria-labelledby="cta-heading"
         >
           {/* Glow */}
-          <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-[#FF9933]/8 blur-[80px]" />
+          <div
+            className="absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+          >
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-india-saffron/8 blur-[80px]" />
           </div>
 
           {/* Chakra watermark */}
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 pointer-events-none" aria-hidden="true">
+          <div
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 pointer-events-none"
+            aria-hidden="true"
+          >
             <AshokaChakra size={260} />
           </div>
 
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#FF9933] mb-4">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-india-saffron mb-4">
             Your Civic Duty Starts Here
           </p>
           <h2
             id="cta-heading"
             className="font-display font-extrabold text-3xl md:text-5xl text-slate-900 dark:text-white mb-4 relative z-10"
           >
-            Ready to Become an{' '}
+            Ready to Become an{" "}
             <span className="text-gradient-india">Informed Voter</span>?
           </h2>
           <p className="text-slate-600 dark:text-white/50 max-w-lg mx-auto mb-10 leading-relaxed relative z-10">
-            Start your journey through India's election process and discover how your single vote shapes the future of 1.4 billion people.
+            Start your journey through India's election process and discover how
+            your single vote shapes the future of 1.4 billion people.
           </p>
           <div className="flex flex-wrap justify-center gap-4 relative z-10">
             <Link
               to="/timeline"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold bg-[#FF9933] hover:bg-[#e8891f] text-white shadow-xl shadow-orange-900/30 transition-all duration-200 hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold bg-india-saffron hover:bg-[#e8891f] text-white shadow-xl shadow-orange-900/30 transition-all duration-200 hover:-translate-y-0.5"
             >
               Start Learning <ArrowRight size={17} aria-hidden="true" />
             </Link>
@@ -562,5 +640,5 @@ export default function Home() {
         </motion.div>
       </section>
     </AnimatedPage>
-  )
+  );
 }

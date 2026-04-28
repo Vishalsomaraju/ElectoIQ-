@@ -188,7 +188,7 @@ export default function Glossary() {
                 className={cn(
                   "px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border",
                   category === cat
-                    ? "bg-primary border-[#1a56db] text-white"
+                    ? "bg-primary border-primary text-white"
                     : "border-slate-200 dark:border-white/15 text-slate-500 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-white/30",
                 )}
               >
