@@ -1,5 +1,5 @@
 // src/components/ui/Card.jsx
-import { cn } from '../../utils/helpers'
+import { cn } from "../../utils/helpers";
 
 /**
  * Main Card container component.
@@ -11,34 +11,41 @@ import { cn } from '../../utils/helpers'
  * @param {function} [props.onClick] - Click handler
  * @returns {JSX.Element} Card component
  */
-export function Card({ children, className, hover = false, glow = false, onClick }) {
-  const isInteractive = Boolean(onClick)
+export function Card({
+  children,
+  className,
+  hover = false,
+  glow = false,
+  onClick,
+}) {
+  const isInteractive = Boolean(onClick);
 
   const handleKeyDown = (e) => {
-    if (!onClick) return
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onClick(e)
+    if (!onClick) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onClick(e);
     }
-  }
+  };
 
   return (
     <div
       onClick={onClick}
       onKeyDown={handleKeyDown}
-      role={isInteractive ? 'button' : undefined}
+      role={isInteractive ? "button" : undefined}
       tabIndex={isInteractive ? 0 : undefined}
       className={cn(
-        'glass rounded-2xl p-6 transition-all duration-300',
-        hover && 'hover:border-blue-500/30 hover:scale-[1.01]',
-        isInteractive && 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF9933] focus-visible:ring-offset-2',
-        glow && 'hover:glow-primary',
+        "glass rounded-2xl p-6 transition-all duration-300",
+        hover && "hover:border-blue-500/30 hover:scale-[1.01]",
+        isInteractive &&
+          "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-india-saffronfron focus-visible:ring-offset-2",
+        glow && "hover:glow-primary",
         className,
       )}
     >
       {children}
     </div>
-  )
+  );
 }
 
 /**
@@ -49,7 +56,7 @@ export function Card({ children, className, hover = false, glow = false, onClick
  * @returns {JSX.Element} CardHeader component
  */
 export function CardHeader({ children, className }) {
-  return <div className={cn('mb-4', className)}>{children}</div>
+  return <div className={cn("mb-4", className)}>{children}</div>;
 }
 
 /**
@@ -61,10 +68,15 @@ export function CardHeader({ children, className }) {
  */
 export function CardTitle({ children, className }) {
   return (
-    <h3 className={cn('font-display font-bold text-lg text-slate-900 dark:text-white', className)}>
+    <h3
+      className={cn(
+        "font-display font-bold text-lg text-slate-900 dark:text-white",
+        className,
+      )}
+    >
       {children}
     </h3>
-  )
+  );
 }
 
 /**
@@ -76,10 +88,15 @@ export function CardTitle({ children, className }) {
  */
 export function CardDescription({ children, className }) {
   return (
-    <p className={cn('text-sm text-slate-500 dark:text-white/60 mt-1', className)}>
+    <p
+      className={cn(
+        "text-sm text-slate-500 dark:text-white/60 mt-1",
+        className,
+      )}
+    >
       {children}
     </p>
-  )
+  );
 }
 
 /**
@@ -90,7 +107,7 @@ export function CardDescription({ children, className }) {
  * @returns {JSX.Element} CardContent component
  */
 export function CardContent({ children, className }) {
-  return <div className={cn('', className)}>{children}</div>
+  return <div className={cn("", className)}>{children}</div>;
 }
 
 /**
@@ -102,8 +119,13 @@ export function CardContent({ children, className }) {
  */
 export function CardFooter({ children, className }) {
   return (
-    <div className={cn('mt-4 pt-4 border-t border-slate-200 dark:border-white/5 flex items-center justify-between', className)}>
+    <div
+      className={cn(
+        "mt-4 pt-4 border-t border-slate-200 dark:border-white/5 flex items-center justify-between",
+        className,
+      )}
+    >
       {children}
     </div>
-  )
+  );
 }
